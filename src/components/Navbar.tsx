@@ -21,9 +21,8 @@ const Navbar = async () => {
                 <div className='flex h-14 items-center justify-between border-b border-zinc-200'>
                     <Link
                         href='/'
-                        className='flex z-40 font-semibold'>
+                        className='flex z-40 font-semibold md:mx-20 mx-6'>
                         <span className='flex items-center justify-center'>
-                            <img src="/logo.svg" alt="logo" className='h-14 w-14' />
                             <p className='font-mono text-xl text-transparent bg-clip-text bg-gradient-to-r from-[#FD9248] via-[#FA1768] to-[#F001FF] font-semibold'>PrepiQ</p>
                         </span>
                     </Link>

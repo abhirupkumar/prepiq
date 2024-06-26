@@ -10,6 +10,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 export default function Home() {
   return (
@@ -114,11 +117,11 @@ export default function Home() {
             <div className="space-y-4">
               <h2 className="text-3xl font-bold">2) Practice Your Answers</h2>
               <p className="text-muted-foreground">
-                Don&apos;t know how to answer the question? No problem. We can generate an answer for you based off of your
+                Don't know how to answer the question? No problem. We can generate an answer for you based off of your
                 previous work experience.
               </p>
               <p className="text-muted-foreground">
-                Want to clean up your answer? We got you. Tell us how you want to improve your answer, and we&apos;ll
+                Want to clean up your answer? We got you. Tell us how you want to improve your answer, and we'll
                 rewrite it for you.
               </p>
               <Button>Get Started</Button>
@@ -145,7 +148,6 @@ export default function Home() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">Pricing</div>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Affordable Pricing for Every Budget</h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   Choose the plan that best fits your needs and start preparing for your next interview with confidence.
@@ -256,6 +258,59 @@ export default function Home() {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
+            </div>
+          </div>
+        </section>
+        <section id="feedback" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+          <div className="px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-8">
+              <div className="space-y-2 text-center">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Feedback</h2>
+                <p className="max-w-[700px] text-muted-foreground md:text-xl">
+                  We'd love to hear your feedback! Please fill out the form below.
+                </p>
+              </div>
+              <div className="w-full max-w-[800px] space-y-4 bg-background p-6 rounded-lg shadow-md">
+                <form className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Name</Label>
+                      <Input className="bg-muted" id="name" placeholder="Enter your name" required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input className="bg-muted" id="email" type="email" placeholder="Enter your email" required />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="message">Message</Label>
+                    <Textarea className="bg-muted min-h-[100px]" id="message" placeholder="Enter your message" required />
+                  </div>
+                  <Button type="submit" className="w-full">
+                    Submit Feedback
+                  </Button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="tryforfree" className="w-full py-12 md:py-24 lg:py-32 bg-background">
+          <div className="px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-8">
+              <div className="space-y-2 text-center">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Got an Interview coming up</h2>
+                <p className="max-w-[700px] text-muted-foreground md:text-xl">
+                  Use PrepiQ now to increase your chances of landing that offer.
+                </p>
+                <Link
+                  href='/sign-in'
+                  className={buttonVariants({
+                    size: 'lg',
+                  })}>
+                  Try Free Today{' '}
+                  <ArrowRight className='ml-1.5 h-5 w-5' />
+                </Link>
+              </div>
             </div>
           </div>
         </section>
