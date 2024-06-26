@@ -6,16 +6,15 @@ import { ArrowRight } from 'lucide-react';
 import MobileNav from './MobileNav';
 import UserAccountNav from './UserAccountNav';
 import { ModeToggle } from './ModeToggle';
-import { RegisterLink, LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
+import { createClient } from '@/utils/supabase/server';
+import { getCurrentUser } from '@/lib/auth-actions';
 // import { getCurrentUser } from '@/lib/firebase-admin';
 
 
 const Navbar = async () => {
 
-    const { getUser, isAuthenticated } = getKindeServerSession();
-    const isAuth = await isAuthenticated();
-    const user = await getUser();
+    const { user, isAuth } = await getCurrentUser();
 
     return (
         <nav className='sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 backdrop-blur-lg transition-all'>
@@ -29,7 +28,7 @@ const Navbar = async () => {
                         </span>
                     </Link>
 
-                    <MobileNav isAuth={!!user} />
+                    <MobileNav isAuth={isAuth} />
 
                     <div className='hidden items-center space-x-4 sm:flex'>
                         <Link
@@ -42,18 +41,14 @@ const Navbar = async () => {
                         </Link>
                         {!isAuth ? (
                             <>
-                                <LoginLink className={buttonVariants({
-                                    variant: 'ghost',
-                                    size: 'sm',
-                                })} postLoginRedirectURL="/dashboard">
-                                    Sign in
-                                </LoginLink>
-                                <RegisterLink className={buttonVariants({
-                                    size: 'sm',
-                                })} postLoginRedirectURL="/dashboard">
+                                <Link
+                                    href="/sign-in"
+                                    className={buttonVariants({
+                                        size: 'sm',
+                                    })} >
                                     Get Started{" "}
                                     <ArrowRight className='ml-1.5 h-5 w-5' />
-                                </RegisterLink>
+                                </Link>
                             </>
                         ) : (
                             <>
@@ -68,12 +63,12 @@ const Navbar = async () => {
 
                                 <UserAccountNav
                                     name={
-                                        !user?.given_name
+                                        !user?.full_name
                                             ? 'Your Account'
-                                            : `${user?.given_name + ' ' + user?.family_name}`
+                                            : `${user?.full_name}`
                                     }
                                     email={user?.email ?? ''}
-                                    imageUrl={user?.picture ?? ''}
+                                    imageUrl={user?.avatar_url ?? ''}
                                 />
                             </>
                         )}

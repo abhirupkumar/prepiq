@@ -9,6 +9,8 @@ interface PageProps {
 }
 
 const Page = async ({ params }: PageProps) => {
+
+
     const { jobId } = params;
     return (
         <></>

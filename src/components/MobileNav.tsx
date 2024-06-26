@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { ModeToggle } from './ModeToggle'
+import { signout } from '@/lib/auth-actions'
 
 const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
     const [isOpen, setOpen] = useState<boolean>(false)
@@ -48,23 +49,12 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                                 <li>
                                     <Link
                                         onClick={() =>
-                                            closeOnCurrent('/sign-up')
-                                        }
-                                        className='flex items-center w-full font-semibold'
-                                        href='/sign-up'>
-                                        Get started
-                                        <ArrowRight className='ml-2 h-5 w-5' />
-                                    </Link>
-                                </li>
-                                <li className='my-3 h-px w-full bg-border' />
-                                <li>
-                                    <Link
-                                        onClick={() =>
                                             closeOnCurrent('/sign-in')
                                         }
                                         className='flex items-center w-full font-semibold'
                                         href='/sign-in'>
-                                        Sign in
+                                        Get started
+                                        <ArrowRight className='ml-2 h-5 w-5' />
                                     </Link>
                                 </li>
                             </>
@@ -82,10 +72,9 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                                 </li>
                                 <li className='my-1 h-px w-full bg-border' />
                                 <li>
-                                    <div
-                                        className='flex items-center w-full font-semibold'>
+                                    <button onClick={signout} className='flex items-center w-full font-semibold'>
                                         Sign out
-                                    </div>
+                                    </button>
                                 </li>
                                 <li className='my-1 h-px w-full bg-border' />
                                 <li>

@@ -11,7 +11,7 @@ import Image from 'next/image'
 import { Icons } from './Icons'
 import Link from 'next/link'
 import { Gem } from 'lucide-react'
-import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import { signout } from '@/lib/auth-actions'
 
 interface UserAccountNavProps {
     email: string | undefined
@@ -81,7 +81,7 @@ const UserAccountNav = async ({
 
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                    <LogoutLink className='text-primary'>Log out</LogoutLink>
+                    <button className='text-primary cursor-pointer' onClick={signout}>Log out</button>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

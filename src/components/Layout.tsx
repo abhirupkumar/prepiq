@@ -1,24 +1,14 @@
-
-import React from 'react'
-import Navbar from './Navbar'
-import Footer from './Footer'
-import { ThemeProvider } from './theme-provider'
+"use client";
+import { KindeProvider } from "@kinde-oss/kinde-auth-nextjs";
+import React from 'react';
 
 const Layout = ({ children }: {
     children: React.ReactNode
 }) => {
     return (
-        <>
-            <Navbar />
-            <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-            >
-                {children}
-            </ThemeProvider>
-            <Footer />
-        </>
+        <KindeProvider>
+            {children}
+        </KindeProvider>
     )
 }
 
