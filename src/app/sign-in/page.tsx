@@ -5,7 +5,7 @@ import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react'
 
-const page = () => {
+const Page = () => {
 
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -61,4 +61,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page
