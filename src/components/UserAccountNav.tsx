@@ -8,11 +8,10 @@ import {
 import { Button } from './ui/button'
 import { Avatar, AvatarFallback } from './ui/avatar'
 import Image from 'next/image'
-// import { Icons } from './Icons'/
+import { Icons } from './Icons'
 import Link from 'next/link'
 import { Gem } from 'lucide-react'
-// import { getUserSubscriptionPlan } from '@/lib/stripe';
-// import SignOut from './SignOut';
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 
 interface UserAccountNavProps {
     email: string | undefined
@@ -25,11 +24,6 @@ const UserAccountNav = async ({
     imageUrl,
     name,
 }: UserAccountNavProps) => {
-
-    // const subscriptionPlan = await getUserSubscriptionPlan();
-    const subscriptionPlan = {
-        isSubscribed: false
-    }
 
     return (
         <DropdownMenu>
@@ -50,7 +44,7 @@ const UserAccountNav = async ({
                         ) : (
                             <AvatarFallback className='bg-popover'>
                                 <span className='sr-only'>{name}</span>
-                                {/* <Icons.user className='h-4 w-4 text-zinc-50' /> */}
+                                <Icons.user className='h-4 w-4 text-zinc-50' />
                             </AvatarFallback>
                         )}
                     </Avatar>
@@ -61,12 +55,12 @@ const UserAccountNav = async ({
                 <div className='flex items-center justify-start gap-2 p-2'>
                     <div className='flex flex-col space-y-0.5 leading-none'>
                         {name && (
-                            <p className='font-medium text-sm text-white'>
+                            <p className='font-medium text-sm text-primary'>
                                 {name}
                             </p>
                         )}
                         {email && (
-                            <p className='w-[200px] truncate text-xs text-zinc-50'>
+                            <p className='w-[200px] truncate text-xs text-primary'>
                                 {email}
                             </p>
                         )}
@@ -80,21 +74,15 @@ const UserAccountNav = async ({
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
-                    {subscriptionPlan?.isSubscribed ? (
-                        <Link href='/dashboard/billing' className="cursor-pointer">
-                            Manage Subscription
-                        </Link>
-                    ) : (
-                        <Link href='/pricing' className="cursor-pointer">
-                            Upgrade{' '}
-                            <Gem className='text-blue-500 h-4 w-4 ml-1.5' />
-                        </Link>
-                    )}
+                    <Link href='/dashboard/billing' className="cursor-pointer">
+                        Purchase a plan
+                    </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
-
-                {/* <SignOut></SignOut> */}
+                <DropdownMenuItem asChild>
+                    <LogoutLink className='text-primary'>Log out</LogoutLink>
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     )

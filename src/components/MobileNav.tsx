@@ -4,6 +4,7 @@ import { ArrowRight, Menu } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { ModeToggle } from './ModeToggle'
 
 const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
     const [isOpen, setOpen] = useState<boolean>(false)
@@ -26,11 +27,22 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
         <div className='sm:hidden'>
             <Menu
                 onClick={toggleOpen}
-                className='relative z-50 h-5 w-5 text-zinc-50'
+                className='relative z-50 h-5 w-5 text-primary mr-6'
             />
             {isOpen ? (
                 <div className='fixed animate-in slide-in-from-top-5 slide-out-to-top-5 fade-in-20 fade-out-20 inset-0 z-0 w-full'>
-                    <ul className='absolute bg-[#121626] border-b border-zinc-200 shadow-xl grid w-full gap-3 px-10 pt-20 pb-8'>
+                    <ul className='absolute bg-accent border-b border-zinc-200 shadow-xl grid w-full gap-3 px-10 pt-20 pb-8'>
+                        <li>
+                            <Link
+                                onClick={() =>
+                                    closeOnCurrent('/pricing')
+                                }
+                                className='flex items-center w-full font-semibold'
+                                href='/pricing'>
+                                Pricing
+                            </Link>
+                        </li>
+                        <li className='my-3 h-px w-full bg-border' />
                         {!isAuth ? (
                             <>
                                 <li>
@@ -44,18 +56,7 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                                         <ArrowRight className='ml-2 h-5 w-5' />
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link
-                                        onClick={() =>
-                                            closeOnCurrent('https://testnix-docs.vercel.app/')
-                                        }
-                                        className='flex items-center w-full font-semibold'
-                                        target='_blank'
-                                        href='https://testnix-docs.vercel.app'>
-                                        Documentation
-                                    </Link>
-                                </li>
-                                <li className='my-3 h-px w-full bg-gray-300' />
+                                <li className='my-3 h-px w-full bg-border' />
                                 <li>
                                     <Link
                                         onClick={() =>
@@ -66,31 +67,9 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                                         Sign in
                                     </Link>
                                 </li>
-                                <li className='my-3 h-px w-full bg-gray-300' />
-                                <li>
-                                    <Link
-                                        onClick={() =>
-                                            closeOnCurrent('/pricing')
-                                        }
-                                        className='flex items-center w-full font-semibold'
-                                        href='/pricing'>
-                                        Pricing
-                                    </Link>
-                                </li>
                             </>
                         ) : (
                             <>
-                                <li>
-                                    <Link
-                                        onClick={() =>
-                                            closeOnCurrent('https://testnix-docs.vercel.app/')
-                                        }
-                                        className='flex items-center w-full font-semibold'
-                                        target='_blank'
-                                        href='https://testnix-docs.vercel.app'>
-                                        Documentation
-                                    </Link>
-                                </li>
                                 <li>
                                     <Link
                                         onClick={() =>
@@ -101,12 +80,18 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                                         Dashboard
                                     </Link>
                                 </li>
-                                <li className='my-1 h-px w-full bg-gray-300' />
-                                <li className='my-1 h-px w-full bg-gray-300' />
+                                <li className='my-1 h-px w-full bg-border' />
                                 <li>
                                     <div
                                         className='flex items-center w-full font-semibold'>
                                         Sign out
+                                    </div>
+                                </li>
+                                <li className='my-1 h-px w-full bg-border' />
+                                <li>
+                                    <div
+                                        className='flex items-center w-full font-semibold'>
+                                        <ModeToggle />
                                     </div>
                                 </li>
                             </>

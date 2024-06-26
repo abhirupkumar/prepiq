@@ -6,14 +6,16 @@ import { ArrowRight } from 'lucide-react';
 import MobileNav from './MobileNav';
 import UserAccountNav from './UserAccountNav';
 import { ModeToggle } from './ModeToggle';
+import { RegisterLink, LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 // import { getCurrentUser } from '@/lib/firebase-admin';
 
 
 const Navbar = async () => {
 
-    // const currentUser = await getCurrentUser();
-    // const user = !!currentUser ? currentUser.toJSON() as typeof currentUser : null;
-    const user = null;
+    const { getUser, isAuthenticated } = getKindeServerSession();
+    const isAuth = await isAuthenticated();
+    const user = await getUser();
 
     return (
         <nav className='sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 backdrop-blur-lg transition-all'>
@@ -30,53 +32,31 @@ const Navbar = async () => {
                     <MobileNav isAuth={!!user} />
 
                     <div className='hidden items-center space-x-4 sm:flex'>
-                        {!user ? (
+                        <Link
+                            href='/pricing'
+                            className={buttonVariants({
+                                variant: 'ghost',
+                                size: 'sm',
+                            })}>
+                            Pricing
+                        </Link>
+                        {!isAuth ? (
                             <>
-                                <Link
-                                    href='/pricing'
-                                    className={buttonVariants({
-                                        variant: 'ghost',
-                                        size: 'sm',
-                                    })}>
-                                    Pricing
-                                </Link>
-                                <Link
-                                    href='https://testnix-docs.vercel.app'
-                                    target="_blank"
-                                    className={buttonVariants({
-                                        variant: 'ghost',
-                                        size: 'sm',
-                                    })}>
-                                    Documentation
-                                </Link>
-                                <Link
-                                    href='/sign-in'
-                                    className={buttonVariants({
-                                        variant: 'ghost',
-                                        size: 'sm',
-                                    })}>
+                                <LoginLink className={buttonVariants({
+                                    variant: 'ghost',
+                                    size: 'sm',
+                                })} postLoginRedirectURL="/dashboard">
                                     Sign in
-                                </Link>
-                                <Link
-                                    href='/sign-in'
-                                    className={buttonVariants({
-                                        size: 'sm',
-                                    })}>
-                                    Get started{' '}
+                                </LoginLink>
+                                <RegisterLink className={buttonVariants({
+                                    size: 'sm',
+                                })} postLoginRedirectURL="/dashboard">
+                                    Get Started{" "}
                                     <ArrowRight className='ml-1.5 h-5 w-5' />
-                                </Link>
+                                </RegisterLink>
                             </>
                         ) : (
                             <>
-                                <Link
-                                    href='https://testnix-docs.vercel.app'
-                                    target="_blank"
-                                    className={buttonVariants({
-                                        variant: 'ghost',
-                                        size: 'sm',
-                                    })}>
-                                    Documentation
-                                </Link>
                                 <Link
                                     href='/dashboard'
                                     className={buttonVariants({
@@ -86,15 +66,15 @@ const Navbar = async () => {
                                     Dashboard
                                 </Link>
 
-                                {/* <UserAccountNav
+                                <UserAccountNav
                                     name={
-                                        !user.displayName
+                                        !user?.given_name
                                             ? 'Your Account'
-                                            : `${user.displayName}`
+                                            : `${user?.given_name + ' ' + user?.family_name}`
                                     }
-                                    email={user.email ?? ''}
-                                    imageUrl={user.photoURL ?? ''}
-                                /> */}
+                                    email={user?.email ?? ''}
+                                    imageUrl={user?.picture ?? ''}
+                                />
                             </>
                         )}
                         <ModeToggle />
