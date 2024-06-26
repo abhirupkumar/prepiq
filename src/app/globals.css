@@ -2,6 +2,10 @@
   @tailwind components;
   @tailwind utilities;
 
+  .accordion-class div:last-child {
+    border: none!important;
+  }
+
   ::-webkit-scrollbar {
     width: 8px;
   }
@@ -34,7 +38,7 @@
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
+    --border: 240 5.9% 90.0%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
@@ -57,7 +61,7 @@
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
+    --border: 240 5.9% 90.0%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9;
   }

@@ -14,12 +14,12 @@ export function absoluteUrl(path: string) {
 }
 
 export function constructMetadata({
-  title = "Interview Labs",
-  description = "Interview Labs is an Interview Prep SaaS application that gives you the most comprehensive interview preparation experience so that you can crush your next interview and land the next job offer.",
+  title = "PrepiQ",
+  description = "PrepiQ Labs is an Interview Prep SaaS application that gives you the most comprehensive interview preparation experience so that you can crush your next interview and land the next job offer.",
   image = "/thumbnail.png",
   icons = "/favicon.ico",
   noIndex = false,
-  keywords = ['interview', 'prep', 'ai', 'mock', 'job', 'naukri', 'taiyari']
+  keywords = ['prepiq', 'prep iq', 'interview', 'preparation', 'ai', 'mock', 'job', 'naukri', 'taiyari']
 }: {
   title?: string
   description?: string
@@ -32,10 +32,6 @@ export function constructMetadata({
     title,
     description,
     keywords,
-    themeColor: [
-      { media: '(prefers-color-scheme: light)', color: 'white' },
-      { media: '(prefers-color-scheme: dark)', color: 'black' },
-    ],
     openGraph: {
       title,
       description,

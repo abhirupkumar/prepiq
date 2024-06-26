@@ -15,11 +15,11 @@ const Footer = () => {
         <div className="xl:grid xl:grid-cols-5 xl:gap-8">
           <div className="space-y-4 xl:col-span-2">
             <Link href="/">
-              <span className="font-semibold">TestNix</span>
+              <span className="font-semibold">PrepiQ</span>
             </Link>
-            <p className="max-w-xs text-sm text-gray-100">Leverage Data-driven Experimentation To Win In The Subscription Economy</p>
+            <p className="max-w-xs text-sm text-primary">Prepare for your dream job with our AI-powered interview platform. Get personalized feedback and realtime analytics to boost your confidence and performance.</p>
             <div className="flex items-center">
-              <Link href="http://linkedin.com/in/abhirup2003" target="_blank" rel="noreferrer" className="rounded-md transition-colors hover:bg-gray-500 active:bg-gray-400 -ml-[5px]">
+              <Link href="http://linkedin.com/in/abhirup2003" target="_blank" rel="noreferrer" className="rounded-md transition-colors bg-gray-600 dark:bg-inherit -ml-[5px]">
                 <span className="sr-only">LinkedIn</span>
                 <svg className="w-10 h-10" x="0px" y="0px" width="100" height="100" viewBox="0,0,256,256" style={{
                   fill: "#FFFFFF"
@@ -33,32 +33,32 @@ const Footer = () => {
           <div className="mt-16 grid grid-cols-1 gap-8 xl:col-span-3 xl:mt-0">
             <div className="md:grid md:grid-cols-3 md:gap-8">
               <div>
-                <h3 className="font-bold text-gray-600">Product</h3>
+                <h3 className="font-bold text-primary">Product</h3>
                 <ul role="list" className="mt-4 space-y-4">
                   <li>
-                    <Link className="text-sm text-gray-300 hover:text-gray-600" href="/dashboard">Dashboard</Link>
+                    <Link className="text-sm text-primary" href="/dashboard">Dashboard</Link>
                   </li>
                 </ul>
               </div>
               <div className="mt-10 md:mt-0">
-                <h3 className="font-bold text-gray-600">Support</h3>
+                <h3 className="font-bold text-primary">Support</h3>
                 <ul role="list" className="mt-4 space-y-4">
                   <li>
-                    <Link className="text-sm text-gray-300 hover:text-gray-600" href="/contact">Contact Us</Link>
+                    <Link className="text-sm text-primary" href="/contact">Contact Us</Link>
                   </li>
                   <li>
-                    <Link className="text-sm text-gray-300 hover:text-gray-600" href="/refund">Cancellation & Refund Policy</Link>
+                    <Link className="text-sm text-primary" href="/refund">Cancellation & Refund Policy</Link>
                   </li>
                 </ul>
               </div>
               <div className="mt-10 md:mt-0">
-                <h3 className="font-bold text-gray-600">Legal</h3>
+                <h3 className="font-bold text-primary">Legal</h3>
                 <ul role="list" className="mt-4 space-y-4">
                   <li>
-                    <Link className="text-sm text-gray-300 hover:text-gray-600" href="/privacy">Privacy Commitment</Link>
+                    <Link className="text-sm text-primary" href="/privacy">Privacy Commitment</Link>
                   </li>
                   <li>
-                    <Link className="text-sm text-gray-300 hover:text-gray-600" href="/terms">Terms & Condition</Link>
+                    <Link className="text-sm text-primary" href="/terms">Terms & Condition</Link>
                   </li>
                 </ul>
               </div>
@@ -66,7 +66,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="mt-16 border-t border-gray-900/10 pt-8 sm:mt-20 lg:mt-24">
-          <p className="text-sm leading-5 text-gray-500">© 2023 TestNix</p>
+          <p className="text-sm leading-5 text-gray-500">© 2024 PrepiQ</p>
         </div>
       </div>
     </footer>
