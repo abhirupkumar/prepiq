@@ -117,11 +117,11 @@ export default function Home() {
             <div className="space-y-4">
               <h2 className="text-3xl font-bold">2) Practice Your Answers</h2>
               <p className="text-muted-foreground">
-                Don't know how to answer the question? No problem. We can generate an answer for you based off of your
+                Don&apos;t know how to answer the question? No problem. We can generate an answer for you based off of your
                 previous work experience.
               </p>
               <p className="text-muted-foreground">
-                Want to clean up your answer? We got you. Tell us how you want to improve your answer, and we'll
+                Want to clean up your answer? We got you. Tell us how you want to improve your answer, and we&apos;ll
                 rewrite it for you.
               </p>
               <Button>Get Started</Button>
@@ -227,9 +227,9 @@ export default function Home() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4">
               <div className="space-y-2 text-center">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Let's Clear Some Doubts</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Let&apos;s Clear Some Doubts</h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Can't seem to find the answer to a different question you have? Contact our support team.
+                  Can&apos;t seem to find the answer to a different question you have? Contact our support team.
                 </p>
               </div>
               <Accordion type="single" collapsible className="w-full accordion-class max-w-[800px] flex flex-col justify-start bg-muted px-8 rounded-xl">
@@ -267,7 +267,7 @@ export default function Home() {
               <div className="space-y-2 text-center">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Feedback</h2>
                 <p className="max-w-[700px] text-muted-foreground md:text-xl">
-                  We'd love to hear your feedback! Please fill out the form below.
+                  We&apos;d love to hear your feedback! Please fill out the form below.
                 </p>
               </div>
               <div className="w-full max-w-[800px] space-y-4 bg-background p-6 rounded-lg shadow-md">
