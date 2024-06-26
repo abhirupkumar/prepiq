@@ -25,7 +25,7 @@ const page = () => {
             <section className="grid items-center gap-8 pb-8 pt-6 md:py-8 container max-w-lg">
                 <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
                     <div className="flex flex-col p-6 space-y-1">
-                        <h3 className="font-semibold leading-none tracking-tight mb-1 text-2xl">Let's get you signed in</h3>
+                        <h3 className="font-semibold leading-none tracking-tight mb-1 text-2xl">Let&apos;s get you signed in</h3>
                     </div>
                     <div className="p-6 pt-0 grid gap-4">
                         <div className="relative">
