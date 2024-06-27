@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { browserClient } from "@/utils/supabase/client";
 import { createClient } from "@/utils/supabase/server";
 import { absoluteUrl } from "./utils";
 

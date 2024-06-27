@@ -1,3 +1,5 @@
+"use client"
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -81,7 +83,7 @@ const UserAccountNav = async ({
 
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                    <button className='text-primary cursor-pointer' onClick={() => signout()}>Log out</button>
+                    <button className='text-primary cursor-pointer' onClick={signout}>Log out</button>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

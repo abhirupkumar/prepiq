@@ -1,6 +1,6 @@
 "use client";
 
-import { createClient } from '@/utils/supabase/client';
+import { browserClient } from '@/utils/supabase/client';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react'
@@ -11,7 +11,7 @@ const Page = () => {
 
     const handleLoginWithOAuth = (provider: "azure" | "google") => {
         setLoading(true);
-        const supabase = createClient();
+        const supabase = browserClient();
         supabase.auth.signInWithOAuth({
             provider,
             options: {
