@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { ModeToggle } from './ModeToggle'
-import { signout } from '@/lib/auth-actions'
+import SignOut from './SignOut'
 
 const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
     const [isOpen, setOpen] = useState<boolean>(false)
@@ -72,9 +72,7 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                                 </li>
                                 <li className='my-1 h-px w-full bg-border' />
                                 <li>
-                                    <button onClick={signout} className='flex items-center w-full font-semibold'>
-                                        Sign out
-                                    </button>
+                                    <SignOut />
                                 </li>
                                 <li className='my-1 h-px w-full bg-border' />
                                 <li>

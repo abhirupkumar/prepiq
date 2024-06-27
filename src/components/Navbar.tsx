@@ -6,10 +6,7 @@ import { ArrowRight } from 'lucide-react';
 import MobileNav from './MobileNav';
 import UserAccountNav from './UserAccountNav';
 import { ModeToggle } from './ModeToggle';
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
-import { createClient } from '@/utils/supabase/server';
 import { getCurrentUser } from '@/lib/auth-actions';
-// import { getCurrentUser } from '@/lib/firebase-admin';
 
 
 const Navbar = async () => {

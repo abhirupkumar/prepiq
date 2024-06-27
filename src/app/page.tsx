@@ -3,7 +3,6 @@ import Image from "next/image";
 import { ArrowRight, Check } from 'lucide-react';
 import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Accordion,
   AccordionContent,
@@ -13,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
 
 export default function Home() {
   return (
@@ -37,12 +35,12 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                <LoginLink className={buttonVariants({
+                <Link className={buttonVariants({
                   size: 'lg',
-                })} postLoginRedirectURL="/dashboard">
+                })} href="/sign-in">
                   Try Free Today{' '}
                   <ArrowRight className='ml-1.5 h-5 w-5' />
-                </LoginLink>
+                </Link>
               </div>
             </div>
           </div>
@@ -177,7 +175,7 @@ export default function Home() {
                   </ul>
                 </div>
                 <Link
-                  href="#"
+                  href="/sign-in"
                   className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                   prefetch={false}
                 >
@@ -211,7 +209,7 @@ export default function Home() {
                   </ul>
                 </div>
                 <Link
-                  href="#"
+                  href="/sign-in"
                   className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                   prefetch={false}
                 >
@@ -245,7 +243,7 @@ export default function Home() {
                   </ul>
                 </div>
                 <Link
-                  href="#"
+                  href="/sign-in"
                   className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                   prefetch={false}
                 >
@@ -335,12 +333,12 @@ export default function Home() {
                 <p className="max-w-[700px] text-muted-foreground md:text-xl">
                   Use PrepiQ now to increase your chances of landing that offer.
                 </p>
-                <LoginLink className={buttonVariants({
+                <Link className={buttonVariants({
                   size: 'lg',
-                })} postLoginRedirectURL="/dashboard">
+                })} href="/sign-in">
                   Try Free Today{' '}
                   <ArrowRight className='ml-1.5 h-5 w-5' />
-                </LoginLink>
+                </Link>
               </div>
             </div>
           </div>

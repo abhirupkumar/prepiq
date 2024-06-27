@@ -1,5 +1,3 @@
-"use client"
-
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -14,6 +12,7 @@ import { Icons } from './Icons'
 import Link from 'next/link'
 import { Gem } from 'lucide-react'
 import { signout } from '@/lib/auth-actions'
+import SignOut from './SignOut'
 
 interface UserAccountNavProps {
     email: string | undefined
@@ -82,9 +81,7 @@ const UserAccountNav = async ({
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                    <button className='text-primary cursor-pointer' onClick={signout}>Log out</button>
-                </DropdownMenuItem>
+                <SignOut />
             </DropdownMenuContent>
         </DropdownMenu>
     )

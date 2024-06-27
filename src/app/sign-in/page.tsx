@@ -15,7 +15,7 @@ const Page = () => {
         supabase.auth.signInWithOAuth({
             provider,
             options: {
-                redirectTo: `${process.env.NEXT_PUBLIC_HOST}/auth-callback?next=/dashboard`,
+                redirectTo: location.origin + `/auth-callback?next=/dashboard`,
             },
         });
     };
