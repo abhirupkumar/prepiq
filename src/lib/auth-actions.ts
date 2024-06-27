@@ -19,6 +19,9 @@ export const getCurrentUser = async () => {
     const supabase = createClient();
     const { data, error } = await supabase.auth.getUser();
     const isAuth = (error || !data?.user) ? false : true;
-    const user: any = !isAuth ? null : data?.user?.user_metadata;
+    const user: any = !isAuth ? null : {
+        ...data?.user,
+        ...data?.user?.user_metadata
+    };
     return { user, isAuth };
 }
