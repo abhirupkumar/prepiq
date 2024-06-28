@@ -1,16 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-// import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
-// import CreatejobButton from './CreatejobButton';
-// import { UserRecord } from 'firebase-admin/auth';
-// import { DocumentData, collection, doc, getDoc, onSnapshot, query } from 'firebase/firestore';
-// import { db } from '@/lib/firebase';
-import { Code2, MessageSquare, Plus } from 'lucide-react';
+import { MessageSquare, Plus, SearchX } from 'lucide-react';
 import Link from 'next/link';
-import { absoluteUrl } from '@/lib/utils';
+import { absoluteUrl, cn } from '@/lib/utils';
 import { browserClient } from '@/utils/supabase/client';
-// import { getUserSubscriptionPlan } from '@/lib/stripe';
+import { Skeleton } from '../components/ui/skeleton';
+import { buttonVariants } from '@/components/ui/button';
+import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 
 const Dashboard = ({ user }: {
   user: any
@@ -51,12 +48,13 @@ const Dashboard = ({ user }: {
   }, [user?.id]);
 
   return (
-    <main className='mx-auto max-w-7xl md:p-10 p-4'>
+    <MaxWidthWrapper className='md:p-10 p-4'>
       <div className='mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:gap-0'>
         <h1 className='font-bold text-4xl text-primary'>
-          My jobs
+          Custom Jobs
         </h1>
         {/* {!loading && <CreatejobButton user={user} subscriptionPlan={subscriptionPlan} noOfExps={noOfjobs} />} */}
+        {!loading && <Link href="/create-job" className={cn(buttonVariants(), "rounded-full")}>Create a New Job</Link>}
       </div>
 
       {jobs && jobs?.length !== 0 ? (
@@ -100,20 +98,19 @@ const Dashboard = ({ user }: {
             ))}
         </ul>
       ) : loading ? (
-        <></>
-        // <SkeletonTheme baseColor="#36383e" highlightColor="#444">
-        //   <Skeleton count={3} height={100} className="my-2" />
-        // </SkeletonTheme>
+        <>
+          <Skeleton className="my-2 h-40" />
+        </>
       ) : (
         <div className='mt-16 flex flex-col items-center gap-2'>
-          <Code2 className='h-8 w-8 text-primary' />
+          <SearchX className='h-8 w-8 text-primary' />
           <h3 className='font-semibold text-xl'>
             Pretty empty around here
           </h3>
           <p>To get started, create your first Job.</p>
         </div>
       )}
-    </main>
+    </MaxWidthWrapper>
   )
 }
 
