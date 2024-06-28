@@ -72,7 +72,7 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                                 </li>
                                 <li className='my-1 h-px w-full bg-border' />
                                 <li>
-                                    <SignOut />
+                                    <SignOut notMenuItem={true} />
                                 </li>
                                 <li className='my-1 h-px w-full bg-border' />
                                 <li>

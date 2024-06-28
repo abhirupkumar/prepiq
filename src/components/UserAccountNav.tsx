@@ -81,7 +81,7 @@ const UserAccountNav = async ({
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
-                <SignOut />
+                <SignOut notMenuItem={false} />
             </DropdownMenuContent>
         </DropdownMenu>
     )
