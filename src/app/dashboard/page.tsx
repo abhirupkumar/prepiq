@@ -1,3 +1,4 @@
+import Dashboard from '@/components/Dashboard';
 import { getCurrentUser } from '@/lib/auth-actions';
 import { redirect } from 'next/navigation';
 import React from 'react';
@@ -9,7 +10,7 @@ const Page = async () => {
 
     return (
         <>
-            {/* {currentUser && user && <Dashboard user={user} subscriptionPlan={subscriptionPlan} />} */}
+            {user && <Dashboard user={user} />}
         </>
     )
 }

@@ -27,7 +27,7 @@ const Navbar = async () => {
 
                     <MobileNav isAuth={isAuth} user={user} />
 
-                    <div className='hidden items-center space-x-4 sm:flex'>
+                    <div className='hidden items-center space-x-4 sm:flex mx-4'>
                         <Link
                             href='/pricing'
                             className={buttonVariants({
