@@ -74,15 +74,15 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                                 <li>
                                     <SignOut notMenuItem={true} />
                                 </li>
-                                <li className='my-1 h-px w-full bg-border' />
-                                <li>
-                                    <div
-                                        className='flex items-center w-full font-semibold'>
-                                        <ModeToggle />
-                                    </div>
-                                </li>
                             </>
                         )}
+                        <li className='my-1 h-px w-full bg-border' />
+                        <li>
+                            <div
+                                className='flex items-center w-full font-semibold'>
+                                <ModeToggle />
+                            </div>
+                        </li>
                     </ul>
                 </div>
             ) : null}
