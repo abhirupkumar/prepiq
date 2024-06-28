@@ -6,8 +6,11 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { ModeToggle } from './ModeToggle'
 import SignOut from './SignOut'
+import { Avatar, AvatarFallback } from './ui/avatar'
+import Image from 'next/image'
+import { Icons } from './Icons'
 
-const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
+const MobileNav = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
     const [isOpen, setOpen] = useState<boolean>(false)
 
     const toggleOpen = () => setOpen((prev) => !prev)
@@ -60,6 +63,43 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                             </>
                         ) : (
                             <>
+                                <li>
+                                    <Avatar className='relative w-8 h-8'>
+                                        {user?.avatar_url ? (
+                                            <div className='relative aspect-square h-full w-full'>
+                                                <Image
+                                                    fill
+                                                    src={user?.avatar_url}
+                                                    alt='profile picture'
+                                                    referrerPolicy='no-referrer'
+                                                />
+                                            </div>
+                                        ) : (
+                                            <AvatarFallback className='bg-popover'>
+                                                <span className='sr-only'>{user?.full_name}</span>
+                                                <Icons.user className='h-4 w-4 text-zinc-50' />
+                                            </AvatarFallback>
+                                        )}
+                                    </Avatar>
+                                </li>
+                                <li className='my-1 h-px w-full bg-border' />
+                                <li>
+                                    <div className='flex items-center justify-start gap-2 p-2 w-full'>
+                                        <div className='flex flex-col space-y-0.5 leading-none'>
+                                            {user?.full_name && (
+                                                <p className='font-medium text-sm text-primary'>
+                                                    {user?.full_name}
+                                                </p>
+                                            )}
+                                            {user?.email && (
+                                                <p className='w-[200px] truncate text-xs text-primary'>
+                                                    {user?.email}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li className='my-1 h-px w-full bg-border' />
                                 <li>
                                     <Link
                                         onClick={() =>

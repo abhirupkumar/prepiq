@@ -25,7 +25,7 @@ const Navbar = async () => {
                         </span>
                     </Link>
 
-                    <MobileNav isAuth={isAuth} />
+                    <MobileNav isAuth={isAuth} user={user} />
 
                     <div className='hidden items-center space-x-4 sm:flex'>
                         <Link
