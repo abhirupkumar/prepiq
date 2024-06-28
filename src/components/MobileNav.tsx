@@ -36,16 +36,6 @@ const MobileNav = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
             {isOpen ? (
                 <div className='fixed animate-in slide-in-from-top-5 slide-out-to-top-5 fade-in-20 fade-out-20 inset-0 z-0 w-full'>
                     <ul className='absolute bg-accent border-b border-zinc-200 shadow-xl grid w-full gap-3 px-10 pt-20 pb-8'>
-                        <li>
-                            <Link
-                                onClick={() =>
-                                    closeOnCurrent('/pricing')
-                                }
-                                className='flex items-center w-full font-semibold'
-                                href='/pricing'>
-                                Pricing
-                            </Link>
-                        </li>
                         <li className='my-3 h-px w-full bg-border' />
                         {!isAuth ? (
                             <>
@@ -116,6 +106,16 @@ const MobileNav = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
                                 </li>
                             </>
                         )}
+                        <li>
+                            <Link
+                                onClick={() =>
+                                    closeOnCurrent('/pricing')
+                                }
+                                className='flex items-center w-full font-semibold'
+                                href='/pricing'>
+                                Pricing
+                            </Link>
+                        </li>
                         <li className='my-1 h-px w-full bg-border' />
                         <li>
                             <div
