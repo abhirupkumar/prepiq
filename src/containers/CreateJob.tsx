@@ -5,6 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
+import { absoluteUrl } from '@/lib/utils';
+import { browserClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
+// import { getDocument } from 'pdfjs-dist';
+// import { pdfjs } from 'react-pdf'
+// import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry'
+
+// pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
+
 import React, { useState } from 'react'
 
 interface FormDataProps {
@@ -12,20 +22,72 @@ interface FormDataProps {
     description: string,
     company: string,
     companyDescription: string,
-    resume: string
+    resume: File | null
 }
 
-const CreateJob = () => {
+const CreateJob = ({ user }: { user: any }) => {
+
+    const { toast } = useToast();
+    const router = useRouter();
+    const [pdfText, setPdfText] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
 
     const [formData, setFormData] = useState<FormDataProps>({
         title: '',
         description: '',
         company: '',
         companyDescription: '',
-        resume: ""
-    })
+        resume: null
+    });
 
-    const handleSubmit = () => {
+    // async function extractText(pdfFile: File) {
+    //     const buffer = await pdfFile.arrayBuffer();
+    //     const pdf = await getDocument({
+    //         data: buffer,
+    //         cMapUrl: './node_modules/pdfjs-dist/cmaps/',
+    //         cMapPacked: true
+    //     }).promise
+    //     let text = "";
+    //     for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+    //         const page = await pdf.getPage(pageNumber)
+    //         const textContent = await page.getTextContent()
+    //         console.log(textContent)
+    //     }
+    // }
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        // Submit the form
+        // await extractText(formData.resume!);
+        setLoading(true);
+        const supabase = browserClient();
+        const { data, error } = await supabase
+            .from('jobs')
+            .insert({
+                profile_id: user?.id,
+                desc: formData.description,
+                title: formData.title,
+                company_name: formData.company ?? "",
+                company_desc: formData.companyDescription ?? "",
+                resume_name: formData.resume?.name,
+                resume_text: "",
+            });
+
+        if (error) {
+            () => toast({
+                variant: "destructive",
+                description: "There was a problem with your request.",
+                title: 'Some error Occured!',
+            })
+        }
+        else {
+            () => toast({
+                description: "Job Created Successfully!",
+                title: 'You will be redirected to dashboard.',
+            })
+            router.push(absoluteUrl('/dashboard'));
+        }
+        setLoading(false);
     }
 
     return (
@@ -65,12 +127,12 @@ const CreateJob = () => {
                     </div>
                     <div className='flex flex-col gap-2'>
                         <Label htmlFor='resume' className='text-sm text-foreground'>Resume*</Label>
-                        <Input type='file' value={formData.resume} onChange={(e) => setFormData({
+                        <Input type='file' onChange={(e) => setFormData({
                             ...formData,
-                            resume: e.target.value
-                        })} id='resume' className='p-2 border border-gray-400 rounded-md' required />
+                            resume: e.target.files![0]
+                        })} id='resume' accept="application/pdf" className='p-2 border border-gray-400 rounded-md' required />
                     </div>
-                    <Button type='submit' className='my-4 rounded-full'>Submit</Button>
+                    <Button disabled={loading} type='submit' className='my-4 rounded-full'>{loading ? "Loading..." : "Submit"}</Button>
                 </form>
             </div>
         </MaxWidthWrapper>

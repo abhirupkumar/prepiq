@@ -10,7 +10,7 @@ const Page = async () => {
 
     return (
         <>
-            {user && <CreateJob />}
+            {user && <CreateJob user={user} />}
         </>
     );
 }
