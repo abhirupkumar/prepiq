@@ -9,12 +9,6 @@ import { useToast } from '@/components/ui/use-toast';
 import { absoluteUrl } from '@/lib/utils';
 import { browserClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
-// import { getDocument } from 'pdfjs-dist';
-// import { pdfjs } from 'react-pdf'
-// import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry'
-
-// pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
-
 import React, { useState } from 'react'
 
 interface FormDataProps {
@@ -40,40 +34,18 @@ const CreateJob = ({ user }: { user: any }) => {
         resume: null
     });
 
-    // async function extractText(pdfFile: File) {
-    //     const buffer = await pdfFile.arrayBuffer();
-    //     const pdf = await getDocument({
-    //         data: buffer,
-    //         cMapUrl: './node_modules/pdfjs-dist/cmaps/',
-    //         cMapPacked: true
-    //     }).promise
-    //     let text = "";
-    //     for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
-    //         const page = await pdf.getPage(pageNumber)
-    //         const textContent = await page.getTextContent()
-    //         console.log(textContent)
-    //     }
-    // }
-
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Submit the form
-        // await extractText(formData.resume!);
-        setLoading(true);
-        const supabase = browserClient();
-        const { data, error } = await supabase
-            .from('jobs')
-            .insert({
-                profile_id: user?.id,
-                desc: formData.description,
-                title: formData.title,
-                company_name: formData.company ?? "",
-                company_desc: formData.companyDescription ?? "",
-                resume_name: formData.resume?.name,
-                resume_text: "",
-            });
-
-        if (error) {
+        // await pdfToTxt(formData.resume!);
+        // setLoading(true);
+        const fileForm = new FormData();
+        fileForm.append('file', formData.resume!);
+        const fetchData = await fetch('/api/extracttextfrompdf', {
+            method: 'POST',
+            body: fileForm
+        });
+        const res = await fetchData.json();
+        if (res.error) {
             () => toast({
                 variant: "destructive",
                 description: "There was a problem with your request.",
@@ -81,12 +53,46 @@ const CreateJob = ({ user }: { user: any }) => {
             })
         }
         else {
-            () => toast({
-                description: "Job Created Successfully!",
-                title: 'You will be redirected to dashboard.',
+            setFormData({
+                ...formData,
+                "description": res.text
             })
-            router.push(absoluteUrl('/dashboard'));
         }
+        if (res.error) {
+            () => toast({
+                variant: "destructive",
+                description: "There was a problem with your request.",
+                title: 'Some error Occured!',
+            })
+        }
+        setPdfText(res.text);
+        // const supabase = browserClient();
+        // const { data, error } = await supabase
+        //     .from('jobs')
+        //     .insert({
+        //         profile_id: user?.id,
+        //         desc: formData.description,
+        //         title: formData.title,
+        //         company_name: formData.company ?? "",
+        //         company_desc: formData.companyDescription ?? "",
+        //         resume_name: formData.resume?.name,
+        //         resume_text: pdfText,
+        //     });
+
+        // if (error) {
+        //     () => toast({
+        //         variant: "destructive",
+        //         description: "There was a problem with your request.",
+        //         title: 'Some error Occured!',
+        //     })
+        // }
+        // else {
+        //     () => toast({
+        //         description: "Job Created Successfully!",
+        //         title: 'You will be redirected to dashboard.',
+        //     })
+        //     router.push(absoluteUrl('/dashboard'));
+        // }
         setLoading(false);
     }
 
@@ -133,6 +139,7 @@ const CreateJob = ({ user }: { user: any }) => {
                         })} id='resume' accept="application/pdf" className='p-2 border border-gray-400 rounded-md' required />
                     </div>
                     <Button disabled={loading} type='submit' className='my-4 rounded-full'>{loading ? "Loading..." : "Submit"}</Button>
+                    <div>{pdfText}</div>
                 </form>
             </div>
         </MaxWidthWrapper>
