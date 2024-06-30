@@ -36,8 +36,7 @@ const CreateJob = ({ user }: { user: any }) => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // await pdfToTxt(formData.resume!);
-        // setLoading(true);
+        setLoading(true);
         const fileForm = new FormData();
         fileForm.append('file', formData.resume!);
         const fetchData = await fetch('/api/extracttextfrompdf', {
@@ -53,46 +52,34 @@ const CreateJob = ({ user }: { user: any }) => {
             })
         }
         else {
-            setFormData({
-                ...formData,
-                "description": res.text
-            })
-        }
-        if (res.error) {
-            () => toast({
-                variant: "destructive",
-                description: "There was a problem with your request.",
-                title: 'Some error Occured!',
-            })
-        }
-        setPdfText(res.text);
-        // const supabase = browserClient();
-        // const { data, error } = await supabase
-        //     .from('jobs')
-        //     .insert({
-        //         profile_id: user?.id,
-        //         desc: formData.description,
-        //         title: formData.title,
-        //         company_name: formData.company ?? "",
-        //         company_desc: formData.companyDescription ?? "",
-        //         resume_name: formData.resume?.name,
-        //         resume_text: pdfText,
-        //     });
+            const supabase = browserClient();
+            const { data, error } = await supabase
+                .from('jobs')
+                .insert({
+                    profile_id: user?.id,
+                    desc: formData.description,
+                    title: formData.title,
+                    company_name: formData.company ?? "",
+                    company_desc: formData.companyDescription ?? "",
+                    resume_name: formData.resume?.name,
+                    resume_text: res.text,
+                });
 
-        // if (error) {
-        //     () => toast({
-        //         variant: "destructive",
-        //         description: "There was a problem with your request.",
-        //         title: 'Some error Occured!',
-        //     })
-        // }
-        // else {
-        //     () => toast({
-        //         description: "Job Created Successfully!",
-        //         title: 'You will be redirected to dashboard.',
-        //     })
-        //     router.push(absoluteUrl('/dashboard'));
-        // }
+            if (error) {
+                () => toast({
+                    variant: "destructive",
+                    description: "There was a problem with your request.",
+                    title: 'Some error Occured!',
+                })
+            }
+            else {
+                () => toast({
+                    description: "Job Created Successfully!",
+                    title: 'You will be redirected to dashboard.',
+                })
+                router.push(absoluteUrl('/dashboard'));
+            }
+        }
         setLoading(false);
     }
 
@@ -132,14 +119,13 @@ const CreateJob = ({ user }: { user: any }) => {
                         })} id='company-description' className='p-2 border border-gray-400 rounded-md mn-h-[100px]' />
                     </div>
                     <div className='flex flex-col gap-2'>
-                        <Label htmlFor='resume' className='text-sm text-foreground'>Resume*</Label>
+                        <Label htmlFor='resume' className='text-sm text-foreground'>Resume* (PDF must contain texts)</Label>
                         <Input type='file' onChange={(e) => setFormData({
                             ...formData,
                             resume: e.target.files![0]
                         })} id='resume' accept="application/pdf" className='p-2 border border-gray-400 rounded-md' required />
                     </div>
                     <Button disabled={loading} type='submit' className='my-4 rounded-full'>{loading ? "Loading..." : "Submit"}</Button>
-                    <div>{pdfText}</div>
                 </form>
             </div>
         </MaxWidthWrapper>

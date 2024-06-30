@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pdfParse from 'pdf-parse';
 
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
     const formData: FormData = await req.formData();
     const uploadedFile = formData.get('file')!;
