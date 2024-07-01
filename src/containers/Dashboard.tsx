@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { absoluteUrl, cn } from '@/lib/utils';
 import { browserClient } from '@/utils/supabase/client';
 import { Skeleton } from '../components/ui/skeleton';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 
 const Dashboard = ({ user }: {
@@ -64,6 +64,18 @@ const Dashboard = ({ user }: {
     return strTime;
   }
 
+  const handleClick = async () => {
+    const fetchData = await fetch("/api/generatequestions", {
+      method: "POST",
+      body: JSON.stringify({ noOfQuestions: 10, jobId: jobs[0].id }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const res = await fetchData.json();
+    console.log(res);
+  }
+
   return (
     <MaxWidthWrapper className='md:p-10 p-4'>
       <div className='mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:gap-0'>
@@ -71,6 +83,7 @@ const Dashboard = ({ user }: {
           Custom Jobs
         </h1>
         {!loading && <Link href="/create-job" className={cn(buttonVariants(), "rounded-full")}>Create a New Job</Link>}
+        {/* <Button onClick={handleClick}>Create a New Job</Button> */}
       </div>
 
       {jobs && jobs?.length !== 0 ? (
@@ -94,6 +107,7 @@ const Dashboard = ({ user }: {
                         <h3 className='truncate text-lg font-medium text-primary'>
                           {job.title} {job.company_name && job.company_name != null && `- ${job.company_name}`}
                         </h3>
+                        {!job.status && <span className='text-xs text-orange-600 dark:text-yellow-100 text-muted-foreground'>In Progress</span>}
                       </div>
                     </div>
                   </div>

@@ -45,11 +45,12 @@ const CreateJob = ({ user }: { user: any }) => {
         });
         const res = await fetchData.json();
         if (res.error) {
-            () => toast({
-                variant: "destructive",
-                description: "There was a problem with your request.",
-                title: 'Some error Occured!',
-            })
+            // () => toast({
+            //     variant: "destructive",
+            //     description: "There was a problem with your request.",
+            //     title: 'Some error Occured!',
+            // })
+            console.log(res.error)
         }
         else {
             const supabase = browserClient();
