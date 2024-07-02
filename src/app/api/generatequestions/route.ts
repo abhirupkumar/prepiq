@@ -10,11 +10,11 @@ export async function POST(request: NextRequest) {
     const supabase = createClient();
     const { data, error } = await supabase
         .from('jobs')
-        .select('desc, resume_text, company_name, company_desc, status')
+        .select('*')
         .eq('id', jobId)
     if (error) {
         console.log("Some error occured: ", error)
-        return NextResponse.error();
+        return NextResponse.json({ success: false, error: error.message }, { status: 401 });
     }
     const job = data[0];
 
@@ -59,7 +59,10 @@ export async function POST(request: NextRequest) {
     const response = await supabase
         .from('questions')
         .insert(questionWithId)
-    await supabase.from('jobs').update({ status: true }).eq('id', jobId);
 
-    return NextResponse.json({ success: true, questionWithId, response }, { status: 200 });
+    if (response.error) {
+        return NextResponse.json({ success: false, error: response.error.message }, { status: 402 });
+    }
+
+    return NextResponse.json({ success: true }, { status: 200 });
 }

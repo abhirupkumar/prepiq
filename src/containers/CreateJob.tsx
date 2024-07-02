@@ -23,7 +23,6 @@ const CreateJob = ({ user }: { user: any }) => {
 
     const { toast } = useToast();
     const router = useRouter();
-    const [pdfText, setPdfText] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
 
     const [formData, setFormData] = useState<FormDataProps>({
@@ -45,12 +44,11 @@ const CreateJob = ({ user }: { user: any }) => {
         });
         const res = await fetchData.json();
         if (res.error) {
-            // () => toast({
-            //     variant: "destructive",
-            //     description: "There was a problem with your request.",
-            //     title: 'Some error Occured!',
-            // })
-            console.log(res.error)
+            toast({
+                variant: "destructive",
+                description: "There was a problem with your request.",
+                title: 'Some error Occured!',
+            })
         }
         else {
             const supabase = browserClient();
@@ -67,14 +65,14 @@ const CreateJob = ({ user }: { user: any }) => {
                 });
 
             if (error) {
-                () => toast({
+                toast({
                     variant: "destructive",
                     description: "There was a problem with your request.",
                     title: 'Some error Occured!',
                 })
             }
             else {
-                () => toast({
+                toast({
                     description: "Job Created Successfully!",
                     title: 'You will be redirected to dashboard.',
                 })
@@ -103,7 +101,7 @@ const CreateJob = ({ user }: { user: any }) => {
                         <Textarea value={formData.description} onChange={(e) => setFormData({
                             ...formData,
                             description: e.target.value
-                        })} id='job-description' className='p-2 border border-gray-400 rounded-md mn-h-[100px]' required />
+                        })} id='job-description' className='p-2 border border-gray-400 rounded-md min-h-[100px]' required />
                     </div>
                     <div className='flex flex-col gap-2'>
                         <Label htmlFor='company-name' className='text-sm text-foreground'>Company Name (Optional)</Label>
@@ -117,7 +115,7 @@ const CreateJob = ({ user }: { user: any }) => {
                         <Textarea value={formData.companyDescription} onChange={(e) => setFormData({
                             ...formData,
                             companyDescription: e.target.value
-                        })} id='company-description' className='p-2 border border-gray-400 rounded-md mn-h-[100px]' />
+                        })} id='company-description' className='p-2 border border-gray-400 rounded-md min-h-[100px]' />
                     </div>
                     <div className='flex flex-col gap-2'>
                         <Label htmlFor='resume' className='text-sm text-foreground'>Resume* (PDF must contain texts)</Label>

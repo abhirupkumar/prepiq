@@ -7,6 +7,7 @@ interface PageProps {
 }
 
 const Page = async ({ params }: PageProps) => {
+    const { interviewId } = params;
     return (
         <div>
 

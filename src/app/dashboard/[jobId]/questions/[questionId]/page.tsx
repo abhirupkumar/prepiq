@@ -1,3 +1,4 @@
+import Question from '@/containers/Question';
 import React from 'react';
 
 interface PageProps {
@@ -7,10 +8,9 @@ interface PageProps {
 }
 
 const Page = async ({ params }: PageProps) => {
+    const { questionId } = params;
     return (
-        <div>
-
-        </div>
+        <Question questionId={questionId} />
     )
 }
 

@@ -35,7 +35,7 @@ const Dashboard = ({ user }: {
     fetchJobs();
 
     const subscription = supabase
-      .channel('public')
+      .channel('fetch_jobs')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, payload => {
         fetchJobs();
       })
@@ -107,7 +107,6 @@ const Dashboard = ({ user }: {
                         <h3 className='truncate text-lg font-medium text-primary'>
                           {job.title} {job.company_name && job.company_name != null && `- ${job.company_name}`}
                         </h3>
-                        {!job.status && <span className='text-xs text-orange-600 dark:text-yellow-100 text-muted-foreground'>In Progress</span>}
                       </div>
                     </div>
                   </div>

@@ -1,6 +1,5 @@
-import Job from '@/containers/Job';
+import Questions from '@/containers/Questions';
 import { getCurrentUser } from '@/lib/auth-actions';
-import { absoluteUrl } from '@/lib/utils';
 import { createClient } from '@/utils/supabase/server';
 import { notFound, redirect } from 'next/navigation';
 import React from 'react';
@@ -13,7 +12,7 @@ interface PageProps {
 
 const Page = async ({ params }: PageProps) => {
 
-    const { user, isAuth } = await getCurrentUser();
+    const { isAuth } = await getCurrentUser();
     if (!isAuth) redirect('/');
     const { jobId } = params;
     const supabase = createClient();
@@ -22,13 +21,11 @@ const Page = async ({ params }: PageProps) => {
         .select('*')
         .eq('id', jobId)
         .single();
+    const res = await supabase.from('questions').select('*').eq('job_id', jobId);
 
     if (error || !data) return notFound();
-
     return (
-        <>
-            {data && <Job jobId={jobId} jobData={data} />}
-        </>
+        <Questions jobId={jobId} questionsData={res?.data} />
     )
 }
 
