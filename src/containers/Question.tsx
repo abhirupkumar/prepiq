@@ -112,7 +112,7 @@ const Question = ({ questionId }: { questionId: string }) => {
                         </CardHeader>
                         <CardContent className="space-y-2">
                             <div className="bg-background rounded-md text-sm p-2 overflow-y-scroll max-h-[250px]">
-                                The user's example lacks direct alignment with the types of software applications typically developed at companies like Google
+                                The user&apos;s example lacks direct alignment with the types of software applications typically developed at companies like Google
                                 The response could benefit from more explicit references to relevant technologies, programming languages, or frameworks used in the project
                             </div>
                         </CardContent>
