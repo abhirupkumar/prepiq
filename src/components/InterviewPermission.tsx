@@ -123,7 +123,7 @@ const InterviewPermission = () => {
             const checkAudioLevel = () => {
                 analyser.getByteFrequencyData(dataArray);
                 const average = dataArray.reduce((a, b) => a + b) / bufferLength;
-                const normalizedLevel = Math.min(average / 128, 1); // Normalize to 0-1
+                const normalizedLevel = Math.min(average / 128, 1);
                 setAudioLevel(normalizedLevel);
                 requestAnimationFrame(checkAudioLevel);
             }
@@ -140,17 +140,28 @@ const InterviewPermission = () => {
     };
 
     useEffect(() => {
+        let audioContext: AudioContext | null = null;
         if (stream) {
             getDevices();
+        }
+        return () => {
+            if (audioContext) {
+                (audioContext as AudioContext).close();
+            }
         }
     }, [stream]);
 
     return (
-        <MaxWidthWrapper className="min-h-screen py-12 flex flex-col justify-center">
+        <MaxWidthWrapper className="py-12 flex flex-col justify-center">
             <div className="relative py-3 sm:max-w-xl sm:mx-auto">
-                <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
-                    <div className="max-w-md mx-auto">
-                        <h1 className="text-2xl font-semibold mb-6">Interview Setup</h1>
+                <div className="relative px-10 py-10 bg-muted border shadow-lg sm:rounded-3xl">
+                    <div className="flex flex-col space-y-3 max-w-md mx-auto">
+                        <h1 className="text-2xl font-semibold">Interview Setup</h1>
+                        <span className='bg-blue-100 p-4 rounded list'>
+                            <li className='text-sm text-black'>Give permission for both camera and microphone</li>
+                            <li className='text-sm text-black'>Ensure camera and microphone are working properly</li>
+                            <li className='text-sm text-black'>Check audio clarity and volume</li>
+                        </span>
                         {error && <p className="text-red-500 mb-4">{error}</p>}
                         {!hasPermission ? (
                             <Button
