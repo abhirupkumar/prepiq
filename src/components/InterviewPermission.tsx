@@ -8,6 +8,7 @@ import AudioMeter from "@/components/AudioMeter";
 
 const InterviewPermission = () => {
 
+    const { toast } = useToast();
     const [hasPermission, setHasPermission] = useState(false);
     const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
     const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
@@ -17,7 +18,10 @@ const InterviewPermission = () => {
     const [error, setError] = useState<string>('');
     const videoRef = useRef<HTMLVideoElement>(null);
     const [audioLevel, setAudioLevel] = useState<number>(0);
-    const { toast } = useToast();
+    const [isRecording, setIsRecording] = useState(false);
+    const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const audioChunksRef = useRef<Blob[]>([]);
 
     const getMediaPermission = async () => {
         try {
@@ -139,16 +143,74 @@ const InterviewPermission = () => {
         }
     };
 
+    const startRecording = () => {
+        if (stream) {
+            audioChunksRef.current = [];
+            const mediaRecorder = new MediaRecorder(stream);
+            mediaRecorderRef.current = mediaRecorder;
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunksRef.current.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+                setRecordedAudio(audioBlob);
+            };
+
+            mediaRecorder.start();
+            setIsRecording(true);
+        }
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorderRef.current) {
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+        }
+    };
+
+    const playRecordedAudio = () => {
+        if (recordedAudio) {
+            const audio = new Audio(URL.createObjectURL(recordedAudio));
+            audio.play();
+        }
+    };
+
     useEffect(() => {
         let audioContext: AudioContext | null = null;
+        let analyser: AnalyserNode | null = null;
+        let dataArray: Uint8Array | null = null;
+
         if (stream) {
-            getDevices();
+            audioContext = new AudioContext();
+            const source = audioContext.createMediaStreamSource(stream);
+            analyser = audioContext.createAnalyser();
+            source.connect(analyser);
+            analyser.fftSize = 2048;
+            const bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+
+            const checkAudioLevel2 = () => {
+                if (analyser && dataArray) {
+                    analyser.getByteFrequencyData(dataArray);
+                    const average = dataArray.reduce((a, b) => a + b) / bufferLength;
+                    const normalizedLevel = Math.min(average / 128, 1);
+                    setAudioLevel(normalizedLevel);
+                }
+                requestAnimationFrame(checkAudioLevel2);
+            }
+
+            checkAudioLevel2();
         }
+
         return () => {
             if (audioContext) {
-                (audioContext as AudioContext).close();
+                audioContext.close();
             }
-        }
+        };
     }, [stream]);
 
     return (
@@ -214,6 +276,39 @@ const InterviewPermission = () => {
                                     Test Audio
                                 </Button>
                                 <AudioMeter level={audioLevel} />
+                                <div className="flex items-center mt-4 space-x-2">
+                                    {!isRecording ? (
+                                        <Button
+                                            onClick={startRecording}
+                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                        >
+                                            Record Audio
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            onClick={stopRecording}
+                                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                        >
+                                            Stop Recording
+                                        </Button>
+                                    )}
+                                    {recordedAudio && (
+                                        <>
+                                            <Button
+                                                onClick={playRecordedAudio}
+                                                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                                            >
+                                                Play Recording
+                                            </Button>
+                                            <Button
+                                                onClick={() => setRecordedAudio(null)}
+                                                className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+                                            >
+                                                Clear Recording
+                                            </Button>
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </div>
