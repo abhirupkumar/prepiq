@@ -50,7 +50,7 @@ const Job = ({ jobId, jobData }: { jobId: string, jobData: any }) => {
             <h1 className='text-4xl font-bold my-4'>{job?.title}{job?.company_name ? " - " + job?.company_name : ""}</h1>
             <UploadResume jobId={jobId} resume_name={job?.resume_name} />
             <InterviewQuestions jobId={jobId} />
-            <MockInterviews />
+            <MockInterviews jobId={jobId} />
         </MaxWidthWrapper>
     )
 }

@@ -105,7 +105,7 @@ const Dashboard = ({ user }: {
                     <div className='flex-1 truncate'>
                       <div className='flex items-center space-x-3'>
                         <h3 className='truncate text-lg font-medium text-primary'>
-                          {job.title} {job.company_name && job.company_name != null && `- ${job.company_name}`}
+                          {job.title}{job.company_name && job.company_name != null && ` - ${job.company_name}`}
                         </h3>
                       </div>
                     </div>

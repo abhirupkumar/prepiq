@@ -1,3 +1,4 @@
+import Interview from '@/containers/Interview';
 import React from 'react'
 
 interface PageProps {
@@ -9,9 +10,7 @@ interface PageProps {
 const Page = async ({ params }: PageProps) => {
     const { interviewId } = params;
     return (
-        <div>
-
-        </div>
+        <Interview interviewId={interviewId} />
     )
 }
 
