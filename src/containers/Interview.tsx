@@ -15,7 +15,7 @@ const questions: any[] = [
     // Add more questions here
 ];
 
-export default function Interview() {
+export default function Interview({ interviewId }: { interviewId: string }) {
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(-1);
