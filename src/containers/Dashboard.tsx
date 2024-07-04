@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Calendar, Clock, Plus, SearchX } from 'lucide-react';
+import { Calendar, Clock, BriefcaseBusiness, SearchX } from 'lucide-react';
 import Link from 'next/link';
 import { absoluteUrl, cn } from '@/lib/utils';
 import { browserClient } from '@/utils/supabase/client';
@@ -114,7 +114,7 @@ const Dashboard = ({ user }: {
 
                 <div className='px-6 mt-4 grid grid-cols-3 place-items-center py-2 gap-6 text-xs text-primary'>
                   <div className='flex items-center gap-2'>
-                    <Plus className='h-4 w-4' />
+                    <BriefcaseBusiness className='h-4 w-4' />
                     Custom Job
                   </div>
                   <div className='flex items-center gap-2'>
