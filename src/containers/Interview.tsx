@@ -6,10 +6,19 @@ import AudioRecorder from '@/components/AudioRecorder';
 import VideoRecorder from '@/components/VideoRecorder';
 import QuestionDisplay from '@/components/QuestionDisplay';
 import { useToast } from '@/components/ui/use-toast';
+import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 
 const questions: any[] = [
     {
         id: 1,
+        text: "With your background in technical coordination, can you describe a situation where you coordinated activities within a team to achieve a goal? How does this relate to your role in the Newton School Coding Club?"
+    },
+    {
+        id: 2,
+        text: "With your background in technical coordination, can you describe a situation where you coordinated activities within a team to achieve a goal? How does this relate to your role in the Newton School Coding Club?"
+    },
+    {
+        id: 3,
         text: "With your background in technical coordination, can you describe a situation where you coordinated activities within a team to achieve a goal? How does this relate to your role in the Newton School Coding Club?"
     },
     // Add more questions here
@@ -142,15 +151,16 @@ export default function Interview({ interviewId }: { interviewId: string }) {
     }, [stream]);
 
     return (
-        <div className="flex">
-            <div className="w-1/2 py-10 px-10 overflow-y-auto">
+        <MaxWidthWrapper className="flex h-full">
+            <div className="w-1/2 py-10 h-full px-10 overflow-y-auto">
                 {!isInterviewStarted ? (
-                    <div>
+                    <div className='h-full'>
                         <h2 className="text-3xl mb-4 font-semibold">Interview Instructions</h2>
                         <div className='bg-blue-100 p-4 rounded list my-4'>
                             <li className='text-sm text-black'>Please grant permission for both camera and microphone</li>
                             <li className='text-sm text-black'>Ensure camera and microphone are working properly</li>
                             <li className='text-sm text-black'>Check audio clarity and volume</li>
+                            <li className='text-sm text-black'>You will get 3 question one after another.</li>
                         </div>
                         <div className="flex flex-col space-y-4">
                             <div className="flex space-x-3">
@@ -196,9 +206,9 @@ export default function Interview({ interviewId }: { interviewId: string }) {
                         </div>
                     </div>
                 ) : (
-                    <div>
+                    <div className='h-full'>
                         <QuestionDisplay question={questions[currentQuestionIndex]} />
-                        <VideoRecorder onRecordingComplete={nextQuestion} />
+                        <VideoRecorder stream={stream!} onRecordingComplete={nextQuestion} />
                     </div>
                 )}
             </div>
@@ -209,6 +219,6 @@ export default function Interview({ interviewId }: { interviewId: string }) {
                     </div>
                 </div>
             </div>
-        </div>
+        </MaxWidthWrapper>
     );
 }
