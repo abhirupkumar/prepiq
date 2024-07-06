@@ -1,5 +1,6 @@
 import Interview from '@/containers/Interview';
-import React from 'react'
+import InterviewOverview from '@/containers/InterviewOverview';
+import React from 'react';
 
 interface PageProps {
     params: {
@@ -10,7 +11,10 @@ interface PageProps {
 const Page = async ({ params }: PageProps) => {
     const { interviewId } = params;
     return (
-        <Interview interviewId={interviewId} />
+        <>
+            {/* <Interview interviewId={interviewId} /> */}
+            <InterviewOverview interviewId={interviewId} />
+        </>
     )
 }
 
