@@ -48,7 +48,7 @@ const InterviewOverview = ({ interviewId }: { interviewId: string }) => {
                         </CardHeader>
                         <CardContent className="space-y-2">
                             <div className="bg-background rounded-md text-sm p-2 overflow-y-scroll max-h-[250px]">
-                                Hello sir, my name is Abhirup Kumar Bhowmick and I had built a project named DocWhisperer, where I had built a software called SASS, which actually uses PDFs and then extracts it from the PDF and then converts it to embeddings, and so using the embeddings you can talk to PDFs. So, that's it. I had used Open AI API.
+                                Hello sir, my name is Abhirup Kumar Bhowmick and I had built a project named DocWhisperer, where I had built a software called SASS, which actually uses PDFs and then extracts it from the PDF and then converts it to embeddings, and so using the embeddings you can talk to PDFs. So, that&apos;s it. I had used Open AI API.
                             </div>
                         </CardContent>
                     </Card>
