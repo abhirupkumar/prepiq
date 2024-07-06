@@ -12,8 +12,8 @@ const Page = async ({ params }: PageProps) => {
     const { interviewId } = params;
     return (
         <>
-            {/* <Interview interviewId={interviewId} /> */}
-            <InterviewOverview interviewId={interviewId} />
+            <Interview interviewId={interviewId} />
+            {/* <InterviewOverview interviewId={interviewId} /> */}
         </>
     )
 }

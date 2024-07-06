@@ -8,7 +8,6 @@ import UserAccountNav from './UserAccountNav';
 import { ModeToggle } from './ModeToggle';
 import { getCurrentUser } from '@/lib/auth-actions';
 
-
 const Navbar = async () => {
 
     const { user, isAuth } = await getCurrentUser();
@@ -19,9 +18,10 @@ const Navbar = async () => {
                 <div className='flex h-14 items-center justify-between border-b border-zinc-200'>
                     <Link
                         href='/'
-                        className='flex z-40 font-semibold md:mx-20 mx-6'>
-                        <span className='flex items-center justify-center'>
-                            <p className='font-mono text-xl text-transparent bg-clip-text bg-gradient-to-r from-[#FD9248] via-[#FA1768] to-[#F001FF] font-semibold'>PrepiQ</p>
+                        className='flex z-40 font-semibold md:mx-20 mx-6 dark:bg-white px-1 rounded-full'>
+                        <span className='flex items-center space-x-2 justify-center'>
+                            <img src="/logo.png" alt="logo" className='h-10 w-10' />
+                            <img src="/name-logo.png" alt="logo" className='h-[1.8rem]' />
                         </span>
                     </Link>
 

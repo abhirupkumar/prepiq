@@ -27,7 +27,7 @@ export default function Home() {
                   </p>
                 </div>
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-primary">
-                  Ace Your Next Interview with{" "}<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FD9248] via-[#FA1768] to-[#F001FF]">PrepiQ</span>
+                  Ace Your Next Interview with{" "}<span className="text-primary">PrepiQ</span>
                 </h1>
                 <p className="max-w-[600px] text-foreground md:text-xl">
                   Prepare for your dream job with our AI-powered interview platform. Get personalized feedback
