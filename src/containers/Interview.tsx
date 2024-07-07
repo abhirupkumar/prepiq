@@ -204,9 +204,6 @@ export default function Interview({ interviewId }: { interviewId: string }) {
                                 Start Interview
                             </Button>
                         </div>
-                        <Button className='w-fit' onClick={startInterview} >
-                            Start Interview
-                        </Button>
                     </div>
                 ) : (
                     <div className='h-full'>
