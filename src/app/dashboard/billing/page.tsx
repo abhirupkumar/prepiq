@@ -1,5 +1,5 @@
 import React from 'react';
-// import BillingForm from '@/components/BillingForm';
+import BillingForm from '@/containers/BillingForm';
 import { redirect } from 'next/navigation';
 import { absoluteUrl } from '@/lib/utils';
 
@@ -9,7 +9,7 @@ const Page = async () => {
     // if (!currentUser) redirect(absoluteUrl("/sign-in"))
 
     // return <BillingForm subscriptionPlan={subscriptionPlan} />
-    return <></>
+    return <BillingForm />
 }
 
 export default Page;

@@ -102,6 +102,17 @@ const MobileNav = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
                                 </li>
                                 <li className='my-1 h-px w-full bg-border' />
                                 <li>
+                                    <Link
+                                        onClick={() =>
+                                            closeOnCurrent('/dashboard/billing')
+                                        }
+                                        className='flex items-center w-full font-semibold'
+                                        href='/dashboard/billing'>
+                                        Billing
+                                    </Link>
+                                </li>
+                                <li className='my-1 h-px w-full bg-border' />
+                                <li>
                                     <SignOut notMenuItem={true} />
                                 </li>
                             </>

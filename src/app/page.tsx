@@ -147,30 +147,41 @@ export default function Home() {
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Affordable Pricing for Every Budget</h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Choose the plan that best fits your needs and start preparing for your next interview with confidence.
+                  Choose the plan that best fits your needs and start preparing for your next interview with confidence. These plans are not monthly subscriptions, but one-time purchases. You can always upgrade to a higher plan if you need more credits.
                 </p>
               </div>
             </div>
-            <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3 lg:gap-12">
+            <div className="mx-auto grid max-w-7xl items-center gap-2 py-12 lg:grid-cols-4 lg:gap-12">
               <div className="flex flex-col justify-between rounded-lg bg-background p-6 shadow-lg">
                 <div className="space-y-4">
-                  <h3 className="text-2xl font-bold">Starter</h3>
+                  <h3 className="text-2xl font-bold">Free Plan</h3>
                   <p className="text-4xl font-bold">
-                    $9
-                    <span className="text-muted-foreground text-sm font-normal">/month</span>
+                    $0
                   </p>
                   <ul className="space-y-2 text-muted-foreground">
                     <li>
                       <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                      5 Mock Interviews
+                      0 Credits
                     </li>
                     <li>
                       <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                      Basic Feedback Reports
+                      Only 1 Custom Job
                     </li>
                     <li>
                       <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                      Access to Question Bank
+                      Only 1 Mock Interview
+                    </li>
+                    <li>
+                      <CheckIcon className="mr-2 inline-block h-4 w-4" />
+                      Upto 10 Practice Questions
+                    </li>
+                    <li>
+                      <CheckIcon className="mr-2 inline-block h-4 w-4" />
+                      Generate Answers with AI
+                    </li>
+                    <li>
+                      <CheckIcon className="mr-2 inline-block h-4 w-4" />
+                      AI-Powered Feedback and Guidance
                     </li>
                   </ul>
                 </div>
@@ -179,32 +190,39 @@ export default function Home() {
                   className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                   prefetch={false}
                 >
-                  Start Free Trial
+                  Try Now
                 </Link>
               </div>
               <div className="flex flex-col justify-between rounded-lg bg-background p-6 shadow-lg">
                 <div className="space-y-4">
-                  <h3 className="text-2xl font-bold">Pro</h3>
+                  <h3 className="text-2xl font-bold">Lite Plan</h3>
                   <p className="text-4xl font-bold">
-                    $19
-                    <span className="text-muted-foreground text-sm font-normal">/month</span>
+                    $4.99
                   </p>
                   <ul className="space-y-2 text-muted-foreground">
                     <li>
                       <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                      10 Mock Interviews
+                      10 Credits
                     </li>
                     <li>
                       <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                      Detailed Feedback Reports
+                      Each Interviews costs 4 credits
                     </li>
                     <li>
                       <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                      Personalized Coaching Insights
+                      Each Custom Job costs 1 credit.
                     </li>
                     <li>
                       <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                      Access to Question Bank
+                      Upto 50 Practice Questions Per Job
+                    </li>
+                    <li>
+                      <CheckIcon className="mr-2 inline-block h-4 w-4" />
+                      Generate Answers with AI
+                    </li>
+                    <li>
+                      <CheckIcon className="mr-2 inline-block h-4 w-4" />
+                      AI-Powered Feedback and Guidance
                     </li>
                   </ul>
                 </div>
@@ -213,32 +231,39 @@ export default function Home() {
                   className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                   prefetch={false}
                 >
-                  Start Free Trial
+                  Try Now
                 </Link>
               </div>
               <div className="flex flex-col justify-between rounded-lg bg-background p-6 shadow-lg">
                 <div className="space-y-4">
-                  <h3 className="text-2xl font-bold">Pro</h3>
+                  <h3 className="text-2xl font-bold">Plus Plan</h3>
                   <p className="text-4xl font-bold">
-                    $19
-                    <span className="text-muted-foreground text-sm font-normal">/month</span>
+                    $7.99
                   </p>
                   <ul className="space-y-2 text-muted-foreground">
                     <li>
                       <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                      10 Mock Interviews
+                      25 Credits
                     </li>
                     <li>
                       <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                      Detailed Feedback Reports
+                      Each Interviews costs 4 credits
                     </li>
                     <li>
                       <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                      Personalized Coaching Insights
+                      Each Custom Job costs 1 credit.
                     </li>
                     <li>
                       <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                      Access to Question Bank
+                      Upto 50 Practice Questions Per Job
+                    </li>
+                    <li>
+                      <CheckIcon className="mr-2 inline-block h-4 w-4" />
+                      Generate Answers with AI
+                    </li>
+                    <li>
+                      <CheckIcon className="mr-2 inline-block h-4 w-4" />
+                      AI-Powered Feedback and Guidance
                     </li>
                   </ul>
                 </div>
@@ -247,7 +272,48 @@ export default function Home() {
                   className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                   prefetch={false}
                 >
-                  Start Free Trial
+                  Try Now
+                </Link>
+              </div>
+              <div className="flex flex-col justify-between rounded-lg bg-background p-6 shadow-lg">
+                <div className="space-y-4">
+                  <h3 className="text-2xl font-bold">Pro Plan</h3>
+                  <p className="text-4xl font-bold">
+                    $13.99
+                  </p>
+                  <ul className="space-y-2 text-muted-foreground">
+                    <li>
+                      <CheckIcon className="mr-2 inline-block h-4 w-4" />
+                      50 Credits
+                    </li>
+                    <li>
+                      <CheckIcon className="mr-2 inline-block h-4 w-4" />
+                      Each Interviews costs 4 credits
+                    </li>
+                    <li>
+                      <CheckIcon className="mr-2 inline-block h-4 w-4" />
+                      Each Custom Job costs 1 credit.
+                    </li>
+                    <li>
+                      <CheckIcon className="mr-2 inline-block h-4 w-4" />
+                      Upto 50 Practice Questions Per Job
+                    </li>
+                    <li>
+                      <CheckIcon className="mr-2 inline-block h-4 w-4" />
+                      Generate Answers with AI
+                    </li>
+                    <li>
+                      <CheckIcon className="mr-2 inline-block h-4 w-4" />
+                      AI-Powered Feedback and Guidance
+                    </li>
+                  </ul>
+                </div>
+                <Link
+                  href="/sign-in"
+                  className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                  prefetch={false}
+                >
+                  Try Now
                 </Link>
               </div>
               <div className="flex flex-col justify" />
@@ -271,21 +337,27 @@ export default function Home() {
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-2">
+                  <AccordionTrigger>How do these credits work?</AccordionTrigger>
+                  <AccordionContent>
+                    Each custom job costs 1  credit and every mock interview you create costs 4 credits, and each mock interview contains 5 questions. You do not need to pay credits to answer any questions. You can purchase additional credits at any time, as per the plans given in the pricing section.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-3">
                   <AccordionTrigger>Does it support multiple languages?</AccordionTrigger>
                   <AccordionContent>
                     Our tool is only available in English.
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="item-3">
+                <AccordionItem value="item-4">
                   <AccordionTrigger>Is there mobile support?</AccordionTrigger>
                   <AccordionContent>
                     We currently do not offer mobile support.
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="item-4">
+                <AccordionItem value="item-5">
                   <AccordionTrigger>Is is free to use?</AccordionTrigger>
                   <AccordionContent>
-                    We offer a limited free trail.
+                    We offer a limited free plan.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

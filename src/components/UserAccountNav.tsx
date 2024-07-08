@@ -76,7 +76,7 @@ const UserAccountNav = async ({
 
                 <DropdownMenuItem asChild>
                     <Link href='/dashboard/billing' className="cursor-pointer">
-                        Purchase a plan
+                        Billing
                     </Link>
                 </DropdownMenuItem>
 
