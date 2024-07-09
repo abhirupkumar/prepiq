@@ -30,7 +30,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NextTopLoader color="#FA1768" showSpinner={false} />
+          <NextTopLoader color="#f98e12" showSpinner={false} />
           <Toaster />
           <Navbar />
           {children}

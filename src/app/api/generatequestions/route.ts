@@ -18,8 +18,22 @@ export async function POST(request: NextRequest) {
     }
     const job = data[0];
 
+    const { data: prevQuestions, error: prevQuestionsError } = await supabase.from('questions').select('question').eq('job_id', jobId);
+
+    if (prevQuestionsError) {
+        console.log("Some error occured: ", prevQuestionsError)
+        return NextResponse.json({ success: false, error: prevQuestionsError.message }, { status: 401 });
+    }
+
+    const prevQuestionsText = prevQuestions.length > 0 ? prevQuestions.map((question: any) => question.question).join("\n\n") : "";
+
     const Question = `
     Ask Questions based on the job description and also about the work or project or experience or achievement he has mentioned in his resume.
+    ${prevQuestions.length > 0 && prevQuestionsText != "" && `
+    Previously Asked Questions: 
+
+    ${prevQuestionsText}`}
+     ${prevQuestions.length > 0 && prevQuestionsText != "" && `Also, do not ask the above previous questions as they have already been asked in the previous round of interview`}
     Follow the format of output of the following example and write nothing extra.
     For example:
     [
@@ -29,7 +43,6 @@ export async function POST(request: NextRequest) {
         ...
     ]
     `
-
     const prompt = `
     You are a professional interviewer ${job.company_name != "" ? ("of " + job.company_name) : ""}.
     ${job.company_desc == "" ? "" : `

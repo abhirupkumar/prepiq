@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, ArrowRight, Bot } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -20,18 +20,27 @@ import {
 } from "@/components/ui/card"
 import { Separator } from '@/components/ui/separator';
 
-const Question = ({ questionId }: { questionId: string }) => {
+const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: string, questionId: string, questionsData: any[], questionData: any }) => {
 
     const router = useRouter();
-    const [question, setQuestion] = useState<any>({
-        question: "Can you provide an example from your experience where you have worked on developing software applications similar to what is mentioned in the job description at Google?"
-    })
+    const [question, setQuestion] = useState<any>(questionData);
+    const [questions, setQuestions] = useState<any>(questionsData);
+    const [prevQuestion, setPrevQuestion] = useState<any>(questionsData.filter((question: any) => question.index === questionData.index - 1)[0]);
+    const [nextQuestion, setNextQuestion] = useState<any>(questionsData.filter((question: any) => question.index === questionData.index + 1)[0]);
+
+    useEffect(() => {
+        setQuestion(questionData);
+        setQuestions(questionsData);
+        setPrevQuestion(questionsData.filter((question: any) => question.index === questionData.index - 1)[0]);
+        setNextQuestion(questionsData.filter((question: any) => question.index === questionData.index + 1)[0]);
+    }, [questionId]);
 
     return (
         <MaxWidthWrapper className='flex flex-col items-center px-20 py-16 w-full'>
             <span className='flex w-full justify-between'>
-                <Button variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Previous Question</Button>
-                <Button variant="outline" className='rounded-full ml-auto flex items-center bg-muted shadow-md'>Next Question{" "}<ArrowRight className="mr-2" /></Button>
+                {prevQuestion == undefined && <Button onClick={() => router.push(`/dashboard/${jobId}/questions`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>}
+                {prevQuestion != undefined && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${prevQuestion.id}`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Previous Question</Button>}
+                {nextQuestion != undefined && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${nextQuestion.id}`)} variant="outline" className='rounded-full ml-auto flex items-center bg-muted shadow-md'>Next Question{" "}<ArrowRight className="mr-2" /></Button>}
             </span>
             <div className='flex space-x-8'>
                 <section className='my-10 w-[50%] space-y-10'>
