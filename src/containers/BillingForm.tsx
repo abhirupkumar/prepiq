@@ -18,7 +18,7 @@ const BillingForm = () => {
                     <CardHeader>
                         <CardTitle>Your Plans</CardTitle>
                         <CardDescription>
-                            You haven't purchased nay plan.
+                            You haven&apos;t purchased nay plan.
                         </CardDescription>
                     </CardHeader>
 
