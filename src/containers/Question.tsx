@@ -3,7 +3,7 @@
 import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, ArrowRight, Bot } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -19,20 +19,53 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Separator } from '@/components/ui/separator';
+import { browserClient } from '@/utils/supabase/client';
 
 const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: string, questionId: string, questionsData: any[], questionData: any }) => {
 
     const router = useRouter();
+    const supabase = browserClient();
     const [question, setQuestion] = useState<any>(questionData);
-    const [questions, setQuestions] = useState<any>(questionsData);
     const [prevQuestion, setPrevQuestion] = useState<any>(questionsData.filter((question: any) => question.index === questionData.index - 1)[0]);
     const [nextQuestion, setNextQuestion] = useState<any>(questionsData.filter((question: any) => question.index === questionData.index + 1)[0]);
+    const [answer, setAnswer] = useState<string>(questionData.submitted_answer);
+    const [rewrittenAnswer, setRewrittenAnswer] = useState<string>("");
 
     useEffect(() => {
         setQuestion(questionData);
-        setQuestions(questionsData);
         setPrevQuestion(questionsData.filter((question: any) => question.index === questionData.index - 1)[0]);
         setNextQuestion(questionsData.filter((question: any) => question.index === questionData.index + 1)[0]);
+        setAnswer(questionData.submitted_answer);
+    }, [questionId]);
+
+    useEffect(() => {
+        const fetchQuestion = async () => {
+            const { data, error } = await supabase
+                .from('questions')
+                .select('*')
+                .eq('id', questionId)
+                .single();
+
+            if (error) {
+                console.error('Error fetching jobs:', error);
+            } else {
+                setQuestion(data);
+                setAnswer(data.submitted_answer);
+            }
+        };
+        fetchQuestion();
+
+        const subscription = supabase
+            .channel('fetch_questions')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'questions' }, payload => {
+                fetchQuestion();
+            })
+            .subscribe()
+
+        return () => {
+            supabase.removeChannel(subscription)
+        };
+
     }, [questionId]);
 
     return (
@@ -53,13 +86,16 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
                             <h2 className='text-xl font-semibold'>Your Answer:</h2>
                             <Textarea id='answer' className='p-2 border border-gray-400 rounded-md min-h-[100px]' />
                             <span className='flex space-x-2 mt-2'>
-                                <Button className='rounded-full'><Bot className="mr-2" />Generate Answer</Button>
+                                <Button className='rounded-full'>
+                                    <img src="/logo-black.png" className="mr-2 h-5 w-5 hidden dark:block" />
+                                    <img src="/logo-white.png" className="mr-2 h-5 w-5 block dark:hidden" />
+                                    Generate Answer</Button>
                                 <Button className='rounded-full'>Submit</Button>
                             </span>
                         </div>
                     </div>
                     <Tabs defaultValue="rewrite" className="">
-                        <TabsList className="grid w-full grid-cols-2">
+                        <TabsList className="grid w-full grid-cols-2 border">
                             <TabsTrigger value="rewrite">Rewrite Answer</TabsTrigger>
                             <TabsTrigger value="saved">Saved Answer</TabsTrigger>
                         </TabsList>
@@ -71,7 +107,8 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
                                 <CardContent className="space-y-2">
                                     <div className='flex w-full space-x-2'>
                                         <span className='flex w-full items-center'>
-                                            <Bot className="absolute mx-2" />
+                                            <img src="/logo-black.png" className="mx-3 absolute h-5 w-5 block dark:hidden" />
+                                            <img src="/logo-white.png" className="mx-3 absolute h-5 w-5 hidden dark:block" />
                                             <Input placeholder='Make it more professional' className='rounded-full pl-10 w-full' />
                                         </span>
                                         <Button className='rounded-full'>Rewrite</Button>
@@ -80,11 +117,13 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
                                         <Button variant="outline" className='rounded-full'>Make it more concise</Button>
                                         <Button variant="outline" className='rounded-full'>Make it sound smarter</Button>
                                     </div>
-                                    <Separator className="my-4" />
-                                    <Button variant="outline" className='rounded-full'>Save Answer</Button>
-                                    <div className="bg-background rounded-md p-2 text-sm">
-                                        As a Freelance Web Developer, I implemented features to enhance operational efficiency and security in web applications. For example, I developed an admin dashboard to simplify inventory management and order processing, resulting in a 40% increase in efficiency. Additionally, I implemented improved security measures, leading to a 50% reduction in breaches and improved user data protection. These accomplishments showcase my proficiency in optimizing software projects by effectively addressing functional and security needs.
-                                    </div>
+                                    {rewrittenAnswer != "" && <>
+                                        <Separator className="my-4" />
+                                        <Button variant="outline" className='rounded-full'>Save Answer</Button>
+                                        <div className="bg-background rounded-md p-2 text-sm">
+                                            {rewrittenAnswer}
+                                        </div>
+                                    </>}
                                 </CardContent>
                             </Card>
                         </TabsContent>
@@ -94,9 +133,13 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
                                     <CardTitle>Saved Answer</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-2">
-                                    <div className="bg-background rounded-md p-2 text-sm">
-                                        As a Freelance Web Developer, I implemented features to enhance operational efficiency and security in web applications. For example, I developed an admin dashboard to simplify inventory management and order processing, resulting in a 40% increase in efficiency. Additionally, I implemented improved security measures, leading to a 50% reduction in breaches and improved user data protection. These accomplishments showcase my proficiency in optimizing software projects by effectively addressing functional and security needs.
+                                    {question.saved_answer != "" ? <div className="bg-background rounded-md p-2 text-sm">
+                                        {question.saved_answer}
                                     </div>
+                                        :
+                                        <div className="bg-background rounded-md p-4 font-semibold text-sm text-center">
+                                            No saved answer found.
+                                        </div>}
                                 </CardContent>
                             </Card>
                         </TabsContent>
@@ -108,11 +151,13 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
                             <CardTitle>Strengths</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            <div className="bg-background rounded-md text-sm p-2 overflow-y-scroll max-h-[250px]">
-                                The user provides a specific example of a software development project they worked on as a Freelance Web Developer, showcasing experience in designing and implementing features for web-based applications
-                                The user highlights tangible results from their project, such as a 40% boost in operational efficiency and a 50% decrease in security breaches, demonstrating ability to deliver measurable outcomes
-                                The user effectively communicates their proactive approach to software development by leading the integration of security protocols and conducting regular assessments, showing initiative and dedication to project success
+                            {question.strengths != "" ? <div className="bg-background rounded-md text-sm p-2 overflow-y-scroll max-h-[250px]">
+                                {question.strengths}
                             </div>
+                                :
+                                <div className="bg-background rounded-md font-semibold text-sm p-4 text-center overflow-y-scroll max-h-[250px]">
+                                    Submit an answer to get Feedback.
+                                </div>}
                         </CardContent>
                     </Card>
                     <Card>
@@ -120,10 +165,13 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
                             <CardTitle>How To Improve</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            <div className="bg-background rounded-md text-sm p-2 overflow-y-scroll max-h-[250px]">
-                                The user&apos;s example lacks direct alignment with the types of software applications typically developed at companies like Google
-                                The response could benefit from more explicit references to relevant technologies, programming languages, or frameworks used in the project
+                            {question.suggestions != "" ? <div className="bg-background rounded-md text-sm p-2 overflow-y-scroll max-h-[250px]">
+                                {question.suggesstions}
                             </div>
+                                :
+                                <div className="bg-background rounded-md font-semibold text-sm p-4 text-center overflow-y-scroll max-h-[250px]">
+                                    Submit an answer to get Feedback.
+                                </div>}
                         </CardContent>
                     </Card>
                 </section>
