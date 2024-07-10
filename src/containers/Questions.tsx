@@ -33,9 +33,17 @@ const Questions = ({ jobId, questionsData }: { jobId: string, questionsData: any
                 .eq('job_id', jobId);
 
             if (error) {
-                console.error('Error fetching jobs:', error);
+                toast({
+                    variant: "destructive",
+                    title: 'Error fetching Job. Please try again later.',
+                    description: error?.message,
+                })
             } else {
-                setQuestions(data);
+                const sortDataWithTime = data.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+                const dataWithIndex = sortDataWithTime.map((question: any, index: number) => {
+                    return { ...question, index: index + 1 }
+                });
+                setQuestions(dataWithIndex);
             }
         };
         fetchQuestions();
@@ -93,7 +101,7 @@ const Questions = ({ jobId, questionsData }: { jobId: string, questionsData: any
                     <TableBody>
                         {questions.map((question: any, index: number) => (
                             <TableRow key={index}>
-                                <TableCell className="font-medium px-6"><Link href={`/dashboard/${jobId}/questions/${question.id}`}>{index + 1}. {question?.question}</Link></TableCell>
+                                <TableCell className="font-medium px-6"><Link href={`/dashboard/${jobId}/questions/${question.id}`}>{question?.index}. {question?.question}</Link></TableCell>
                                 <TableCell className="font-medium px-8"><Link href={`/dashboard/${jobId}/questions/${question.id}`}>{question.submitted_answer != "" ? <Check className='bg-green-500 p-1 rounded-full text-white font-bold' /> : <Check className='bg-zinc-400 p-1 rounded-full text-white font-bold' />}</Link></TableCell>
                             </TableRow>
                         ))}

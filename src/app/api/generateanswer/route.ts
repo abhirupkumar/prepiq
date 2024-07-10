@@ -16,7 +16,6 @@ export async function POST(request: NextRequest) {
         .single();
 
     if (error1) {
-        console.log("Some error occured: ", error1)
         return NextResponse.json({ success: false, error: error1.message }, { status: 401 });
     }
 
@@ -27,7 +26,6 @@ export async function POST(request: NextRequest) {
         .single()
 
     if (error2) {
-        console.log("Some error occured: ", error2)
         return NextResponse.json({ success: false, error: error2.message }, { status: 401 });
     }
 

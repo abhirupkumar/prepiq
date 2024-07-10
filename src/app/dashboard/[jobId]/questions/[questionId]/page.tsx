@@ -15,7 +15,8 @@ const Page = async ({ params }: PageProps) => {
     const supabase = createClient();
     const { data, error } = await supabase.from('questions').select('*').eq('job_id', jobId);
     if (error) return notFound();
-    const dataWithIndex = data.map((question: any, index: number) => {
+    const sortDataWithTime = data.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    const dataWithIndex = sortDataWithTime.map((question: any, index: number) => {
         return { ...question, index: index + 1 }
     });
 

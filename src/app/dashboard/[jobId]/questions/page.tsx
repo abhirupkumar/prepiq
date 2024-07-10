@@ -22,10 +22,14 @@ const Page = async ({ params }: PageProps) => {
         .eq('id', jobId)
         .single();
     const res = await supabase.from('questions').select('*').eq('job_id', jobId);
+    const sortDataWithTime = res?.data.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    const dataWithIndex = sortDataWithTime.map((question: any, index: number) => {
+        return { ...question, index: index + 1 }
+    });
 
     if (error || !data) return notFound();
     return (
-        <Questions jobId={jobId} questionsData={res?.data} />
+        <Questions jobId={jobId} questionsData={dataWithIndex} />
     )
 }
 

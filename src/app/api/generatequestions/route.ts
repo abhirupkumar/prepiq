@@ -13,7 +13,6 @@ export async function POST(request: NextRequest) {
         .select('*')
         .eq('id', jobId)
     if (error) {
-        console.log("Some error occured: ", error)
         return NextResponse.json({ success: false, error: error.message }, { status: 401 });
     }
     const job = data[0];
@@ -21,7 +20,6 @@ export async function POST(request: NextRequest) {
     const { data: prevQuestions, error: prevQuestionsError } = await supabase.from('questions').select('question').eq('job_id', jobId);
 
     if (prevQuestionsError) {
-        console.log("Some error occured: ", prevQuestionsError)
         return NextResponse.json({ success: false, error: prevQuestionsError.message }, { status: 401 });
     }
 

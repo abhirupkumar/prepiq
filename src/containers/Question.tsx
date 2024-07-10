@@ -38,6 +38,7 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
         submittingAnswer: false,
     });
     const [rewriteLoading, setRewriteLoading] = useState<boolean>(false);
+    const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
     useEffect(() => {
         setQuestion(questionData);
@@ -55,7 +56,11 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
                 .single();
 
             if (error) {
-                console.error('Error fetching jobs:', error);
+                toast({
+                    variant: "destructive",
+                    title: 'Error fetching Questions. Please try again later.',
+                    description: error?.message,
+                })
             } else {
                 setQuestion(data);
                 setAnswer(data.submitted_answer);
@@ -131,7 +136,22 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
 
     const rewriteAnswer = async () => {
         setRewriteLoading(true);
-        setRewrittenAnswer("");
+        const fetchedData = await fetch("/api/rewriteanswer", {
+            method: "POST",
+            body: JSON.stringify({ answer, jobId, questionId, rewritePrompt }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        const res = await fetchedData.json();
+        if (!res.success) {
+            toast({
+                variant: "destructive",
+                title: 'Error Submitting Answer.',
+                description: "Please try again.",
+            })
+        }
+        setRewrittenAnswer(res.answer);
         setRewriteLoading(false);
     }
 
@@ -140,12 +160,35 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
         rewriteAnswer();
     }
 
+    const saveAnswer = async () => {
+        setSaveLoading(true);
+        const { data, error } = await supabase
+            .from('questions')
+            .update({ saved_answer: rewrittenAnswer })
+            .eq('id', questionId)
+        if (error) {
+            toast({
+                variant: "destructive",
+                title: 'Error Saving Answer.',
+                description: "Please try again.",
+            })
+        } else {
+            toast({
+                title: 'Answer Saved.',
+                description: "Your answer has been saved.",
+            })
+        }
+        setSaveLoading(false);
+    }
+
     return (
         <MaxWidthWrapper className='flex flex-col items-center px-20 py-16 w-full'>
             <span className='flex w-full justify-between'>
-                {prevQuestion == undefined && <Button onClick={() => router.push(`/dashboard/${jobId}/questions`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>}
-                {prevQuestion != undefined && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${prevQuestion.id}`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Previous Question</Button>}
-                {nextQuestion != undefined && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${nextQuestion.id}`)} variant="outline" className='rounded-full ml-auto flex items-center bg-muted shadow-md'>Next Question{" "}<ArrowRight className="mr-2" /></Button>}
+                <Button onClick={() => router.push(`/dashboard/${jobId}/questions`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>
+                <div className='ml-auto flex space-x-6 justify-between'>
+                    {prevQuestion != undefined && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${prevQuestion.id}`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Previous Question</Button>}
+                    {nextQuestion != undefined && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${nextQuestion.id}`)} variant="outline" className='rounded-full ml-auto flex items-center bg-muted shadow-md'>Next Question{" "}<ArrowRight className="mr-2" /></Button>}
+                </div>
             </span>
             <div className='flex space-x-8'>
                 <section className='my-10 w-[50%] space-y-10'>
@@ -195,7 +238,7 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
                                     </div>
                                     {rewrittenAnswer != "" && <>
                                         <Separator className="my-4" />
-                                        <Button variant="outline" className='rounded-full'>Save Answer</Button>
+                                        <Button disabled={saveLoading} onClick={saveAnswer} variant="outline" className='rounded-full'>Save Answer</Button>
                                         <div className="bg-background rounded-md p-2 text-sm">
                                             {rewrittenAnswer}
                                         </div>
@@ -209,7 +252,7 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
                                     <CardTitle>Saved Answer</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-2">
-                                    {question.saved_answer != "" ? <div className="bg-background rounded-md p-2 text-sm">
+                                    {question.saved_answer != "" ? <div className="bg-background rounded-md p-4 text-sm">
                                         {question.saved_answer}
                                     </div>
                                         :
@@ -227,12 +270,12 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
                             <CardTitle>Strengths</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            {question.strengths != "" ? <div className="bg-background rounded-md text-sm p-2 overflow-y-scroll max-h-[250px]">
-                                {question.strengths}
+                            {question.strengths != "" ? <div className="bg-background rounded-md text-sm p-4 overflow-y-scroll max-h-[250px]">
+                                {loading.submittingAnswer ? "Generating Your Feedback." : question.strengths}
                             </div>
                                 :
                                 <div className="bg-background rounded-md font-semibold text-sm p-4 text-center overflow-y-scroll max-h-[250px]">
-                                    Submit an answer to get Feedback.
+                                    {loading.submittingAnswer ? "Generating Your Feedback." : "Submit an answer to get Feedback."}
                                 </div>}
                         </CardContent>
                     </Card>
@@ -241,12 +284,12 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
                             <CardTitle>How To Improve</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            {question.suggestions != "" ? <div className="bg-background rounded-md text-sm p-2 overflow-y-scroll max-h-[250px]">
-                                {question.suggestions}
+                            {question.suggestions != "" ? <div className="bg-background rounded-md text-sm p-4 overflow-y-scroll max-h-[250px]">
+                                {loading.submittingAnswer ? "Generating Your Feedback..." : question.suggestions}
                             </div>
                                 :
                                 <div className="bg-background rounded-md font-semibold text-sm p-4 text-center overflow-y-scroll max-h-[250px]">
-                                    Submit an answer to get Feedback.
+                                    {loading.submittingAnswer ? "Generating Your Feedback..." : "Submit an answer to get Feedback."}
                                 </div>}
                         </CardContent>
                     </Card>

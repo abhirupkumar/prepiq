@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
         parsedText = data.text;
         return NextResponse.json({ text: parsedText }, { status: 200 });
     } catch (error: any) {
-        console.log(error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
