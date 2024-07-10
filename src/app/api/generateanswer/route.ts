@@ -6,7 +6,7 @@ export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
 
-    const { answer, jobId, questionId } = await request.json();
+    const { jobId, questionId } = await request.json();
     const supabase = createClient();
 
     const { data: job, error: error1 } = await supabase
@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
         .select('*')
         .eq('id', questionId)
         .single()
+
     if (error2) {
         console.log("Some error occured: ", error2)
         return NextResponse.json({ success: false, error: error2.message }, { status: 401 });
@@ -51,38 +52,13 @@ export async function POST(request: NextRequest) {
 
     ${questionData.question}
 
-    Answer given by the candidate:
-
-    ${answer}
-
-    Tell him whether the strengths of his answer and how much appropriate it is and then Also provide some suggestions.
-    Follow the format of output of the following example and write nothing extra.
-    For example:
-    [
-        {
-            strength: "Strengths of the answer in 1 - 2 paragraphs with proper punctuations.",
-            suggestion: "Suggestions for improvement in 1 - 2 paragraphs with proper punctuations."
-        }
-    ]
+    Answer the question as if you are the candidate who is being interviewed in a concise yet descriptive manner.
+    Format your output as a single string with proper punctuations without double quotes.
     `
 
     const res: any = await model.invoke(prompt);
 
-    const resData = JSON.parse(res.content);
-    console.log(resData[0]);
+    const answer = res.content;
 
-    const { data: answerData, error: answerError } = await supabase
-        .from('questions')
-        .update({
-            "submitted_answer": answer,
-            'strengths': resData[0].strength,
-            'suggestions': resData[0].suggestion,
-        })
-        .eq('id', questionId);
-
-    if (answerError) {
-        return NextResponse.json({ success: false, error: answerError.message }, { status: 401 });
-    }
-
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json({ success: true, answer: answer }, { status: 200 });
 }

@@ -3,7 +3,7 @@
 import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -20,16 +20,24 @@ import {
 } from "@/components/ui/card"
 import { Separator } from '@/components/ui/separator';
 import { browserClient } from '@/utils/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 
 const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: string, questionId: string, questionsData: any[], questionData: any }) => {
 
     const router = useRouter();
+    const { toast } = useToast();
     const supabase = browserClient();
     const [question, setQuestion] = useState<any>(questionData);
     const [prevQuestion, setPrevQuestion] = useState<any>(questionsData.filter((question: any) => question.index === questionData.index - 1)[0]);
     const [nextQuestion, setNextQuestion] = useState<any>(questionsData.filter((question: any) => question.index === questionData.index + 1)[0]);
     const [answer, setAnswer] = useState<string>(questionData.submitted_answer);
     const [rewrittenAnswer, setRewrittenAnswer] = useState<string>("");
+    const [rewritePrompt, setRewritePrompt] = useState<string>("");
+    const [loading, setLoading] = useState<any>({
+        generatingAnswer: false,
+        submittingAnswer: false,
+    });
+    const [rewriteLoading, setRewriteLoading] = useState<boolean>(false);
 
     useEffect(() => {
         setQuestion(questionData);
@@ -68,6 +76,70 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
 
     }, [questionId]);
 
+    const generateAnswer = async () => {
+        setLoading({
+            generatingAnswer: true,
+            submittingAnswer: false,
+        })
+        const fetchedData = await fetch("/api/generateanswer", {
+            method: "POST",
+            body: JSON.stringify({ jobId, questionId }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        const res = await fetchedData.json();
+        if (!res.success) {
+            toast({
+                variant: "destructive",
+                title: 'Error Generating Answer.',
+                description: "Please try again.",
+            })
+        }
+        setAnswer(res.answer);
+        setLoading({
+            generatingAnswer: false,
+            submittingAnswer: false,
+        })
+    }
+
+    const checkAnswer = async () => {
+        setLoading({
+            generatingAnswer: false,
+            submittingAnswer: true,
+        })
+        const fetchedData = await fetch("/api/checkanswer", {
+            method: "POST",
+            body: JSON.stringify({ answer, jobId, questionId }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        const res = await fetchedData.json();
+        if (!res.success) {
+            toast({
+                variant: "destructive",
+                title: 'Error Submitting Answer.',
+                description: "Please try again.",
+            })
+        }
+        setLoading({
+            generatingAnswer: false,
+            submittingAnswer: false,
+        })
+    }
+
+    const rewriteAnswer = async () => {
+        setRewriteLoading(true);
+        setRewrittenAnswer("");
+        setRewriteLoading(false);
+    }
+
+    const changePromptAndRewrite = (text: string) => {
+        setRewritePrompt(text);
+        rewriteAnswer();
+    }
+
     return (
         <MaxWidthWrapper className='flex flex-col items-center px-20 py-16 w-full'>
             <span className='flex w-full justify-between'>
@@ -84,13 +156,17 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
                         </div>
                         <div className='flex flex-col space-y-2'>
                             <h2 className='text-xl font-semibold'>Your Answer:</h2>
-                            <Textarea id='answer' className='p-2 border border-gray-400 rounded-md min-h-[100px]' />
+                            <Textarea value={answer} onChange={(e: any) => setAnswer(e.target.value)} id='answer' className='p-2 border border-gray-400 rounded-md min-h-[100px]' />
                             <span className='flex space-x-2 mt-2'>
-                                <Button className='rounded-full'>
-                                    <img src="/logo-black.png" className="mr-2 h-5 w-5 hidden dark:block" />
-                                    <img src="/logo-white.png" className="mr-2 h-5 w-5 block dark:hidden" />
-                                    Generate Answer</Button>
-                                <Button className='rounded-full'>Submit</Button>
+                                <Button disabled={loading.generatingAnswer || loading.submittingAnswer} onClick={generateAnswer} className='rounded-full'>
+                                    {!loading.generatingAnswer ? <>
+                                        <img src="/logo-black.png" className="mr-2 h-5 w-5 hidden dark:block" />
+                                        <img src="/logo-white.png" className="mr-2 h-5 w-5 block dark:hidden" />
+                                        Generate Answer
+                                    </>
+                                        :
+                                        <Loader2 className="h-5 w-5 animate-spin mx-4" />}</Button>
+                                <Button onClick={checkAnswer} disabled={loading.generatingAnswer || loading.submittingAnswer} className='rounded-full'>{loading.submittingAnswer ? <Loader2 className="h-5 w-5 animate-spin mx-3" /> : "Submit"}</Button>
                             </span>
                         </div>
                     </div>
@@ -109,13 +185,13 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
                                         <span className='flex w-full items-center'>
                                             <img src="/logo-black.png" className="mx-3 absolute h-5 w-5 block dark:hidden" />
                                             <img src="/logo-white.png" className="mx-3 absolute h-5 w-5 hidden dark:block" />
-                                            <Input placeholder='Make it more professional' className='rounded-full pl-10 w-full' />
+                                            <Input value={rewritePrompt} onChange={(e: any) => setRewritePrompt(e.target.value)} placeholder='Make it more professional' className='rounded-full pl-10 w-full' />
                                         </span>
-                                        <Button className='rounded-full'>Rewrite</Button>
+                                        <Button disabled={rewriteLoading} onClick={rewriteAnswer} className='rounded-full'>{rewriteLoading ? <Loader2 className="h-5 w-5 animate-spin mx-4" /> : "Rewrite"}</Button>
                                     </div>
                                     <div className='flex space-x-2'>
-                                        <Button variant="outline" className='rounded-full'>Make it more concise</Button>
-                                        <Button variant="outline" className='rounded-full'>Make it sound smarter</Button>
+                                        <Button disabled={rewriteLoading} onClick={() => changePromptAndRewrite("Make it more concise")} variant="outline" className='rounded-full'>Make it more concise</Button>
+                                        <Button disabled={rewriteLoading} onClick={() => changePromptAndRewrite("Make it sound smarter")} variant="outline" className='rounded-full'>Make it sound smarter</Button>
                                     </div>
                                     {rewrittenAnswer != "" && <>
                                         <Separator className="my-4" />
@@ -166,7 +242,7 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
                         </CardHeader>
                         <CardContent className="space-y-2">
                             {question.suggestions != "" ? <div className="bg-background rounded-md text-sm p-2 overflow-y-scroll max-h-[250px]">
-                                {question.suggesstions}
+                                {question.suggestions}
                             </div>
                                 :
                                 <div className="bg-background rounded-md font-semibold text-sm p-4 text-center overflow-y-scroll max-h-[250px]">
