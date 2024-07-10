@@ -89,7 +89,7 @@ const Questions = ({ jobId, questionsData }: { jobId: string, questionsData: any
 
     return (
         <MaxWidthWrapper className='flex flex-col items-center px-32 py-16'>
-            <Button onClick={() => router.push('/dashboard')} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>
+            <Button onClick={() => router.push(`/dashboard/${jobId}`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>
             <section className='bg-muted my-10 flex-flex-col py-2 rounded-lg shadow-md'>
                 {questions.length > 0 ? <Table>
                     <TableHeader>
