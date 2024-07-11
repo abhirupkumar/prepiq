@@ -15,7 +15,7 @@ const MockInterviews = ({ jobId }: { jobId: string }) => {
                 <Button className='rounded-full'>New Interview <Plus className='ml-2 text-sm' /></Button>
             </div>
             <Separator className='!mt-1' />
-            <Link href={`/dashboard/${jobId}/interview/1`} className='flex items-center bg-muted px-4 py-4 rounded-md border-2 w-80 text-start'>
+            <Link href={`/dashboard/${jobId}/interview/1`} className='flex items-center bg-muted px-4 py-4 rounded-md border w-80 text-start'>
                 <Image src="/mockinterview.jpg" alt="interview-question" height="80" width="80" className='rounded-md mr-4' />
                 <div className='flex flex-col space-y-1'>
                     <h3 className='text-xl text-semibold'>Interview 1</h3>

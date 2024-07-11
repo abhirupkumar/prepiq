@@ -10,7 +10,7 @@ const InterviewQuestions = ({ jobId }: { jobId: string }) => {
                 Interview Questions:
             </h2>
             <Separator className='!mt-1' />
-            <Link href={`/dashboard/${jobId}/questions`} className='flex items-center text-semibold text-xl bg-muted px-6 py-4 rounded-md border-2 w-80 text-start'>
+            <Link href={`/dashboard/${jobId}/questions`} className='flex items-center text-semibold text-xl bg-muted px-6 py-4 rounded-md border w-80 text-start'>
                 <Image src="/interviewquestion.jpg" alt="interview-question" height="80" width="80" className='rounded-md mr-4' />
                 Practice Interview Questions
             </Link>
