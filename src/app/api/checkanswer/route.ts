@@ -7,28 +7,30 @@ export const maxDuration = 60;
 export async function POST(request: NextRequest) {
 
     const { answer, jobId, questionId } = await request.json();
-    const supabase = createClient();
+    try {
 
-    const { data: job, error: error1 } = await supabase
-        .from('jobs')
-        .select('*')
-        .eq('id', jobId)
-        .single();
+        const supabase = createClient();
 
-    if (error1) {
-        return NextResponse.json({ success: false, error: error1.message }, { status: 401 });
-    }
+        const { data: job, error: error1 } = await supabase
+            .from('jobs')
+            .select('*')
+            .eq('id', jobId)
+            .single();
 
-    const { data: questionData, error: error2 } = await supabase
-        .from('questions')
-        .select('*')
-        .eq('id', questionId)
-        .single()
-    if (error2) {
-        return NextResponse.json({ success: false, error: error2.message }, { status: 401 });
-    }
+        if (error1) {
+            return NextResponse.json({ success: false, error: error1.message }, { status: 401 });
+        }
 
-    const prompt = `
+        const { data: questionData, error: error2 } = await supabase
+            .from('questions')
+            .select('*')
+            .eq('id', questionId)
+            .single()
+        if (error2) {
+            return NextResponse.json({ success: false, error: error2.message }, { status: 401 });
+        }
+
+        const prompt = `
     You are a professional interviewer ${job.company_name != "" ? ("of " + job.company_name) : ""}.
     ${job.company_desc == "" ? "" : `
         Company Description: 
@@ -36,7 +38,7 @@ export async function POST(request: NextRequest) {
         ${job.company_desc}
 
         `
-        }
+            }
     Job description:
 
     ${job.desc}
@@ -64,22 +66,26 @@ export async function POST(request: NextRequest) {
     ]
     `
 
-    const res: any = await model.invoke(prompt);
+        const res: any = await model.invoke(prompt);
 
-    const resData = JSON.parse(res.content);
+        const resData = JSON.parse(res.content);
 
-    const { data: answerData, error: answerError } = await supabase
-        .from('questions')
-        .update({
-            "submitted_answer": answer,
-            'strengths': resData[0].strength,
-            'suggestions': resData[0].suggestion,
-        })
-        .eq('id', questionId);
+        const { data: answerData, error: answerError } = await supabase
+            .from('questions')
+            .update({
+                'strengths': resData[0].strength,
+                'suggestions': resData[0].suggestion,
+                'isfeedbackgenerated': true
+            })
+            .eq('id', questionId);
 
-    if (answerError) {
-        return NextResponse.json({ success: false, error: answerError.message }, { status: 401 });
+        if (answerError) {
+            return NextResponse.json({ success: false, error: answerError.message }, { status: 401 });
+        }
+
+        return NextResponse.json({ success: true }, { status: 200 });
     }
-
-    return NextResponse.json({ success: true }, { status: 200 });
+    catch (error: any) {
+        return NextResponse.json({ success: false, error: "Some error occured!" }, { status: 401 });
+    }
 }

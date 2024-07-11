@@ -39,9 +39,10 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion 
     const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        setQuestion(questionData);
-        setAnswer(questionData.submitted_answer);
-    }, [questionId]);
+        if (question.submitted_answer != "" && !question.isfeedbackgenerated) {
+            checkAnswer();
+        }
+    }, [question]);
 
     useEffect(() => {
         const fetchQuestion = async () => {
@@ -104,11 +105,33 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion 
         })
     }
 
-    const checkAnswer = async () => {
+    const submitAnswer = async () => {
         setLoading({
             generatingAnswer: false,
             submittingAnswer: true,
         })
+        const { data: answerData, error: answerError } = await supabase
+            .from('questions')
+            .update({
+                "submitted_answer": answer,
+                "isfeedbackgenerated": false,
+            })
+            .eq('id', questionId);
+
+        if (answerError) {
+            toast({
+                variant: "destructive",
+                title: 'Error submitting answer. Please try again later.',
+                description: "Some error Occured!",
+            })
+        }
+        setLoading({
+            generatingAnswer: false,
+            submittingAnswer: false,
+        })
+    }
+
+    const checkAnswer = async () => {
         const fetchedData = await fetch("/api/checkanswer", {
             method: "POST",
             body: JSON.stringify({ answer, jobId, questionId }),
@@ -120,14 +143,10 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion 
         if (!res.success) {
             toast({
                 variant: "destructive",
-                title: 'Error Submitting Answer.',
-                description: "Please try again.",
+                title: 'Error Checking Answer.',
+                description: "Please refresh the page.",
             })
         }
-        setLoading({
-            generatingAnswer: false,
-            submittingAnswer: false,
-        })
     }
 
     const rewriteAnswer = async () => {
@@ -205,7 +224,7 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion 
                                     </>
                                         :
                                         <Loader2 className="h-5 w-5 animate-spin mx-4" />}</Button>
-                                <Button onClick={checkAnswer} disabled={loading.generatingAnswer || loading.submittingAnswer} className='rounded-full'>{loading.submittingAnswer ? <Loader2 className="h-5 w-5 animate-spin mx-3" /> : "Submit"}</Button>
+                                <Button onClick={submitAnswer} disabled={loading.generatingAnswer || loading.submittingAnswer} className='rounded-full'>{loading.submittingAnswer ? <Loader2 className="h-5 w-5 animate-spin mx-3" /> : "Submit"}</Button>
                             </span>
                         </div>
                     </div>
@@ -266,12 +285,12 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion 
                             <CardTitle>Strengths</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            {question.strengths != "" ? <div className="bg-background rounded-md text-sm p-4 overflow-y-scroll max-h-[250px]">
-                                {loading.submittingAnswer ? "Generating Your Feedback." : question.strengths}
+                            {question.submitted_answer != "" ? <div className="bg-background rounded-md text-sm p-4 overflow-y-scroll max-h-[250px]">
+                                {!question.isfeedbackgenerated ? "Generating Your Feedback." : question.strengths}
                             </div>
                                 :
                                 <div className="bg-background rounded-md font-semibold text-sm p-4 text-center overflow-y-scroll max-h-[250px]">
-                                    {loading.submittingAnswer ? "Generating Your Feedback." : "Submit an answer to get Feedback."}
+                                    Submit an answer to get Feedback.
                                 </div>}
                         </CardContent>
                     </Card>
@@ -280,12 +299,12 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion 
                             <CardTitle>How To Improve</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            {question.suggestions != "" ? <div className="bg-background rounded-md text-sm p-4 overflow-y-scroll max-h-[250px]">
-                                {loading.submittingAnswer ? "Generating Your Feedback..." : question.suggestions}
+                            {question.submitted_answer != "" ? <div className="bg-background rounded-md text-sm p-4 overflow-y-scroll max-h-[250px]">
+                                {!question.isfeedbackgenerated ? "Generating Your Feedback..." : question.suggestions}
                             </div>
                                 :
                                 <div className="bg-background rounded-md font-semibold text-sm p-4 text-center overflow-y-scroll max-h-[250px]">
-                                    {loading.submittingAnswer ? "Generating Your Feedback..." : "Submit an answer to get Feedback."}
+                                    Submit an answer to get Feedback.
                                 </div>}
                         </CardContent>
                     </Card>

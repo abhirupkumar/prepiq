@@ -39,8 +39,7 @@ const Questions = ({ jobId, questionsData }: { jobId: string, questionsData: any
                     description: error?.message,
                 })
             } else {
-                const sortDataWithTime = data.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-                const dataWithIndex = sortDataWithTime.map((question: any, index: number) => {
+                const dataWithIndex = data.map((question: any, index: number) => {
                     return { ...question, index: index + 1 }
                 });
                 setQuestions(dataWithIndex);
