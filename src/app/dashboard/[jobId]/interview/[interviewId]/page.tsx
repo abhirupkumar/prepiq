@@ -4,16 +4,17 @@ import React from 'react';
 
 interface PageProps {
     params: {
+        jobId: string,
         interviewId: string
     }
 }
 
 const Page = async ({ params }: PageProps) => {
-    const { interviewId } = params;
+    const { jobId, interviewId } = params;
     return (
         <>
             <Interview interviewId={interviewId} />
-            {/* <InterviewOverview interviewId={interviewId} /> */}
+            {/* <InterviewOverview jobId={jobId} interviewId={interviewId} /> */}
         </>
     )
 }

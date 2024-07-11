@@ -10,7 +10,7 @@ import { ArrowLeft, Bot } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-const InterviewOverview = ({ interviewId }: { interviewId: string }) => {
+const InterviewOverview = ({ jobId, interviewId }: { jobId: string, interviewId: string }) => {
 
     const router = useRouter();
     const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -23,20 +23,26 @@ const InterviewOverview = ({ interviewId }: { interviewId: string }) => {
         },
         {
             question: "What can you provide an example from your experience where you have worked on developing software applications similar to what is mentioned in the job description at Google?"
+        },
+        {
+            question: "Can you provide an example from your experience in Newton School where you have worked on developing software applications similar to what is mentioned in the job description at Google?"
+        },
+        {
+            question: "What can you provide an example from your experience where you have worked on developing software applications similar to what is mentioned in the job description at Google?"
         }
     ]);
 
     return (
         <MaxWidthWrapper className='flex flex-col items-center px-8 py-4 w-full'>
             <span className='flex w-full justify-between'>
-                <Button onClick={() => router.back()} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>
+                <Button onClick={() => router.push(`/dashboard/${jobId}`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>
             </span>
             <div className='flex space-x-8'>
                 <section className='my-10 w-[50%] space-y-6'>
                     <div className='bg-muted border flex flex-col py-6 px-6 rounded-lg'>
-                        <div className='flex items-center space-x-4 my-2'>
-                            {questions.map((question: any, index: number) => <button onClick={() => setCurrentQuestion(index)} key={index} className={`flex flex-col px-2 py-1 rounded-full ${currentQuestion == index ? "bg-blue-200 text-black" : "bg-background text-primary"}`}>
-                                <h2 className="text-xl font-bold mb-2">Question {index + 1}</h2>
+                        <div className='flex flex-wrap items-center my-2'>
+                            {questions.map((question: any, index: number) => <button onClick={() => setCurrentQuestion(index)} key={index} className={`flex flex-col mx-3 my-1 px-3 py-1 rounded-full ${currentQuestion == index ? "bg-blue-200 text-black" : "bg-background text-primary"}`}>
+                                <h2 className="text-lg font-bold">Question {index + 1}</h2>
                             </button>)}
                         </div>
                         <p className="mb-4 font-semibold">{questions[currentQuestion].question}</p>
