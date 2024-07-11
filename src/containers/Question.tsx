@@ -22,14 +22,12 @@ import { Separator } from '@/components/ui/separator';
 import { browserClient } from '@/utils/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 
-const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: string, questionId: string, questionsData: any[], questionData: any }) => {
+const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion }: { jobId: string, questionId: string, questionData: any, prevQuestion: any, nextQuestion: any }) => {
 
     const router = useRouter();
     const { toast } = useToast();
     const supabase = browserClient();
     const [question, setQuestion] = useState<any>(questionData);
-    const [prevQuestion, setPrevQuestion] = useState<any>(questionsData.filter((question: any) => question.index === questionData.index - 1)[0]);
-    const [nextQuestion, setNextQuestion] = useState<any>(questionsData.filter((question: any) => question.index === questionData.index + 1)[0]);
     const [answer, setAnswer] = useState<string>(questionData.submitted_answer);
     const [rewrittenAnswer, setRewrittenAnswer] = useState<string>("");
     const [rewritePrompt, setRewritePrompt] = useState<string>("");
@@ -42,8 +40,6 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
 
     useEffect(() => {
         setQuestion(questionData);
-        setPrevQuestion(questionsData.filter((question: any) => question.index === questionData.index - 1)[0]);
-        setNextQuestion(questionsData.filter((question: any) => question.index === questionData.index + 1)[0]);
         setAnswer(questionData.submitted_answer);
     }, [questionId]);
 
@@ -186,15 +182,15 @@ const Question = ({ jobId, questionId, questionsData, questionData }: { jobId: s
             <span className='flex w-full justify-between'>
                 <Button onClick={() => router.push(`/dashboard/${jobId}/questions`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>
                 <div className='ml-auto flex space-x-6 justify-between'>
-                    {prevQuestion != undefined && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${prevQuestion.id}`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Previous Question</Button>}
-                    {nextQuestion != undefined && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${nextQuestion.id}`)} variant="outline" className='rounded-full ml-auto flex items-center bg-muted shadow-md'>Next Question{" "}<ArrowRight className="mr-2" /></Button>}
+                    {prevQuestion && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${prevQuestion.id}`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Previous Question</Button>}
+                    {nextQuestion && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${nextQuestion.id}`)} variant="outline" className='rounded-full ml-auto flex items-center bg-muted shadow-md'>Next Question{" "}<ArrowRight className="mr-2" /></Button>}
                 </div>
             </span>
             <div className='flex space-x-8'>
                 <section className='my-10 w-[50%] space-y-10'>
                     <div className='bg-muted border divide-y-2 flex flex-col py-6 px-6 rounded-lg'>
                         <div className='flex flex-col'>
-                            <h2 className="text-xl font-bold mb-2">Question</h2>
+                            <h2 className="text-xl font-bold mb-2">Question {questionData.index}</h2>
                             <p className="mb-4 font-semibold">{question.question}</p>
                         </div>
                         <div className='flex flex-col space-y-2'>

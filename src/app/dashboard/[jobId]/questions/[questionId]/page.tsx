@@ -19,9 +19,12 @@ const Page = async ({ params }: PageProps) => {
     const dataWithIndex = sortDataWithTime.map((question: any, index: number) => {
         return { ...question, index: index + 1 }
     });
+    const questionData = dataWithIndex.find((question: any) => question.id === questionId)
+    const prevQuestion = dataWithIndex.filter((question: any) => question.index === questionData.index - 1)[0] ?? null
+    const nextQuestion = dataWithIndex.filter((question: any) => question.index === questionData.index + 1)[0] ?? null
 
     return (
-        <Question jobId={jobId} questionId={questionId} questionsData={dataWithIndex} questionData={dataWithIndex.find((question: any) => question.id === questionId)} />
+        <Question jobId={jobId} questionId={questionId} questionData={questionData} prevQuestion={prevQuestion} nextQuestion={nextQuestion} />
     )
 }
 
