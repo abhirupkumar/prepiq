@@ -6,11 +6,13 @@ import { Clock } from 'lucide-react';
 import { useToast } from './ui/use-toast';
 
 interface VideoRecorderProps {
+    jobId: string;
+    questionId: string;
     stream: MediaStream;
     onRecordingComplete: () => void;
 }
 
-export default function VideoRecorder({ stream, onRecordingComplete }: VideoRecorderProps) {
+export default function VideoRecorder({ jobId, questionId, stream, onRecordingComplete }: VideoRecorderProps) {
     const { toast } = useToast();
     const [timer, setTimer] = useState(0);
     const videoChunksRef = useRef<BlobPart[]>([]);
@@ -29,8 +31,8 @@ export default function VideoRecorder({ stream, onRecordingComplete }: VideoReco
             audioChunks.push(event.data);
         });
 
-        mediaRecorderRef.current.addEventListener("stop", () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+        mediaRecorderRef.current?.addEventListener("stop", () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
             transcribeAudio(audioBlob);
             const audioUrl = URL.createObjectURL(audioBlob);
             setAudioURL(audioUrl);
@@ -98,24 +100,32 @@ export default function VideoRecorder({ stream, onRecordingComplete }: VideoReco
     // };
 
     const transcribeAudio = async (audioBlob: Blob) => {
-        const formData = new FormData();
-        formData.append('audio', audioBlob, 'audio.mp3');
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = async () => {
+            const base64Audio = (reader?.result as string).split(',')[1];
+            const fetchedData = await fetch('/api/speechtotext', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    audioBlob: base64Audio,
+                    fileName: `${jobId}/questions/${questionId}`,
+                }),
+            });
 
-        const fetchedData = await fetch('/api/speechtotext', {
-            method: 'POST',
-            body: formData,
-        });
+            const response = await fetchedData.json();
+            if (!response.success) {
+                toast({
+                    title: "Some error occured!"
+                })
+                return;
+            }
 
-        const response = await fetchedData.json();
-        if (!response.success) {
-            toast({
-                title: "Some error occured!"
-            })
-            return;
+            const data = await response.json();
+            console.log('Transcription:', data.transcript);
         }
-
-        const data = await response.json();
-        console.log('Transcription:', data.transcript);
     }
 
     const formatTime = (seconds: number) => {

@@ -24,7 +24,7 @@ const questions: any[] = [
     // Add more questions here
 ];
 
-export default function Interview({ interviewId }: { interviewId: string }) {
+export default function Interview({ jobId, interviewId }: { jobId: string, interviewId: string }) {
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(-1);
@@ -164,11 +164,11 @@ export default function Interview({ interviewId }: { interviewId: string }) {
                         </div>
                         <div className="flex flex-col space-y-4">
                             <div className="flex space-x-3">
-                                <Button onClick={enableCamera} disabled={isCameraEnabled}>
-                                    {isCameraEnabled ? 'Camera Enabled' : 'Enable Camera'}
-                                </Button>
                                 <Button onClick={enableAudio} disabled={isAudioEnabled}>
                                     {isAudioEnabled ? 'Microphone Enabled' : 'Enable Microphone'}
+                                </Button>
+                                <Button onClick={enableCamera} disabled={!isAudioEnabled || isCameraEnabled}>
+                                    {isCameraEnabled ? 'Camera Enabled' : 'Enable Camera'}
                                 </Button>
                             </div>
                             <div className="flex flex-col space-y-3 my-2">
@@ -208,7 +208,7 @@ export default function Interview({ interviewId }: { interviewId: string }) {
                 ) : (
                     <div className='h-full'>
                         <QuestionDisplay question={questions[currentQuestionIndex]} />
-                        <VideoRecorder stream={stream!} onRecordingComplete={nextQuestion} />
+                        <VideoRecorder jobId={jobId} questionId={questions[currentQuestionIndex].id as string} stream={stream!} onRecordingComplete={nextQuestion} />
                     </div>
                 )}
             </div>
