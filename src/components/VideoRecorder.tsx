@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Clock } from 'lucide-react';
+import { useToast } from './ui/use-toast';
 
 interface VideoRecorderProps {
     stream: MediaStream;
@@ -10,18 +11,46 @@ interface VideoRecorderProps {
 }
 
 export default function VideoRecorder({ stream, onRecordingComplete }: VideoRecorderProps) {
-    const [isRecording, setIsRecording] = useState(false);
-    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const { toast } = useToast();
     const [timer, setTimer] = useState(0);
     const videoChunksRef = useRef<BlobPart[]>([]);
     const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
-    // const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const [audioURL, setAudioURL] = useState<string | null>(null);
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+
+    const startRecording = async () => {
+        setAudioURL(null);
+        mediaRecorderRef.current = new MediaRecorder(stream);
+        mediaRecorderRef.current.start();
+
+        const audioChunks: BlobPart[] = [];
+        mediaRecorderRef.current.addEventListener("dataavailable", (event) => {
+            audioChunks.push(event.data);
+        });
+
+        mediaRecorderRef.current.addEventListener("stop", () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+            transcribeAudio(audioBlob);
+            const audioUrl = URL.createObjectURL(audioBlob);
+            setAudioURL(audioUrl);
+        });
+
+        setTimer(0);
+        setIsRecording(true);
+    };
+
+    const stopRecording = () => {
+        mediaRecorderRef.current?.stop();
+        setIsRecording(false);
+        // onRecordingComplete();
+    };
 
     useEffect(() => {
         if (isRecording) {
             timerIntervalRef.current = setInterval(() => {
                 setTimer((prevTimer) => {
-                    if (prevTimer >= 240) { // 4 minutes = 240 seconds
+                    if (prevTimer >= 180) { // 3 minutes = 180 seconds
                         stopRecording();
                         return prevTimer;
                     }
@@ -39,34 +68,55 @@ export default function VideoRecorder({ stream, onRecordingComplete }: VideoReco
         };
     }, [isRecording]);
 
-    const startRecording = async () => {
-        mediaRecorderRef.current = new MediaRecorder(stream);
-        videoChunksRef.current = [];
+    // const startRecording = async () => {
+    //     mediaRecorderRef.current = new MediaRecorder(stream);
+    //     videoChunksRef.current = [];
 
-        mediaRecorderRef.current.addEventListener("dataavailable", (event) => {
-            videoChunksRef.current.push(event.data);
+    //     mediaRecorderRef.current.addEventListener("dataavailable", (event) => {
+    //         videoChunksRef.current.push(event.data);
+    //     });
+
+    //     mediaRecorderRef.current.start();
+    //     // setRecordedVideoUrl(null);
+    //     setTimer(0);
+    //     setIsRecording(true);
+    // };
+
+    // const stopRecording = () => {
+    //     mediaRecorderRef.current?.stop();
+    //     setIsRecording(false);
+    //     mediaRecorderRef.current?.addEventListener("stop", () => {
+    //         const videoBlob = new Blob(videoChunksRef.current, { type: 'video/webm' });
+    //         // const videoUrl = URL.createObjectURL(videoBlob);
+    //         // setRecordedVideoUrl(videoUrl);
+    //         const videoSizeInMB = videoBlob.size / (1024 * 1024);
+    //         console.log(`Recorded video size: ${videoSizeInMB.toFixed(2)} MB`);
+
+    //         // Here you would typically upload the video or process it
+    //     }, { once: true });
+    //     onRecordingComplete();
+    // };
+
+    const transcribeAudio = async (audioBlob: Blob) => {
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'audio.mp3');
+
+        const fetchedData = await fetch('/api/speechtotext', {
+            method: 'POST',
+            body: formData,
         });
 
-        mediaRecorderRef.current.start();
-        // setRecordedVideoUrl(null);
-        setTimer(0);
-        setIsRecording(true);
-    };
+        const response = await fetchedData.json();
+        if (!response.success) {
+            toast({
+                title: "Some error occured!"
+            })
+            return;
+        }
 
-    const stopRecording = () => {
-        mediaRecorderRef.current?.stop();
-        setIsRecording(false);
-        mediaRecorderRef.current?.addEventListener("stop", () => {
-            const videoBlob = new Blob(videoChunksRef.current, { type: 'video/webm' });
-            // const videoUrl = URL.createObjectURL(videoBlob);
-            // setRecordedVideoUrl(videoUrl);
-            const videoSizeInMB = videoBlob.size / (1024 * 1024);
-            console.log(`Recorded video size: ${videoSizeInMB.toFixed(2)} MB`);
-
-            // Here you would typically upload the video or process it
-        }, { once: true });
-        onRecordingComplete();
-    };
+        const data = await response.json();
+        console.log('Transcription:', data.transcript);
+    }
 
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
@@ -83,7 +133,7 @@ export default function VideoRecorder({ stream, onRecordingComplete }: VideoReco
                 {isRecording && (
                     <div className="text-xl flex items-center font-bold">
                         <Clock className="mr-2" size={24} />
-                        Time: {formatTime(timer)} / 4:00
+                        Time: {formatTime(timer)} / 3:00
                     </div>
                 )}
             </div>
