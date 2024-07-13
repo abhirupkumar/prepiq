@@ -205,7 +205,7 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion 
                     {nextQuestion && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${nextQuestion.id}`)} variant="outline" className='rounded-full ml-auto flex items-center bg-muted shadow-md'>Next Question{" "}<ArrowRight className="mr-2" /></Button>}
                 </div>
             </span>
-            <div className='flex md:flex-row flex-col md:space-x-8 mx-2'>
+            <div className='flex md:flex-row flex-col md:space-x-8 md:mx-2'>
                 <section className='my-10 md:w-[50%] w-full space-y-10'>
                     <div className='bg-muted border divide-y-2 flex flex-col py-6 px-6 rounded-lg'>
                         <div className='flex flex-col'>
