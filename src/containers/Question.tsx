@@ -197,7 +197,7 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion 
     }
 
     return (
-        <MaxWidthWrapper className='flex flex-col items-center px-4 md:px-10 lg:px-20 py-16 w-full'>
+        <MaxWidthWrapper className='flex flex-col items-center px-4 lg:px-20 py-16 w-full'>
             <span className='flex w-full justify-between'>
                 <Button onClick={() => router.push(`/dashboard/${jobId}/questions`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>
                 <div className='ml-auto flex space-x-6 justify-between'>
