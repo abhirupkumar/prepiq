@@ -123,8 +123,7 @@ export default function VideoRecorder({ jobId, questionId, stream, onRecordingCo
                 return;
             }
 
-            const data = await response.json();
-            console.log('Transcription:', data.transcript);
+            console.log('Transcription:', response.transcription);
         }
     }
 

@@ -2,8 +2,6 @@ import { Storage } from '@google-cloud/storage';
 import { SpeechClient, protos } from '@google-cloud/speech'
 import { NextRequest, NextResponse } from 'next/server';
 import { Readable } from 'stream';
-import { v4 as uuidv4 } from 'uuid';
-import { createClient } from '@/utils/supabase/server';
 
 const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB chunks
 
@@ -16,11 +14,19 @@ async function* streamToAsyncIterable(stream: Readable) {
 export async function POST(req: NextRequest) {
 
     try {
-        const { audioBlob, fileName } = await req.json();
+        // const { audioBlob, fileName } = await req.json();
 
-        if (!audioBlob || !fileName) {
-            return NextResponse.json({ success: false, error: 'Missing audio file' }, { status: 401 })
-        }
+        // if (!audioBlob || !fileName) {
+        //     return NextResponse.json({ success: false, error: 'Missing audio file' }, { status: 401 })
+        // }
+
+        // const storage = new Storage({
+        //     credentials: {
+        //         client_email: process.env.GOOGLE_CLIENT_EMAIL,
+        //         private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        //     },
+        //     projectId: process.env.GOOGLE_PROJECT_ID,
+        // })
 
         const speechClient = new SpeechClient({
             credentials: {
@@ -30,51 +36,49 @@ export async function POST(req: NextRequest) {
             projectId: process.env.GOOGLE_PROJECT_ID,
         });
 
-        const supabase = createClient();
-        const buffer = Buffer.from(audioBlob, 'base64');
+        // const bucket = storage.bucket(process.env.GOOGLE_STORAGE_BUCKET!);
+
+        // const buffer = Buffer.from(audioBlob, 'base64');
+
+        // const file = bucket.file(fileName);
+        // await file.save(buffer, {
+        //     contentType: 'audio/wav',
+        // });
+        // console.log("File Uploaded!");
 
         // Upload to Supabase Storage
-        const { data: uploadData, error: uploadError } = await supabase.storage
-            .from('audio-files')
-            .upload(fileName, buffer, {
-                contentType: 'audio/wav',
-                upsert: true,
-            });
-
-        if (uploadError) {
-            throw new Error(uploadError.message);
-        }
 
         // const audioUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/audio-files/${fileName}`;
+        const fileName = '8b0e9781-cec3-4d08-a7e0-98d727dd1ccd/questions/1'
 
         // Transcribe the audio file
-        const [response]: any = await speechClient.recognize({
+        console.log("Transcribing...");
+        const [operation]: any = await speechClient.longRunningRecognize({
             audio: {
-                content: buffer
+                uri: `gs://${process.env.GOOGLE_STORAGE_BUCKET!}/${fileName}`
             },
             config: {
                 encoding: protos.google.cloud.speech.v1.RecognitionConfig.AudioEncoding.LINEAR16,
                 sampleRateHertz: 16000,
                 languageCode: 'en-US',
+                enableAutomaticPunctuation: true,
             },
         });
+        console.log(`Transcription Completed. Url: gs://${process.env.GOOGLE_STORAGE_BUCKET!}/${fileName}`);
+
+        const [response]: any = await operation.promise();
 
         const transcription = response.results
             .map((result: any) => result.alternatives[0].transcript)
             .join('\n');
 
-        // Delete the audio file from Supabase Storage
-        const { error: deleteError } = await supabase.storage
-            .from('audio-files')
-            .remove([fileName]);
+        // await file.delete();
+        // console.log("Deleting File...")
 
-        if (deleteError) {
-            throw new Error(deleteError.message);
-        }
-        console.log(transcription);
-        NextResponse.json({ success: true, transcription: transcription }, { status: 500 });
+        console.log("Transcribed Text: ", transcription);
+        return NextResponse.json({ success: true, transcription: transcription, operation, response }, { status: 200 });
     } catch (error) {
         console.log('Error transcribing audio:', error)
-        NextResponse.json({ success: false, error: 'Error transcribing audio' }, { status: 400 })
+        return NextResponse.json({ success: false, error: 'Error transcribing audio' }, { status: 400 })
     }
 }

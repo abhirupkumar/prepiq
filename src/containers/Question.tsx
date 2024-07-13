@@ -197,7 +197,7 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion 
     }
 
     return (
-        <MaxWidthWrapper className='flex flex-col items-center px-20 py-16 w-full'>
+        <MaxWidthWrapper className='flex flex-col items-center px-4 md:px-10 lg:px-20 py-16 w-full'>
             <span className='flex w-full justify-between'>
                 <Button onClick={() => router.push(`/dashboard/${jobId}/questions`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>
                 <div className='ml-auto flex space-x-6 justify-between'>
@@ -205,8 +205,8 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion 
                     {nextQuestion && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${nextQuestion.id}`)} variant="outline" className='rounded-full ml-auto flex items-center bg-muted shadow-md'>Next Question{" "}<ArrowRight className="mr-2" /></Button>}
                 </div>
             </span>
-            <div className='flex space-x-8'>
-                <section className='my-10 w-[50%] space-y-10'>
+            <div className='flex md:flex-row flex-col md:space-x-8'>
+                <section className='my-10 md:w-[50%] w-full space-y-10 mx-2'>
                     <div className='bg-muted border divide-y-2 flex flex-col py-6 px-6 rounded-lg'>
                         <div className='flex flex-col'>
                             <h2 className="text-xl font-bold mb-2">Question {questionData.index}</h2>
@@ -279,7 +279,7 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion 
                         </TabsContent>
                     </Tabs>
                 </section>
-                <section className='my-10 space-y-6 flex-flex-col py-2 rounded-lg w-[50%]'>
+                <section className='my-10 space-y-6 flex-flex-col py-2 rounded-lg md:w-[50%] w-full mx-2'>
                     <Card>
                         <CardHeader>
                             <CardTitle>Strengths</CardTitle>
