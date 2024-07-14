@@ -3,14 +3,6 @@ import { SpeechClient, protos } from '@google-cloud/speech'
 import { NextRequest, NextResponse } from 'next/server';
 import { Readable } from 'stream';
 
-const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB chunks
-
-async function* streamToAsyncIterable(stream: Readable) {
-    for await (const chunk of stream) {
-        yield chunk;
-    }
-}
-
 export async function POST(req: NextRequest) {
 
     try {
@@ -28,6 +20,23 @@ export async function POST(req: NextRequest) {
         //     projectId: process.env.GOOGLE_PROJECT_ID,
         // })
 
+
+        // const bucket = storage.bucket(process.env.GOOGLE_STORAGE_BUCKET!);
+
+        // const buffer = Buffer.from(audioBlob, 'base64');
+
+        // const file = bucket.file(fileName);
+        // await file.save(buffer, {
+        //     contentType: 'audio/pcm',
+        // });
+        // console.log("File Uploaded!");
+
+        // const audioUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/audio-files/${fileName}`;
+        const fileName = "1720966379651_audio.pcm";
+
+        // Transcribe the audio file
+        console.log("Transcribing...");
+
         const speechClient = new SpeechClient({
             credentials: {
                 client_email: process.env.GOOGLE_CLIENT_EMAIL,
@@ -36,30 +45,13 @@ export async function POST(req: NextRequest) {
             projectId: process.env.GOOGLE_PROJECT_ID,
         });
 
-        // const bucket = storage.bucket(process.env.GOOGLE_STORAGE_BUCKET!);
-
-        // const buffer = Buffer.from(audioBlob, 'base64');
-
-        // const file = bucket.file(fileName);
-        // await file.save(buffer, {
-        //     contentType: 'audio/wav',
-        // });
-        // console.log("File Uploaded!");
-
-        // Upload to Supabase Storage
-
-        // const audioUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/audio-files/${fileName}`;
-        const fileName = '8b0e9781-cec3-4d08-a7e0-98d727dd1ccd/questions/1'
-
-        // Transcribe the audio file
-        console.log("Transcribing...");
         const [operation]: any = await speechClient.longRunningRecognize({
             audio: {
                 uri: `gs://${process.env.GOOGLE_STORAGE_BUCKET!}/${fileName}`
             },
             config: {
                 encoding: protos.google.cloud.speech.v1.RecognitionConfig.AudioEncoding.LINEAR16,
-                sampleRateHertz: 16000,
+                sampleRateHertz: 8000,
                 languageCode: 'en-US',
                 enableAutomaticPunctuation: true,
             },

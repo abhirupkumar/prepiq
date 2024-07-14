@@ -88,7 +88,7 @@ export default function Interview({ jobId, interviewId }: { jobId: string, inter
             try {
                 const newStream = await navigator.mediaDevices.getUserMedia({
                     audio: { deviceId: { exact: deviceId } },
-                    video: true
+                    video: selectedVideoDevice != "" ? { deviceId: { exact: selectedVideoDevice } } : true,
                 });
                 setStream(newStream);
                 if (videoRef.current) {
@@ -109,7 +109,7 @@ export default function Interview({ jobId, interviewId }: { jobId: string, inter
         if (stream) {
             try {
                 const newStream = await navigator.mediaDevices.getUserMedia({
-                    audio: true,
+                    audio: selectedAudioDevice != "" ? { deviceId: { exact: selectedAudioDevice } } : true,
                     video: { deviceId: { exact: deviceId } }
                 });
                 setStream(newStream);
@@ -171,7 +171,7 @@ export default function Interview({ jobId, interviewId }: { jobId: string, inter
                                     {isCameraEnabled ? 'Camera Enabled' : 'Enable Camera'}
                                 </Button>
                             </div>
-                            <div className="flex flex-col space-y-3 my-2">
+                            {/* <div className="flex flex-col space-y-3 my-2">
                                 {isCameraEnabled && <div className="flex flex-col justify-start">
                                     <span className="text-primary font-semibold">Video Device:</span>
                                     <select
@@ -198,7 +198,7 @@ export default function Interview({ jobId, interviewId }: { jobId: string, inter
                                         ))}
                                     </select>
                                 </div>}
-                            </div>
+                            </div> */}
                             {isAudioEnabled && <AudioRecorder stream={stream!} />}
                             <Button className='w-fit' onClick={startInterview} disabled={!isCameraEnabled || !isAudioEnabled}>
                                 Start Interview
