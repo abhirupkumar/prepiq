@@ -33,7 +33,7 @@ export default function VideoRecorder({ jobId, questionId, stream, onRecordingCo
         });
 
         mediaRecorderRef.current?.addEventListener("stop", () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/pcm' });
+            const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
             transcribeAudio(audioBlob);
             const audioUrl = URL.createObjectURL(audioBlob);
             setAudioURL(audioUrl);
@@ -100,62 +100,62 @@ export default function VideoRecorder({ jobId, questionId, stream, onRecordingCo
     //     onRecordingComplete();
     // };
 
-    // const transcribeAudio = async (audioBlob: Blob) => {
-    //     const reader = new FileReader();
-    //     reader.readAsDataURL(audioBlob);
-    //     reader.onloadend = async () => {
-    //         const base64Audio = (reader?.result as string).split(',')[1];
-    //         const fetchedData = await fetch('/api/speechtotext', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({
-    //                 audioBlob: base64Audio,
-    //                 // fileName: `${jobId}/questions/${questionId}`,
-    //                 fileName: `${Date.now()}_audio.pcm`,
-    //             }),
-    //         });
-
-    //         const response = await fetchedData.json();
-    //         if (!response.success) {
-    //             toast({
-    //                 title: "Some error occured!"
-    //             })
-    //             return;
-    //         }
-
-    //         console.log('Transcription:', response.transcription);
-    //     }
-    // }
-
-    const transcribeAudio = (audioBlob: Blob) => {
+    const transcribeAudio = async (audioBlob: Blob) => {
         const reader = new FileReader();
-        reader.onloadend = () => {
-            const audioUrl = reader.result as string;
-            const recognition = new window.webkitSpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.lang = 'en-US';
-
-            recognition.onresult = (event: any) => {
-                const transcript = event.results[0][0].transcript;
-                console.log(transcript);
-            };
-
-            recognition.onerror = (event: any) => {
-                console.error('Speech recognition error:', event.error);
-            };
-
-            recognition.onaudioend = () => {
-                console.log('Audio ended');
-            };
-
-            recognitionRef.current = recognition;
-            recognition.start();
-        };
         reader.readAsDataURL(audioBlob);
-    };
+        reader.onloadend = async () => {
+            const base64Audio = (reader?.result as string).split(',')[1];
+            const fetchedData = await fetch('/api/speechtotext', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    audioBlob: base64Audio,
+                    // fileName: `${jobId}/questions/${questionId}`,
+                    fileName: `${Date.now()}_audio.mp3`,
+                }),
+            });
+
+            const response = await fetchedData.json();
+            if (!response.success) {
+                toast({
+                    title: "Some error occured!"
+                })
+                return;
+            }
+
+            console.log('Transcription:', response.transcription);
+        }
+    }
+
+    // const transcribeAudio = (audioBlob: Blob) => {
+    //     const reader = new FileReader();
+    //     reader.onloadend = () => {
+    //         const audioUrl = reader.result as string;
+    //         const recognition = new window.webkitSpeechRecognition();
+    //         recognition.continuous = false;
+    //         recognition.interimResults = false;
+    //         recognition.lang = 'en-US';
+
+    //         recognition.onresult = (event: any) => {
+    //             const transcript = event.results[0][0].transcript;
+    //             console.log(transcript);
+    //         };
+
+    //         recognition.onerror = (event: any) => {
+    //             console.error('Speech recognition error:', event.error);
+    //         };
+
+    //         recognition.onaudioend = () => {
+    //             console.log('Audio ended');
+    //         };
+
+    //         recognitionRef.current = recognition;
+    //         recognition.start();
+    //     };
+    //     reader.readAsDataURL(audioBlob);
+    // };
 
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
