@@ -34,11 +34,7 @@ const Pricing = () => {
                                 </li>
                                 <li>
                                     <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Each Custom Job costs 1 credit.
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Upto 10 Practice Questions Per Job.
+                                    Every 10 Questions costs 1 credit.
                                 </li>
                                 <li>
                                     <CheckIcon className="mr-2 inline-block h-4 w-4" />
@@ -75,11 +71,7 @@ const Pricing = () => {
                                 </li>
                                 <li>
                                     <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Each Custom Job costs 1 credit.
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Upto 50 Practice Questions Per Job
+                                    Every 10 Questions costs 1 credit.
                                 </li>
                                 <li>
                                     <CheckIcon className="mr-2 inline-block h-4 w-4" />
@@ -116,11 +108,7 @@ const Pricing = () => {
                                 </li>
                                 <li>
                                     <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Each Custom Job costs 1 credit.
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Upto 50 Practice Questions Per Job
+                                    Every 10 Questions costs 1 credit.
                                 </li>
                                 <li>
                                     <CheckIcon className="mr-2 inline-block h-4 w-4" />
@@ -157,11 +145,7 @@ const Pricing = () => {
                                 </li>
                                 <li>
                                     <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Each Custom Job costs 1 credit.
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Upto 50 Practice Questions Per Job
+                                    Every 10 Questions costs 1 credit.
                                 </li>
                                 <li>
                                     <CheckIcon className="mr-2 inline-block h-4 w-4" />
