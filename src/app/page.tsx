@@ -132,7 +132,7 @@ export default function Home() {
                 Get Detailed Feedback and Suggestions with our AI-powered mock interviewer
               </p>
               <p className="text-muted-foreground text-xl">
-                The AI mock interviewer asks you questions, you answer them with your voice, and we record the entire interview and transcribe it to text. (Don't worry we don't store your personal information, after the video is transcribed, it is deleted automatically).
+                The AI mock interviewer asks you questions, you answer them with your voice, and we record the entire interview and transcribe it to text. (Don&apos;t worry we don&apos;t store your personal information, after the video is transcribed, it is deleted automatically).
               </p>
               <Button>Get Started</Button>
             </div>
