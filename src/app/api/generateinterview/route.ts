@@ -7,7 +7,7 @@ export const maxDuration = 60;
 export const revalidate = 0;
 
 export async function POST(request: NextRequest) {
-    const { jobId } = await request.json();
+    const { jobId, interviewId } = await request.json();
     const supabase = createClient();
     const { user, isAuth } = await getCurrentUser();
     const { data, error } = await supabase
@@ -15,13 +15,13 @@ export async function POST(request: NextRequest) {
         .select('*')
         .eq('id', jobId)
     if (!isAuth) return NextResponse.json({ success: false, error: "User not authenticated." }, { status: 405 });
-    if (user.credits <= 0) return NextResponse.json({ success: false, error: "Need more Credits.", submessage: "1 credit for each 10 questions." }, { status: 405 });
+    if (user.credits < 4) return NextResponse.json({ success: false, error: "Need more Credits.", submessage: "4 credits for each interview." }, { status: 405 });
     if (error) {
         return NextResponse.json({ success: false, error: error.message }, { status: 401 });
     }
     const job = data[0];
 
-    const { data: prevQuestions, error: prevQuestionsError } = await supabase.from('questions').select('question').eq('job_id', jobId).eq('interview_id', null);
+    const { data: prevQuestions, error: prevQuestionsError } = await supabase.from('questions').select('question').eq('job_id', jobId).eq('interview_id', interviewId);
 
     if (prevQuestionsError) {
         return NextResponse.json({ success: false, error: prevQuestionsError.message }, { status: 401 });
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     const prevQuestionsText = prevQuestions.length > 0 ? prevQuestions.map((question: any) => question.question).join("\n\n") : "";
 
     const Question = `
-    Ask Questions based on the job description and also about the work or project or experience or achievement he has mentioned in his resume.If required search on the internet about different questions asked for the above mentioned job description.
+    Ask Questions based on the job description and also about the work or project or experience or achievement he has mentioned in his resume. If required search on the internet about different questions asked for the above mentioned job description.
     ${prevQuestions.length > 0 && prevQuestionsText != "" && `
     Previously Asked Questions: 
 
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 
         `
         }
-    Please generate top 10 different interview questions which might come in the interview for a candidate applying for the position described in the following job description:
+    Please generate top 5 different interview questions which might come in the interview for a candidate applying for the position described in the following job description:
 
     ${job.desc}
 
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     ${Question}
     `
 
-    const { data: userData, error: userError } = await supabase.from('profiles').update({ 'credits': user.credits - 1 }).eq('id', user.id).select();
+    const { data: userData, error: userError } = await supabase.from('profiles').update({ 'credits': user.credits - 4 }).eq('id', user.id).select();
     if (userError) {
         console.log("userData: ", userData)
         console.log("userError: ", userError)
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     const questions = JSON.parse(res.content);
     const created_at = new Date();
     const questionWithId = questions.map((question: any, index: number) => {
-        return { ...question, job_id: jobId, created_at: created_at }
+        return { ...question, job_id: jobId, created_at: created_at, interview_id: interviewId }
     });
 
     const response = await supabase

@@ -20,6 +20,7 @@ const Page = async ({ params }: PageProps) => {
         .from('jobs')
         .select('*')
         .eq('id', jobId)
+        .eq('interview_id', null)
         .single();
     const res = await supabase.from('questions').select('*').eq('job_id', jobId);
     const sortDataWithTime = res?.data.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());

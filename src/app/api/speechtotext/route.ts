@@ -1,18 +1,18 @@
-import { Storage } from '@google-cloud/storage';
-import { SpeechClient, protos } from '@google-cloud/speech'
 import { NextRequest, NextResponse } from 'next/server';
-import { Readable } from 'stream';
 import { AssemblyAI } from 'assemblyai';
 import { createClient } from '@/utils/supabase/server';
 
 export async function POST(req: NextRequest) {
 
     try {
-        const { audioBlob, fileName } = await req.json();
+        const formData = await req.formData();
+        const audioBlob = formData.get('audioBlob') as Blob;
 
-        if (!audioBlob || !fileName) {
+        if (!audioBlob) {
             return NextResponse.json({ success: false, error: 'Missing audio file' }, { status: 401 })
         }
+
+        const fileName = `${Date.now()}_audio.mp3`;
 
         const supabase = createClient();
 
@@ -20,7 +20,6 @@ export async function POST(req: NextRequest) {
             .storage.from('audio-files')
             .upload(fileName, audioBlob, {
                 contentType: 'audio/mpeg',
-                upsert: true,
             });
         console.log("File Uploaded!");
 
@@ -31,34 +30,31 @@ export async function POST(req: NextRequest) {
 
         // Transcribe the audio file
 
-        const { data: audioData } = supabase
-            .storage
-            .from('audio-files')
-            .getPublicUrl(fileName, {
-                download: true,
-            })
-        console.log(audioData);
+        const client = new AssemblyAI({
+            apiKey: process.env.ASSEMBLYAI_API_KEY!,
+        });
+        console.log("Transcribing...");
 
-        // const client = new AssemblyAI({
-        //     apiKey: '15ac67dad483476386ad74457f2674b3',
-        // });
-        // console.log("Transcribing...");
+        const data = {
+            audio_url: `https://pnthwcyarzebpdfikfwj.supabase.co/storage/v1/object/public/audio-files/${fileName}`
+        }
 
         // const data = {
-        //     audio_url: "https://pnthwcyarzebpdfikfwj.supabase.co/storage/v1/object/sign/audio-files/1721017576878_audio.mp3?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhdWRpby1maWxlcy8xNzIxMDE3NTc2ODc4X2F1ZGlvLm1wMyIsImlhdCI6MTcyMTAxODY3MywiZXhwIjoxNzIxNjIzNDczfQ.hCPvQBkMU8644XzXkrng6a1KQvyBGoDh2kPjMLVxfOA&t=2024-07-15T04%3A44%3A33.707Z"
+        //     audio_url: `https://pnthwcyarzebpdfikfwj.supabase.co/storage/v1/object/public/audio-files/1721017576878_audio.mp3`
         // }
 
-        // const transcript = await client.transcripts.transcribe(data);
-        // console.log(transcript.text);
+        const transcript = await client.transcripts.transcribe(data);
+        console.log(transcript.text);
 
-        // if (transcript.status === 'error') {
-        //     console.log("Error: ", transcript.error);
-        //     return NextResponse.json({ success: false, error: transcript.error }, { status: 400 })
-        // }
+        if (transcript.status === 'error') {
+            console.log("Error: ", transcript.error);
+            return NextResponse.json({ success: false, error: transcript.error }, { status: 400 })
+        }
 
-        // await file.delete();
-        // console.log("Deleting File...")
-        return NextResponse.json({ success: true, transcription: "", message: 'File uploaded successfully' }, { status: 200 });
+        await supabase.storage.from('audio-files').remove([fileName]);
+        console.log("Deleting File...")
+
+        return NextResponse.json({ success: true, transcription: transcript.text, message: 'File uploaded successfully' }, { status: 200 });
 
         // console.log("Result: ", transcript);
         // return NextResponse.json({ success: true, transcription: transcript.text }, { status: 200 });

@@ -30,7 +30,8 @@ const Questions = ({ jobId, questionsData }: { jobId: string, questionsData: any
             const { data, error } = await supabase
                 .from('questions')
                 .select('*')
-                .eq('job_id', jobId);
+                .eq('job_id', jobId)
+                .eq('interview_id', null);
 
             if (error) {
                 toast({
@@ -79,8 +80,8 @@ const Questions = ({ jobId, questionsData }: { jobId: string, questionsData: any
         else {
             toast({
                 variant: "destructive",
-                title: 'Error Generating Questions.',
-                description: "Please try again.",
+                title: res.error,
+                description: res.submessage ?? "Please try again.",
             })
         }
         setLoading(false);

@@ -17,9 +17,13 @@ export const getCurrentUser = async () => {
     const supabase = createClient();
     const { data, error } = await supabase.auth.getUser();
     const isAuth = (error || !data?.user) ? false : true;
-    const user: any = !isAuth ? null : {
-        ...data?.user,
-        ...data?.user?.user_metadata
-    };
+
+    if (!isAuth) return { user: null, isAuth: false };
+
+    const { data: userData } = await supabase.from('profiles').select('*').eq('id', data?.user?.id).single();
+    const user: any = {
+        ...data?.user?.user_metadata,
+        ...userData
+    }
     return { user, isAuth };
 }

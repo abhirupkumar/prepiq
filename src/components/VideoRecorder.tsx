@@ -33,7 +33,7 @@ export default function VideoRecorder({ jobId, questionId, stream, onRecordingCo
         });
 
         mediaRecorderRef.current?.addEventListener("stop", () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+            const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
             transcribeAudio(audioBlob);
             const audioUrl = URL.createObjectURL(audioBlob);
             setAudioURL(audioUrl);
@@ -71,90 +71,24 @@ export default function VideoRecorder({ jobId, questionId, stream, onRecordingCo
         };
     }, [isRecording]);
 
-    // const startRecording = async () => {
-    //     mediaRecorderRef.current = new MediaRecorder(stream);
-    //     videoChunksRef.current = [];
-
-    //     mediaRecorderRef.current.addEventListener("dataavailable", (event) => {
-    //         videoChunksRef.current.push(event.data);
-    //     });
-
-    //     mediaRecorderRef.current.start();
-    //     // setRecordedVideoUrl(null);
-    //     setTimer(0);
-    //     setIsRecording(true);
-    // };
-
-    // const stopRecording = () => {
-    //     mediaRecorderRef.current?.stop();
-    //     setIsRecording(false);
-    //     mediaRecorderRef.current?.addEventListener("stop", () => {
-    //         const videoBlob = new Blob(videoChunksRef.current, { type: 'video/webm' });
-    //         // const videoUrl = URL.createObjectURL(videoBlob);
-    //         // setRecordedVideoUrl(videoUrl);
-    //         const videoSizeInMB = videoBlob.size / (1024 * 1024);
-    //         console.log(`Recorded video size: ${videoSizeInMB.toFixed(2)} MB`);
-
-    //         // Here you would typically upload the video or process it
-    //     }, { once: true });
-    //     onRecordingComplete();
-    // };
-
     const transcribeAudio = async (audioBlob: Blob) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(audioBlob);
-        reader.onloadend = async () => {
-            const base64Audio = (reader?.result as string).split(',')[1];
-            const fetchedData = await fetch('/api/speechtotext', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    audioBlob: base64Audio,
-                    fileName: `${Date.now()}_audio.mp3`,
-                }),
-            });
+        const formData = new FormData();
+        formData.append('audioBlob', audioBlob);
+        const fetchedData = await fetch('/api/speechtotext', {
+            method: 'POST',
+            body: formData,
+        });
 
-            const response = await fetchedData.json();
-            if (!response.success) {
-                toast({
-                    title: "Some error occured!"
-                })
-                return;
-            }
-
-            console.log('Transcription:', response.transcription);
+        const response = await fetchedData.json();
+        if (!response.success) {
+            toast({
+                title: "Some error occured!"
+            })
+            return;
         }
+
+        console.log('Transcription:', response.transcription);
     }
-
-    // const transcribeAudio = (audioBlob: Blob) => {
-    //     const reader = new FileReader();
-    //     reader.onloadend = () => {
-    //         const audioUrl = reader.result as string;
-    //         const recognition = new window.webkitSpeechRecognition();
-    //         recognition.continuous = false;
-    //         recognition.interimResults = false;
-    //         recognition.lang = 'en-US';
-
-    //         recognition.onresult = (event: any) => {
-    //             const transcript = event.results[0][0].transcript;
-    //             console.log(transcript);
-    //         };
-
-    //         recognition.onerror = (event: any) => {
-    //             console.error('Speech recognition error:', event.error);
-    //         };
-
-    //         recognition.onaudioend = () => {
-    //             console.log('Audio ended');
-    //         };
-
-    //         recognitionRef.current = recognition;
-    //         recognition.start();
-    //     };
-    //     reader.readAsDataURL(audioBlob);
-    // };
 
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
@@ -175,24 +109,6 @@ export default function VideoRecorder({ jobId, questionId, stream, onRecordingCo
                     </div>
                 )}
             </div>
-            {/* {recordedVideoUrl && (
-                <div className="mt-4">
-                    <video
-                        src={recordedVideoUrl}
-                        controls
-                        className="w-full max-w-md"
-                    />
-                    <div className="mt-2 space-x-2">
-                        <Button onClick={() => setRecordedVideoUrl(null)}>Discard</Button>
-                        <Button onClick={() => {
-                            onRecordingComplete();
-                            setRecordedVideoUrl(null);
-                        }}>
-                            Save and Continue
-                        </Button>
-                    </div>
-                </div>
-            )} */}
             <div className='bg-blue-100 p-4 mt-48 rounded my-4 text-black'>
                 <h3 className='text-lg font-semibold'>Please Note:</h3>
                 <p className="text-sm">You respond to the question by submitting a video clip. After that, we preserve your response, transcribe your video recording to text, and provide you with feedback on how effectively you responded to the question.</p>
