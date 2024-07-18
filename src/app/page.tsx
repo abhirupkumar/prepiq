@@ -56,29 +56,29 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
+            <div className="mx-auto grid max-w-6xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
               <div className="flex flex-col justify-center space-y-4">
                 <ul className="grid gap-6">
                   <li>
                     <div className="grid gap-1">
-                      <h3 className="text-xl font-bold">Personalized Feedback</h3>
-                      <p className="text-muted-foreground">
+                      <h3 className="text-2xl font-bold">Personalized Feedback</h3>
+                      <p className="text-muted-foreground text-lg">
                         Get tailored insights and recommendations to improve your interview performance.
                       </p>
                     </div>
                   </li>
                   <li>
                     <div className="grid gap-1">
-                      <h3 className="text-xl font-bold">Curated Practice Questions</h3>
-                      <p className="text-muted-foreground">
+                      <h3 className="text-2xl font-bold">Curated Practice Questions</h3>
+                      <p className="text-muted-foreground text-lg">
                         Access a vast library of industry-specific practice questions to sharpen your skills.
                       </p>
                     </div>
                   </li>
                   <li>
                     <div className="grid gap-1">
-                      <h3 className="text-xl font-bold">AI Powered Interviews</h3>
-                      <p className="text-muted-foreground">
+                      <h3 className="text-2xl font-bold">AI Powered Interviews</h3>
+                      <p className="text-muted-foreground text-lg">
                         Through our AI-powered mock interview you can improve your communication skills.
                       </p>
                     </div>
@@ -86,59 +86,58 @@ export default function Home() {
                 </ul>
               </div>
               <img
-                src="/dashboard-preview.png"
+                src="/interview.png"
                 alt="Features"
-                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
+                className="mx-auto rounded-lg h-full"
               />
             </div>
           </div>
         </section>
         <section id="examples" className="w-full px-6 py-12 md:py-24 lg:py-32">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16 items-center">
             <div className="space-y-4">
               <h2 className="text-3xl font-bold">1) Generate Unlimited Practice Interview Questions</h2>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground text-xl">
                 Upload a job description + your resume to generate{" "}
-                <strong>unlimited custom practice interview questions</strong>
+                <strong>unlimited custom practice interview questions</strong>{" "}
                 based off of your previous work experience.
               </p>
               <Button>Get Started</Button>
             </div>
             <div>
-              <img src="/placeholder.svg" alt="Upload documents" className="w-full h-auto" />
+              <img src="/create-job.png" alt="Upload documents" className="w-full h-auto rounded-lg" />
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16 items-center">
             <div>
-              <img src="/placeholder.svg" alt="Practice your answers" className="w-full h-auto" />
+              <img src="/questions.png" alt="Practice your answers" className="w-full h-auto rounded-lg" />
             </div>
             <div className="space-y-4">
               <h2 className="text-3xl font-bold">2) Practice Your Answers</h2>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground text-xl">
                 Don&apos;t know how to answer the question? No problem. We can generate an answer for you based off of your
                 previous work experience.
               </p>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground text-xl">
                 Want to clean up your answer? We got you. Tell us how you want to improve your answer, and we&apos;ll
                 rewrite it for you.
               </p>
               <Button>Get Started</Button>
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16  items-center">
             <div className="space-y-4">
-              <h2 className="text-3xl font-bold">3) Lights, Camera, Mock Interview</h2>
-              <p className="text-muted-foreground">
-                See exactly how you look + sound in an interview with our AI-powered mock interviewer
+              <h2 className="text-3xl font-bold">3) Detailed Feedback and Suggestions</h2>
+              <p className="text-muted-foreground text-xl">
+                Get Detailed Feedback and Suggestions with our AI-powered mock interviewer
               </p>
-              <p className="text-muted-foreground">
-                The AI mock interviewer asks you questions, you answer them with your voice, and we record the entire
-                interview for you to review afterwards (we give you feedback on your answers, too).
+              <p className="text-muted-foreground text-xl">
+                The AI mock interviewer asks you questions, you answer them with your voice, and we record the entire interview and transcribe it to text. (Don't worry we don't store your personal information, after the video is transcribed, it is deleted automatically).
               </p>
               <Button>Get Started</Button>
             </div>
             <div>
-              <img src="/placeholder.svg" alt="Mock interview" className="w-full h-auto" />
+              <img src="/question.png" alt="Mock interview" className="w-full h-auto rounded-lg" />
             </div>
           </div>
         </section>

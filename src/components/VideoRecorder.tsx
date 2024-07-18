@@ -112,7 +112,6 @@ export default function VideoRecorder({ jobId, questionId, stream, onRecordingCo
                 },
                 body: JSON.stringify({
                     audioBlob: base64Audio,
-                    // fileName: `${jobId}/questions/${questionId}`,
                     fileName: `${Date.now()}_audio.mp3`,
                 }),
             });
