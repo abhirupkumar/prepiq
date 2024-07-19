@@ -39,10 +39,8 @@ const Questions = ({ jobId, questionsData }: { jobId: string, questionsData: any
                     description: error?.message,
                 })
             } else {
-                const dataWithIndex = data.map((question: any, index: number) => {
-                    return { ...question, index: index + 1 }
-                });
-                setQuestions(dataWithIndex);
+                const sortDataWithIndex = data.sort((a: any, b: any) => a.index - b.index)
+                setQuestions(sortDataWithIndex);
             }
         };
         fetchQuestions();

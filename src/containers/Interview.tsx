@@ -3,67 +3,44 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import AudioRecorder from '@/components/AudioRecorder';
-import VideoRecorder from '@/components/VideoRecorder';
-import QuestionDisplay from '@/components/QuestionDisplay';
+import MainRecorder from '@/components/MainRecorder';
 import { useToast } from '@/components/ui/use-toast';
 import MaxWidthWrapper from '@/components/MaxWidthWrapper';
+import { browserClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
+import SendingDataModal from '@/components/SendingDataModal';
 
-const questions: any[] = [
-    {
-        id: 1,
-        text: "With your background in technical coordination, can you describe a situation where you coordinated activities within a team to achieve a goal? How does this relate to your role in the Newton School Coding Club?"
-    },
-    {
-        id: 2,
-        text: "With your background in technical coordination, can you describe a situation where you coordinated activities within a team to achieve a goal? How does this relate to your role in the Newton School Coding Club?"
-    },
-    {
-        id: 3,
-        text: "With your background in technical coordination, can you describe a situation where you coordinated activities within a team to achieve a goal? How does this relate to your role in the Newton School Coding Club?"
-    },
-    // Add more questions here
-];
-
-export default function Interview({ jobId, interviewId }: { jobId: string, interviewId: string }) {
+export default function Interview({ jobId, interviewId, questionsData }: { jobId: string, interviewId: string, questionsData: any[] }) {
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(-1);
     const [isInterviewStarted, setIsInterviewStarted] = useState<boolean>(false);
+    const [questions, setQuestions] = useState<any[]>(questionsData);
 
     const { toast } = useToast();
-    const [isCameraEnabled, setIsCameraEnabled] = useState(false);
-    const [isAudioEnabled, setIsAudioEnabled] = useState(false);
+    const supabase = browserClient();
+    const [isEnabled, setIsEnabled] = useState(false);
     const [stream, setStream] = useState<MediaStream | null>(null);
     const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
     const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
     const [selectedAudioDevice, setSelectedAudioDevice] = useState<string>('');
     const [selectedVideoDevice, setSelectedVideoDevice] = useState<string>('');
+    const [audioDatas, setAudioDatas] = useState<any[]>([]);
+    const [openModal, setOpenModal] = useState(false);
+    const [isUploading, setIsUploading] = useState(-1);
+    const [isSpeaking, setIsSpeaking] = useState(true);
+    const router = useRouter();
 
-    const enableCamera = async () => {
+    const enableAudioAndCamera = async () => {
         try {
-            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: isAudioEnabled });
+            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
             setStream(mediaStream);
             await getDevices();
-            setIsCameraEnabled(true);
+            setIsEnabled(true);
         } catch (error) {
             toast({
                 variant: "destructive",
                 title: 'Error accessing camera.',
-                description: "Please ensure you have granted the necessary permissions.",
-            })
-        }
-    };
-
-    const enableAudio = async () => {
-        try {
-            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: isCameraEnabled, audio: true });
-            setStream(mediaStream);
-            await getDevices();
-            setIsAudioEnabled(true);
-        } catch (error) {
-            toast({
-                variant: "destructive",
-                title: 'Error accessing microphone.',
                 description: "Please ensure you have granted the necessary permissions.",
             })
         }
@@ -129,15 +106,17 @@ export default function Interview({ jobId, interviewId }: { jobId: string, inter
 
     const startInterview = () => {
         setIsInterviewStarted(true);
-        setCurrentQuestionIndex(0);
+        const newIndex = questions.findIndex(question => question.submitted_answer == "");
+        setCurrentQuestionIndex(newIndex);
     };
 
     const nextQuestion = () => {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
+            setIsSpeaking(true);
         } else {
-            // End interview
-            setIsInterviewStarted(false);
+            setOpenModal(true);
+            transcribeAudio();
         }
     };
 
@@ -150,6 +129,35 @@ export default function Interview({ jobId, interviewId }: { jobId: string, inter
         }
     }, [stream]);
 
+    const transcribeAudio = async () => {
+        for (const audioData of audioDatas) {
+            setIsUploading(audioData.index);
+            const audioBlob = audioData.audioBlob;
+            const formData = new FormData();
+            formData.append('audioBlob', audioBlob);
+            const fetchedData = await fetch('/api/speechtotext', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const response = await fetchedData.json();
+            if (!response.success) {
+                toast({
+                    title: "Some error occured!"
+                })
+                return;
+            }
+            await supabase.from('interview_questions').update({ submitted_answer: response.transcription }).eq('id', audioData.questionId);
+            if (audioData.index == 0) {
+                await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
+            }
+            if (audioData.index == audioDatas.length - 1) {
+                await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
+                setIsUploading(audioData.index + 1);
+            }
+        }
+    }
+
     return (
         <MaxWidthWrapper className="flex h-full">
             <div className="w-1/2 py-10 h-full px-10 overflow-y-auto">
@@ -160,24 +168,21 @@ export default function Interview({ jobId, interviewId }: { jobId: string, inter
                             <li className='text-sm text-black'>Please grant permission for both camera and microphone</li>
                             <li className='text-sm text-black'>Ensure camera and microphone are working properly</li>
                             <li className='text-sm text-black'>Check audio clarity and volume</li>
-                            <li className='text-sm text-black'>You will get 3 question one after another.</li>
+                            <li className='text-sm text-black'>You will get 5 question one after another.</li>
                         </div>
                         <div className="flex flex-col space-y-4">
                             <div className="flex space-x-3">
-                                <Button onClick={enableAudio} disabled={isAudioEnabled}>
-                                    {isAudioEnabled ? 'Microphone Enabled' : 'Enable Microphone'}
-                                </Button>
-                                <Button onClick={enableCamera} disabled={!isAudioEnabled || isCameraEnabled}>
-                                    {isCameraEnabled ? 'Camera Enabled' : 'Enable Camera'}
+                                <Button onClick={enableAudioAndCamera} disabled={isEnabled}>
+                                    {isEnabled ? 'Enabled' : 'Enable Both Microphone And Camera'}
                                 </Button>
                             </div>
-                            {/* <div className="flex flex-col space-y-3 my-2">
-                                {isCameraEnabled && <div className="flex flex-col justify-start">
+                            <div className="flex flex-col space-y-3 my-2">
+                                {isEnabled && <div className="flex flex-col justify-start">
                                     <span className="text-primary font-semibold">Video Device:</span>
                                     <select
                                         value={selectedVideoDevice}
                                         onChange={(e) => changeVideoDevice(e.target.value)}
-                                        disabled={!isCameraEnabled}
+                                        disabled={!isEnabled}
                                         className='w-fit rounded-full px-2 py-1 border'
                                     >
                                         {videoDevices.map(device => (
@@ -185,12 +190,12 @@ export default function Interview({ jobId, interviewId }: { jobId: string, inter
                                         ))}
                                     </select>
                                 </div>}
-                                {isAudioEnabled && <div className="flex flex-col justify-start">
+                                {isEnabled && <div className="flex flex-col justify-start">
                                     <span className="text-primary font-semibold">Audio Device:</span>
                                     <select
                                         value={selectedAudioDevice}
                                         onChange={(e) => changeAudioDevice(e.target.value)}
-                                        disabled={!isAudioEnabled}
+                                        disabled={!isEnabled}
                                         className='w-fit rounded-full px-2 py-1 border'
                                     >
                                         {audioDevices.map(device => (
@@ -198,18 +203,18 @@ export default function Interview({ jobId, interviewId }: { jobId: string, inter
                                         ))}
                                     </select>
                                 </div>}
-                            </div> */}
-                            {isAudioEnabled && <AudioRecorder stream={stream!} />}
-                            <Button className='w-fit' onClick={startInterview} disabled={!isCameraEnabled || !isAudioEnabled}>
+                            </div>
+                            {isEnabled && <AudioRecorder stream={stream!} />}
+                            <Button className='w-fit' onClick={startInterview} disabled={!isEnabled}>
                                 Start Interview
                             </Button>
                         </div>
                     </div>
                 ) : (
-                    <div className='h-full'>
-                        <QuestionDisplay question={questions[currentQuestionIndex]} />
-                        <VideoRecorder jobId={jobId} questionId={questions[currentQuestionIndex].id as string} stream={stream!} onRecordingComplete={nextQuestion} />
-                    </div>
+                    <>
+                        <MainRecorder isSpeaking={isSpeaking} setIsSpeaking={setIsSpeaking} jobId={jobId} questionId={questions[currentQuestionIndex].id as string} stream={stream!} onRecordingComplete={nextQuestion} currIndex={currentQuestionIndex} question={questions[currentQuestionIndex]} setAudioDatas={setAudioDatas} />
+                        <SendingDataModal openModal={openModal} setOpenModal={setOpenModal} isUploading={isUploading} />
+                    </>
                 )}
             </div>
             <div className="w-1/2">

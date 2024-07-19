@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     const prevQuestionsText = prevQuestions.length > 0 ? prevQuestions.map((question: any) => question.question).join("\n\n") : "";
-
+    const lastQuestionIndex = prevQuestions.length > 0 ? prevQuestions[prevQuestions.length - 1].index : 0;
     const Question = `
     Ask Questions based on the job description and also about the work or project or experience or achievement he has mentioned in his resume.If required search on the internet about different questions asked for the above mentioned job description.
     ${prevQuestions.length > 0 && prevQuestionsText != "" && `
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     const questions = JSON.parse(res.content);
     const created_at = new Date();
     const questionWithId = questions.map((question: any, index: number) => {
-        return { ...question, job_id: jobId, created_at: created_at }
+        return { ...question, job_id: jobId, created_at: created_at, index: lastQuestionIndex + index + 1 }
     });
 
     const response = await supabase

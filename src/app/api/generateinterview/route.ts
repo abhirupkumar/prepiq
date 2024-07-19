@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     const questions = JSON.parse(res.content);
     const created_at = new Date();
     const questionWithId = questions.map((question: any, index: number) => {
-        return { ...question, created_at: created_at, interview_id: interviewData[0].id }
+        return { ...question, created_at: created_at, interview_id: interviewData[0].id, index: index + 1 }
     });
 
     const response = await supabase

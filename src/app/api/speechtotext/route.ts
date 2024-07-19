@@ -39,10 +39,6 @@ export async function POST(req: NextRequest) {
             audio_url: `https://pnthwcyarzebpdfikfwj.supabase.co/storage/v1/object/public/audio-files/${fileName}`
         }
 
-        // const data = {
-        //     audio_url: `https://pnthwcyarzebpdfikfwj.supabase.co/storage/v1/object/public/audio-files/1721017576878_audio.mp3`
-        // }
-
         const transcript = await client.transcripts.transcribe(data);
         console.log(transcript.text);
 
@@ -55,9 +51,6 @@ export async function POST(req: NextRequest) {
         console.log("Deleting File...")
 
         return NextResponse.json({ success: true, transcription: transcript.text, message: 'File uploaded successfully' }, { status: 200 });
-
-        // console.log("Result: ", transcript);
-        // return NextResponse.json({ success: true, transcription: transcript.text }, { status: 200 });
     } catch (error) {
         console.log('Error transcribing audio:', error)
         return NextResponse.json({ success: false, error: 'Error transcribing audio' }, { status: 400 })
