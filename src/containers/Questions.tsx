@@ -30,8 +30,7 @@ const Questions = ({ jobId, questionsData }: { jobId: string, questionsData: any
             const { data, error } = await supabase
                 .from('questions')
                 .select('*')
-                .eq('job_id', jobId)
-                .eq('interview_id', null);
+                .eq('job_id', jobId);
 
             if (error) {
                 toast({

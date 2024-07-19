@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
     const job = data[0];
 
-    const { data: prevQuestions, error: prevQuestionsError } = await supabase.from('questions').select('question').eq('job_id', jobId).eq('interview_id', null);
+    const { data: prevQuestions, error: prevQuestionsError } = await supabase.from('questions').select('question').eq('job_id', jobId);
 
     if (prevQuestionsError) {
         return NextResponse.json({ success: false, error: prevQuestionsError.message }, { status: 401 });
@@ -67,8 +67,6 @@ export async function POST(request: NextRequest) {
 
     const { data: userData, error: userError } = await supabase.from('profiles').update({ 'credits': user.credits - 1 }).eq('id', user.id).select();
     if (userError) {
-        console.log("userData: ", userData)
-        console.log("userError: ", userError)
         return NextResponse.json({ success: false, error: "Some error occured!" }, { status: 406 });
     }
 

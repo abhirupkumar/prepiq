@@ -10,7 +10,7 @@ import { ArrowLeft, MoveLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
-const Job = ({ jobId, jobData }: { jobId: string, jobData: any }) => {
+const Job = ({ jobId, jobData, interviewData }: { jobId: string, jobData: any, interviewData: any[] }) => {
 
     const router = useRouter();
     const [job, setJob] = useState<any>(jobData);
@@ -50,7 +50,7 @@ const Job = ({ jobId, jobData }: { jobId: string, jobData: any }) => {
             <h1 className='text-4xl font-bold my-4'>{job?.title}{job?.company_name ? " - " + job?.company_name : ""}</h1>
             <UploadResume jobId={jobId} resume_name={job?.resume_name} />
             <InterviewQuestions jobId={jobId} />
-            <MockInterviews jobId={jobId} />
+            <MockInterviews jobId={jobId} interviewData={interviewData} />
         </MaxWidthWrapper>
     )
 }

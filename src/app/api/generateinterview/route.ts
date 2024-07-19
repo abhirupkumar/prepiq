@@ -7,7 +7,7 @@ export const maxDuration = 60;
 export const revalidate = 0;
 
 export async function POST(request: NextRequest) {
-    const { jobId, interviewId } = await request.json();
+    const { jobId } = await request.json();
     const supabase = createClient();
     const { user, isAuth } = await getCurrentUser();
     const { data, error } = await supabase
@@ -21,7 +21,14 @@ export async function POST(request: NextRequest) {
     }
     const job = data[0];
 
-    const { data: prevQuestions, error: prevQuestionsError } = await supabase.from('questions').select('question').eq('job_id', jobId).eq('interview_id', interviewId);
+    const { data: interviewData, error: interviewError } = await supabase
+        .from('interviews').insert({ job_id: jobId, created_at: new Date() }).select();
+
+    if (interviewError) {
+        return NextResponse.json({ success: false, error: interviewError.message }, { status: 411 });
+    }
+
+    const { data: prevQuestions, error: prevQuestionsError } = await supabase.from('interview_questions').select('question').eq('interview_id', interviewData[0].id);
 
     if (prevQuestionsError) {
         return NextResponse.json({ success: false, error: prevQuestionsError.message }, { status: 401 });
@@ -67,8 +74,6 @@ export async function POST(request: NextRequest) {
 
     const { data: userData, error: userError } = await supabase.from('profiles').update({ 'credits': user.credits - 4 }).eq('id', user.id).select();
     if (userError) {
-        console.log("userData: ", userData)
-        console.log("userError: ", userError)
         return NextResponse.json({ success: false, error: "Some error occured!" }, { status: 406 });
     }
 
@@ -77,11 +82,11 @@ export async function POST(request: NextRequest) {
     const questions = JSON.parse(res.content);
     const created_at = new Date();
     const questionWithId = questions.map((question: any, index: number) => {
-        return { ...question, job_id: jobId, created_at: created_at, interview_id: interviewId }
+        return { ...question, created_at: created_at, interview_id: interviewData[0].id }
     });
 
     const response = await supabase
-        .from('questions')
+        .from('interview_questions')
         .insert(questionWithId)
 
     if (response.error) {

@@ -22,12 +22,16 @@ const Page = async ({ params }: PageProps) => {
         .select('*')
         .eq('id', jobId)
         .single();
+    const { data: interviewData, error: interviewError } = await supabase
+        .from('interviews')
+        .select('*')
+        .eq('job_id', jobId);
 
     if (error || !data) return notFound();
 
     return (
         <>
-            {data && <Job jobId={jobId} jobData={data} />}
+            {data && <Job jobId={jobId} jobData={data} interviewData={interviewData} />}
         </>
     )
 }
