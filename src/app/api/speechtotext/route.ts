@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AssemblyAI } from 'assemblyai';
 import { createClient } from '@/utils/supabase/server';
+import { Storage } from '@google-cloud/storage';
 
 export async function POST(req: NextRequest) {
 
@@ -16,17 +17,33 @@ export async function POST(req: NextRequest) {
 
         const supabase = createClient();
 
-        const { data: storageData, error: storageError } = await supabase
-            .storage.from('audio-files')
-            .upload(fileName, audioBlob, {
-                contentType: 'audio/mpeg',
-            });
+
+        const storage = new Storage({
+            projectId: process.env.GOOGLE_PROJECT_ID!,
+            credentials: {
+                client_email: process.env.GOOGLE_CLIENT_EMAIL!,
+                private_key: process.env.GOOGLE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
+            }
+        });
+
+        const bucket = storage.bucket(process.env.GOOGLE_STORAGE_BUCKET!);
+        const file = bucket.file(fileName);
+
+        await file.save(Buffer.from(await audioBlob.arrayBuffer()), {
+            contentType: 'audio/mpeg',
+        });
+
+        // const { data: storageData, error: storageError } = await supabase
+        //     .storage.from('audio-files')
+        //     .upload(fileName, audioBlob, {
+        //         contentType: 'audio/mpeg',
+        //     });
         console.log("File Uploaded!");
 
-        if (storageError) {
-            console.log("Error uploading file: ", storageError);
-            return NextResponse.json({ success: false, error: 'Error uploading file' }, { status: 400 })
-        }
+        // if (storageError) {
+        //     console.log("Error uploading file: ", storageError);
+        //     return NextResponse.json({ success: false, error: 'Error uploading file' }, { status: 400 })
+        // }
 
         // Transcribe the audio file
 
@@ -35,8 +52,12 @@ export async function POST(req: NextRequest) {
         });
         console.log("Transcribing...");
 
+        // const data = {
+        //     audio_url: `https://storage.googleapis.com/prepiq_bucket_1/1721403875846_audio.mp3`
+        // }
+
         const data = {
-            audio_url: `https://pnthwcyarzebpdfikfwj.supabase.co/storage/v1/object/public/audio-files/${fileName}`
+            audio_url: `https://storage.googleapis.com/prepiq_bucket_1/${fileName}`
         }
 
         const transcript = await client.transcripts.transcribe(data);
@@ -47,7 +68,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ success: false, error: transcript.error }, { status: 400 })
         }
 
-        await supabase.storage.from('audio-files').remove([fileName]);
+        await file.delete()
+        // await supabase.storage.from('audio-files').remove([fileName]);
         console.log("Deleting File...")
 
         return NextResponse.json({ success: true, transcription: transcript.text, message: 'File uploaded successfully' }, { status: 200 });

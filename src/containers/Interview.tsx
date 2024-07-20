@@ -29,6 +29,7 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
     const [openModal, setOpenModal] = useState(false);
     const [isUploading, setIsUploading] = useState(-1);
     const [isSpeaking, setIsSpeaking] = useState(true);
+    const [startTranscribe, setStartTranscribe] = useState(false);
     const router = useRouter();
 
     const enableAudioAndCamera = async () => {
@@ -114,11 +115,18 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setIsSpeaking(true);
-        } else {
+        }
+        else {
+            setStartTranscribe(true);
+        }
+    };
+
+    useEffect(() => {
+        if (startTranscribe) {
             setOpenModal(true);
             transcribeAudio();
         }
-    };
+    }, [startTranscribe])
 
     useEffect(() => {
         if (videoRef.current && stream) {
@@ -130,6 +138,7 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
     }, [stream]);
 
     const transcribeAudio = async () => {
+        await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
         for (const audioData of audioDatas) {
             setIsUploading(audioData.index);
             const audioBlob = audioData.audioBlob;
@@ -148,14 +157,10 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
                 return;
             }
             await supabase.from('interview_questions').update({ submitted_answer: response.transcription }).eq('id', audioData.questionId);
-            if (audioData.index == 0) {
-                await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
-            }
-            if (audioData.index == audioDatas.length - 1) {
-                await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
-                setIsUploading(audioData.index + 1);
-            }
         }
+        await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
+        setIsUploading(6);
+        router.refresh();
     }
 
     return (

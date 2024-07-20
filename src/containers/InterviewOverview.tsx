@@ -6,31 +6,39 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { browserClient } from '@/utils/supabase/client';
 import { ArrowLeft, Bot } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-const InterviewOverview = ({ jobId, interviewId }: { jobId: string, interviewId: string }) => {
+const InterviewOverview = ({ jobId, interviewId, interviewData, questionsData }: { jobId: string, interviewId: string, interviewData: any, questionsData: any[] }) => {
 
     const router = useRouter();
     const [currentQuestion, setCurrentQuestion] = useState(0);
-    const [questions, setQuestions] = useState<any>([
-        {
-            question: "Can you provide an example from your experience where you have worked on developing software applications similar to what is mentioned in the job description at Google?"
-        },
-        {
-            question: "Can you provide an example from your experience in Newton School where you have worked on developing software applications similar to what is mentioned in the job description at Google?"
-        },
-        {
-            question: "What can you provide an example from your experience where you have worked on developing software applications similar to what is mentioned in the job description at Google?"
-        },
-        {
-            question: "Can you provide an example from your experience in Newton School where you have worked on developing software applications similar to what is mentioned in the job description at Google?"
-        },
-        {
-            question: "What can you provide an example from your experience where you have worked on developing software applications similar to what is mentioned in the job description at Google?"
-        }
-    ]);
+    const [questions, setQuestions] = useState<any[]>(questionsData);
+    const [interview, setInterview] = useState<any>(interviewData);
+    const supabase = browserClient();
+
+    useEffect(() => {
+        const fetchQuestions = async () => {
+            if (interview.completed != "completed" && questions.find((question: any) => question.submitted_answer === "") === undefined) {
+                await supabase.from('interviews').update({ completed: "completed" }).eq('id', interviewId);
+                setInterview({ ...interview, completed: "completed" });
+            }
+            const { data, error } = await supabase
+                .from('interview_questions')
+                .select('*')
+                .eq('interview_id', interviewId);
+
+            if (error) {
+                console.error('Error fetching questions:', error);
+            } else {
+                setQuestions(data);
+            }
+        };
+        fetchQuestions();
+
+    }, [interviewId]);
 
     return (
         <MaxWidthWrapper className='flex flex-col items-center px-8 py-4 w-full'>

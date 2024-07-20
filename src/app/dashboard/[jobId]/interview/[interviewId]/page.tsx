@@ -33,13 +33,15 @@ const Page = async ({ params }: PageProps) => {
     }
 
     const newQuestiondata = questionsData.sort((a: any, b: any) => a.index - b.index);
+    const areAllAnswersSubmitted = questionsData.find((question: any) => question.submitted_answer === "") === undefined;
+    const isInterviewCompleted = interviewData.completed === "completed" || areAllAnswersSubmitted;
 
     return (
         <>
-            {interviewData.completed != "completed" ?
+            {!isInterviewCompleted ?
                 <Interview jobId={jobId} interviewId={interviewId} questionsData={newQuestiondata} />
                 :
-                <InterviewOverview jobId={jobId} interviewId={interviewId} />}
+                <InterviewOverview interviewData={interviewData} jobId={jobId} interviewId={interviewId} questionsData={newQuestiondata} />}
         </>
     )
 }

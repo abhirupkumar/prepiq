@@ -116,8 +116,8 @@ const MockInterviews = ({ jobId, interviewData }: { jobId: string, interviewData
                                     {getTime(interview.created_at)}
                                 </div>
                             </div>
-                            <div className='flex items-center gap-2 text-xs'>
-                                <Check className={`h-4 w-4 ${interview.completed == "completed" && "text-green-500"} ${interview.completed == "pending" && "text-red-500"}`} />
+                            <div className='flex items-center gap-2 text-sm'>
+                                <Check className={`${interview.completed == "completed" && "text-green-500"} ${interview.completed == "pending" && "text-red-500"}`} />
                                 {interview.completed.charAt(0).toUpperCase() + interview.completed.slice(1)}
                             </div>
                         </div>
