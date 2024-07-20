@@ -22,7 +22,7 @@ import { Separator } from '@/components/ui/separator';
 import { browserClient } from '@/utils/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 
-const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion }: { jobId: string, questionId: string, questionData: any, prevQuestion: any, nextQuestion: any }) => {
+const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion, isInterview }: { jobId: string, questionId: string, questionData: any, prevQuestion: any, nextQuestion: any, isInterview?: boolean }) => {
 
     const router = useRouter();
     const { toast } = useToast();
@@ -199,11 +199,18 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion 
     return (
         <MaxWidthWrapper className='flex flex-col items-center px-4 lg:px-20 py-16 w-full'>
             <span className='flex w-full justify-between'>
-                <Button onClick={() => router.push(`/dashboard/${jobId}/questions`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>
-                <div className='ml-auto flex space-x-6 justify-between'>
+                {isInterview ? <Button onClick={() => router.push(`/dashboard/${jobId}/questions`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>
+                    :
+                    <Button onClick={() => router.push(`/dashboard/${jobId}`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>}
+                {isInterview ? <div className='ml-auto flex space-x-6 justify-between'>
                     {prevQuestion && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${prevQuestion.id}`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Previous Question</Button>}
                     {nextQuestion && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${nextQuestion.id}`)} variant="outline" className='rounded-full ml-auto flex items-center bg-muted shadow-md'>Next Question{" "}<ArrowRight className="mr-2" /></Button>}
                 </div>
+                    :
+                    <div className='ml-auto flex space-x-6 justify-between'>
+                        {question.index > 1 && <Button onClick={prevQuestion} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Previous Question</Button>}
+                        {question.index < 5 && <Button onClick={nextQuestion} variant="outline" className='rounded-full ml-auto flex items-center bg-muted shadow-md'>Next Question{" "}<ArrowRight className="mr-2" /></Button>}
+                    </div>}
             </span>
             <div className='flex md:flex-row flex-col md:space-x-8 md:mx-0 mx-2'>
                 <section className='my-10 md:w-[50%] w-full space-y-10'>
@@ -214,7 +221,7 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion 
                         </div>
                         <div className='flex flex-col space-y-2'>
                             <h2 className='text-xl font-semibold'>Your Answer:</h2>
-                            <Textarea value={answer} onChange={(e: any) => setAnswer(e.target.value)} id='answer' className='p-2 border border-gray-400 rounded-md min-h-[100px]' />
+                            {!isInterview ? <Textarea value={answer} onChange={(e: any) => setAnswer(e.target.value)} id='answer' className='p-2 border border-gray-400 rounded-md min-h-[100px]' /> : <span id='answer' className='p-2 border border-gray-400 rounded-md min-h-[100px]'>{answer}</span>}
                             <span className='flex space-x-2 mt-2'>
                                 <Button disabled={loading.generatingAnswer || loading.submittingAnswer} onClick={generateAnswer} className='rounded-full'>
                                     {!loading.generatingAnswer ? <>
