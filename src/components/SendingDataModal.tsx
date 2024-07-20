@@ -14,9 +14,6 @@ const SendingDataModal = ({ openModal, setOpenModal, isUploading }: { openModal:
             <DialogTitle>
                 <></>
             </DialogTitle>
-            <DialogHeader>
-                <h1 className='text-center w-full p-2 font-semibold text-2xl'>Uploading Data</h1>
-            </DialogHeader>
             <DialogContent>
                 <div className="flex flex-col items-center justify-center space-y-4">
                     {[0, 1, 2, 3, 4].map((val, index) => <div key={index} className='flex space-x-4 items-center'>

@@ -164,71 +164,76 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
     }
 
     return (
-        <MaxWidthWrapper className="flex h-full">
-            <div className="w-1/2 py-10 h-full px-10 overflow-y-auto">
-                {!isInterviewStarted ? (
-                    <div className='h-full'>
-                        <h2 className="text-3xl mb-4 font-semibold">Interview Instructions</h2>
-                        <div className='bg-blue-100 p-4 rounded list my-4'>
-                            <li className='text-sm text-black'>Please grant permission for both camera and microphone</li>
-                            <li className='text-sm text-black'>Ensure camera and microphone are working properly</li>
-                            <li className='text-sm text-black'>Check audio clarity and volume</li>
-                            <li className='text-sm text-black'>You will get 5 question one after another.</li>
-                        </div>
-                        <div className="flex flex-col space-y-4">
-                            <div className="flex space-x-3">
-                                <Button onClick={enableAudioAndCamera} disabled={isEnabled}>
-                                    {isEnabled ? 'Enabled' : 'Enable Both Microphone And Camera'}
+        <>
+            <MaxWidthWrapper className="md:flex h-full hidden">
+                <div className="w-1/2 py-10 h-full px-10 overflow-y-auto">
+                    {!isInterviewStarted ? (
+                        <div className='h-full'>
+                            <h2 className="text-3xl mb-4 font-semibold">Interview Instructions</h2>
+                            <div className='bg-blue-100 p-4 rounded list my-4'>
+                                <li className='text-sm text-black'>Please grant permission for both camera and microphone</li>
+                                <li className='text-sm text-black'>Ensure camera and microphone are working properly</li>
+                                <li className='text-sm text-black'>Check audio clarity and volume</li>
+                                <li className='text-sm text-black'>You will get 5 question one after another.</li>
+                            </div>
+                            <div className="flex flex-col space-y-4">
+                                <div className="flex space-x-3">
+                                    <Button onClick={enableAudioAndCamera} disabled={isEnabled}>
+                                        {isEnabled ? 'Enabled' : 'Enable Both Microphone And Camera'}
+                                    </Button>
+                                </div>
+                                <div className="flex flex-col space-y-3 my-2">
+                                    {isEnabled && <div className="flex flex-col justify-start">
+                                        <span className="text-primary font-semibold">Video Device:</span>
+                                        <select
+                                            value={selectedVideoDevice}
+                                            onChange={(e) => changeVideoDevice(e.target.value)}
+                                            disabled={!isEnabled}
+                                            className='w-fit rounded-full px-2 py-1 border'
+                                        >
+                                            {videoDevices.map(device => (
+                                                <option key={device.deviceId} value={device.deviceId}>{device.label}</option>
+                                            ))}
+                                        </select>
+                                    </div>}
+                                    {isEnabled && <div className="flex flex-col justify-start">
+                                        <span className="text-primary font-semibold">Audio Device:</span>
+                                        <select
+                                            value={selectedAudioDevice}
+                                            onChange={(e) => changeAudioDevice(e.target.value)}
+                                            disabled={!isEnabled}
+                                            className='w-fit rounded-full px-2 py-1 border'
+                                        >
+                                            {audioDevices.map(device => (
+                                                <option key={device.deviceId} value={device.deviceId}>{device.label}</option>
+                                            ))}
+                                        </select>
+                                    </div>}
+                                </div>
+                                {isEnabled && <AudioRecorder stream={stream!} />}
+                                <Button className='w-fit' onClick={startInterview} disabled={!isEnabled}>
+                                    Start Interview
                                 </Button>
                             </div>
-                            <div className="flex flex-col space-y-3 my-2">
-                                {isEnabled && <div className="flex flex-col justify-start">
-                                    <span className="text-primary font-semibold">Video Device:</span>
-                                    <select
-                                        value={selectedVideoDevice}
-                                        onChange={(e) => changeVideoDevice(e.target.value)}
-                                        disabled={!isEnabled}
-                                        className='w-fit rounded-full px-2 py-1 border'
-                                    >
-                                        {videoDevices.map(device => (
-                                            <option key={device.deviceId} value={device.deviceId}>{device.label}</option>
-                                        ))}
-                                    </select>
-                                </div>}
-                                {isEnabled && <div className="flex flex-col justify-start">
-                                    <span className="text-primary font-semibold">Audio Device:</span>
-                                    <select
-                                        value={selectedAudioDevice}
-                                        onChange={(e) => changeAudioDevice(e.target.value)}
-                                        disabled={!isEnabled}
-                                        className='w-fit rounded-full px-2 py-1 border'
-                                    >
-                                        {audioDevices.map(device => (
-                                            <option key={device.deviceId} value={device.deviceId}>{device.label}</option>
-                                        ))}
-                                    </select>
-                                </div>}
-                            </div>
-                            {isEnabled && <AudioRecorder stream={stream!} />}
-                            <Button className='w-fit' onClick={startInterview} disabled={!isEnabled}>
-                                Start Interview
-                            </Button>
+                        </div>
+                    ) : (
+                        <>
+                            <MainRecorder isSpeaking={isSpeaking} setIsSpeaking={setIsSpeaking} jobId={jobId} questionId={questions[currentQuestionIndex].id as string} stream={stream!} onRecordingComplete={nextQuestion} currIndex={currentQuestionIndex} question={questions[currentQuestionIndex]} setAudioDatas={setAudioDatas} />
+                            <SendingDataModal openModal={openModal} setOpenModal={setOpenModal} isUploading={isUploading} />
+                        </>
+                    )}
+                </div>
+                <div className="w-1/2">
+                    <div className='w-full h-full flex flex-col items-center justify-center'>
+                        <div className="flex rounded-xl items-center justify-center bg-gray-700 w-[300px] lg:w-[600px] my-10 h-[450px] z-10">
+                            <video ref={videoRef} autoPlay muted className="z-30 lg:max-w-[600px] rounded-xl" />
                         </div>
                     </div>
-                ) : (
-                    <>
-                        <MainRecorder isSpeaking={isSpeaking} setIsSpeaking={setIsSpeaking} jobId={jobId} questionId={questions[currentQuestionIndex].id as string} stream={stream!} onRecordingComplete={nextQuestion} currIndex={currentQuestionIndex} question={questions[currentQuestionIndex]} setAudioDatas={setAudioDatas} />
-                        <SendingDataModal openModal={openModal} setOpenModal={setOpenModal} isUploading={isUploading} />
-                    </>
-                )}
-            </div>
-            <div className="w-1/2">
-                <div className='w-full h-full flex flex-col items-center justify-center'>
-                    <div className="flex rounded-xl items-center justify-center bg-gray-700 w-[600px] my-10 h-[450px] z-10">
-                        <video ref={videoRef} autoPlay muted className="z-30 w-[600px] rounded-xl" />
-                    </div>
                 </div>
-            </div>
-        </MaxWidthWrapper>
+            </MaxWidthWrapper>
+            <MaxWidthWrapper className="md:hidden h-screen flex items-center justify-center">
+                <h1 className="text-xl font-semibold p-4">Interview cannot be given in mobile. Please use Laptop or Desktop.</h1>
+            </MaxWidthWrapper>
+        </>
     );
 }

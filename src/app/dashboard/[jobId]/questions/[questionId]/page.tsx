@@ -3,6 +3,8 @@ import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
 import React from 'react';
 
+export const revalidate = 0;
+
 interface PageProps {
     params: {
         jobId: string,

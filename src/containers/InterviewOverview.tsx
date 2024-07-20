@@ -65,7 +65,9 @@ const InterviewOverview = ({ jobId, interviewId, interviewData, questionsData }:
     }
 
     return (
-        <Question jobId={jobId} isInterview={true} questionId={questionsData[currentQuestionIndex].id} questionData={questionsData[currentQuestionIndex]} prevQuestion={prevQuestion} nextQuestion={nextQuestion} />
+        <>
+            {questionsData.map((question, index) => currentQuestionIndex == index && <Question key={index} jobId={jobId} interviewId={interviewId} isInterview={true} questionId={question.id} questionData={question} prevQuestion={prevQuestion} nextQuestion={nextQuestion} />)}
+        </>
     )
 }
 

@@ -6,7 +6,7 @@ export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
 
-    const { answer, jobId, questionId, rewritePrompt } = await request.json();
+    const { answer, jobId, questionId, rewritePrompt, isInterview, interviewId } = await request.json();
     const supabase = createClient();
 
     const { data: job, error: error1 } = await supabase
@@ -19,11 +19,21 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: false, error: error1.message }, { status: 401 });
     }
 
-    const { data: questionData, error: error2 } = await supabase
-        .from('questions')
-        .select('*')
-        .eq('id', questionId)
-        .single()
+    let fetchedQuestionData;
+    if (isInterview)
+        fetchedQuestionData = await supabase
+            .from('interview_questions')
+            .select('*')
+            .eq('id', questionId)
+            .eq('interview_id', interviewId)
+            .single()
+    else
+        fetchedQuestionData = await supabase
+            .from('questions')
+            .select('*')
+            .eq('id', questionId)
+            .single()
+    const { data: questionData, error: error2 } = fetchedQuestionData
 
     if (error2) {
         return NextResponse.json({ success: false, error: error2.message }, { status: 401 });

@@ -6,7 +6,7 @@ export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
 
-    const { answer, jobId, questionId } = await request.json();
+    const { answer, jobId, questionId, isInterview, interviewId } = await request.json();
     try {
 
         const supabase = createClient();
@@ -21,11 +21,21 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: false, error: error1.message }, { status: 401 });
         }
 
-        const { data: questionData, error: error2 } = await supabase
-            .from('questions')
-            .select('*')
-            .eq('id', questionId)
-            .single()
+        let fetchedQuestionData;
+        if (isInterview)
+            fetchedQuestionData = await supabase
+                .from("interview_questions")
+                .select('*')
+                .eq('id', questionId)
+                .eq('interview_id', interviewId)
+                .single()
+        else
+            fetchedQuestionData = await supabase
+                .from('questions')
+                .select('*')
+                .eq('id', questionId)
+                .single()
+        const { data: questionData, error: error2 } = fetchedQuestionData
         if (error2) {
             return NextResponse.json({ success: false, error: error2.message }, { status: 401 });
         }
@@ -70,14 +80,24 @@ export async function POST(request: NextRequest) {
 
         const resData = JSON.parse(res.content);
 
-        const { data: answerData, error: answerError } = await supabase
-            .from('questions')
-            .update({
-                'strengths': resData[0].strength,
-                'suggestions': resData[0].suggestion,
-                'isfeedbackgenerated': true
-            })
-            .eq('id', questionId);
+        let fetchedAnswerData;
+        if (isInterview)
+            fetchedAnswerData = await supabase
+                .from("interview_questions")
+                .update({
+                    'strengths': resData[0].strength,
+                    'suggestions': resData[0].suggestion,
+                })
+                .eq('id', questionId);
+        else
+            fetchedAnswerData = await supabase
+                .from('questions')
+                .update({
+                    'strengths': resData[0].strength,
+                    'suggestions': resData[0].suggestion,
+                })
+                .eq('id', questionId);
+        const { error: answerError } = fetchedAnswerData;
 
         if (answerError) {
             return NextResponse.json({ success: false, error: answerError.message }, { status: 401 });

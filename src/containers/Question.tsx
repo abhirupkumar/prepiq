@@ -22,7 +22,7 @@ import { Separator } from '@/components/ui/separator';
 import { browserClient } from '@/utils/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 
-const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion, isInterview }: { jobId: string, questionId: string, questionData: any, prevQuestion: any, nextQuestion: any, isInterview?: boolean }) => {
+const Question = ({ jobId, questionId, interviewId, questionData, prevQuestion, nextQuestion, isInterview }: { jobId: string, questionId: string, interviewId?: string, questionData: any, prevQuestion: any, nextQuestion: any, isInterview?: boolean }) => {
 
     const router = useRouter();
     const { toast } = useToast();
@@ -37,20 +37,32 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion,
     });
     const [rewriteLoading, setRewriteLoading] = useState<boolean>(false);
     const [saveLoading, setSaveLoading] = useState<boolean>(false);
+    const [isFeedbackGenerated, setIsFeedbackGenerated] = useState<boolean>(question.submitted_answer == "" || (question.submitted_answer != "" && question.strengths != ""));
 
     useEffect(() => {
-        if (question.submitted_answer != "" && !question.isfeedbackgenerated) {
+        if (!isFeedbackGenerated) {
             checkAnswer();
         }
-    }, [question]);
+    }, [isFeedbackGenerated]);
 
     useEffect(() => {
         const fetchQuestion = async () => {
-            const { data, error } = await supabase
-                .from('questions')
-                .select('*')
-                .eq('id', questionId)
-                .single();
+            let res;
+            if (isInterview)
+                res = await supabase
+                    .from('interview_questions')
+                    .select('*')
+                    .eq('id', questionId)
+                    .eq('interview_id', interviewId)
+                    .single();
+            else
+                res = await supabase
+                    .from('questions')
+                    .select('*')
+                    .eq('id', questionId)
+                    .single();
+
+            const { data, error } = res;
 
             if (error) {
                 toast({
@@ -66,8 +78,8 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion,
         fetchQuestion();
 
         const subscription = supabase
-            .channel('fetch_questions')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'questions' }, payload => {
+            .channel(isInterview ? "fetch_interview_questions" : "fetch_practice_questions")
+            .on('postgres_changes', { event: '*', schema: 'public', table: isInterview ? 'interview_questions' : 'questions' }, payload => {
                 fetchQuestion();
             })
             .subscribe()
@@ -110,13 +122,23 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion,
             generatingAnswer: false,
             submittingAnswer: true,
         })
-        const { data: answerData, error: answerError } = await supabase
-            .from('questions')
-            .update({
-                "submitted_answer": answer,
-                "isfeedbackgenerated": false,
-            })
-            .eq('id', questionId);
+        let fetchedData;
+        if (isInterview)
+            fetchedData = await supabase
+                .from("interview_questions")
+                .update({
+                    "submitted_answer": answer,
+                })
+                .eq('id', questionId)
+                .ep('interview_id', interviewId);
+        else
+            fetchedData = await supabase
+                .from('questions')
+                .update({
+                    "submitted_answer": answer,
+                })
+                .eq('id', questionId);
+        const { data: answerData, error: answerError } = fetchedData
 
         if (answerError) {
             toast({
@@ -124,6 +146,9 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion,
                 title: 'Error submitting answer. Please try again later.',
                 description: "Some error Occured!",
             })
+        }
+        else {
+            setIsFeedbackGenerated(false);
         }
         setLoading({
             generatingAnswer: false,
@@ -134,7 +159,7 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion,
     const checkAnswer = async () => {
         const fetchedData = await fetch("/api/checkanswer", {
             method: "POST",
-            body: JSON.stringify({ answer, jobId, questionId }),
+            body: JSON.stringify({ answer, jobId, questionId, isInterview, interviewId: isInterview ? interviewId : null }),
             headers: {
                 "Content-Type": "application/json"
             }
@@ -144,8 +169,11 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion,
             toast({
                 variant: "destructive",
                 title: 'Error Checking Answer.',
-                description: "Please refresh the page.",
+                description: res.error ?? "Please refresh the page.",
             })
+        }
+        else {
+            setIsFeedbackGenerated(true);
         }
     }
 
@@ -153,7 +181,7 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion,
         setRewriteLoading(true);
         const fetchedData = await fetch("/api/rewriteanswer", {
             method: "POST",
-            body: JSON.stringify({ answer, jobId, questionId, rewritePrompt }),
+            body: JSON.stringify({ answer, jobId, questionId, rewritePrompt, isInterview, interviewId: isInterview ? interviewId : null }),
             headers: {
                 "Content-Type": "application/json"
             }
@@ -177,10 +205,19 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion,
 
     const saveAnswer = async () => {
         setSaveLoading(true);
-        const { data, error } = await supabase
-            .from('questions')
-            .update({ saved_answer: rewrittenAnswer })
-            .eq('id', questionId)
+        let fetchedAnswerData;
+        if (isInterview)
+            fetchedAnswerData = await supabase
+                .from('interview_questions')
+                .update({ saved_answer: rewrittenAnswer })
+                .eq('id', questionId)
+                .eq('interview_id', interviewId)
+        else
+            fetchedAnswerData = await supabase
+                .from('questions')
+                .update({ saved_answer: rewrittenAnswer })
+                .eq('id', questionId)
+        const { data, error } = fetchedAnswerData;
         if (error) {
             toast({
                 variant: "destructive",
@@ -199,10 +236,10 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion,
     return (
         <MaxWidthWrapper className='flex flex-col items-center px-4 lg:px-20 py-16 w-full'>
             <span className='flex w-full justify-between'>
-                {isInterview ? <Button onClick={() => router.push(`/dashboard/${jobId}/questions`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>
+                {!isInterview ? <Button onClick={() => router.push(`/dashboard/${jobId}/questions`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>
                     :
                     <Button onClick={() => router.push(`/dashboard/${jobId}`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Back</Button>}
-                {isInterview ? <div className='ml-auto flex space-x-6 justify-between'>
+                {!isInterview ? <div className='ml-auto flex space-x-6 justify-between'>
                     {prevQuestion && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${prevQuestion.id}`)} variant="outline" className='rounded-full mr-auto flex items-center bg-muted shadow-md'><ArrowLeft className="mr-2" />{" "}Previous Question</Button>}
                     {nextQuestion && <Button onClick={() => router.push(`/dashboard/${jobId}/questions/${nextQuestion.id}`)} variant="outline" className='rounded-full ml-auto flex items-center bg-muted shadow-md'>Next Question{" "}<ArrowRight className="mr-2" /></Button>}
                 </div>
@@ -221,8 +258,8 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion,
                         </div>
                         <div className='flex flex-col space-y-2'>
                             <h2 className='text-xl font-semibold'>Your Answer:</h2>
-                            {!isInterview ? <Textarea value={answer} onChange={(e: any) => setAnswer(e.target.value)} id='answer' className='p-2 border border-gray-400 rounded-md min-h-[100px]' /> : <span id='answer' className='p-2 border border-gray-400 rounded-md min-h-[100px]'>{answer}</span>}
-                            <span className='flex space-x-2 mt-2'>
+                            {!isInterview ? <Textarea value={answer} onChange={(e: any) => setAnswer(e.target.value)} id='answer' className='p-2 border border-gray-400 rounded-md min-h-[100px]' /> : <span id='answer' className='p-2 border bg-background border-gray-400 rounded-md min-h-[100px]'>{answer}</span>}
+                            {!isInterview && <span className='flex space-x-2 mt-2'>
                                 <Button disabled={loading.generatingAnswer || loading.submittingAnswer} onClick={generateAnswer} className='rounded-full'>
                                     {!loading.generatingAnswer ? <>
                                         <img src="/logo-black.png" className="mr-2 h-5 w-5 hidden dark:block" />
@@ -232,7 +269,7 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion,
                                         :
                                         <Loader2 className="h-5 w-5 animate-spin mx-4" />}</Button>
                                 <Button onClick={submitAnswer} disabled={loading.generatingAnswer || loading.submittingAnswer} className='rounded-full'>{loading.submittingAnswer ? <Loader2 className="h-5 w-5 animate-spin mx-3" /> : "Submit"}</Button>
-                            </span>
+                            </span>}
                         </div>
                     </div>
                     <Tabs defaultValue="rewrite" className="">
@@ -255,7 +292,7 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion,
                                         <Button disabled={rewriteLoading} onClick={rewriteAnswer} className='rounded-full'>{rewriteLoading ? <Loader2 className="h-5 w-5 animate-spin mx-4" /> : "Rewrite"}</Button>
                                     </div>
                                     <div className='flex space-x-2'>
-                                        <Button disabled={rewriteLoading} onClick={() => changePromptAndRewrite("Make it more concise")} variant="outline" className='rounded-full'>Make it more concise</Button>
+                                        <Button disabled={rewriteLoading} onClick={() => changePromptAndRewrite("Write a better answer")} variant="outline" className='rounded-full'>Write a better answer</Button>
                                         <Button disabled={rewriteLoading} onClick={() => changePromptAndRewrite("Make it sound smarter")} variant="outline" className='rounded-full'>Make it sound smarter</Button>
                                     </div>
                                     {rewrittenAnswer != "" && <>
@@ -292,8 +329,9 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion,
                             <CardTitle>Strengths</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            {question.submitted_answer != "" ? <div className="bg-background rounded-md text-sm p-4 overflow-y-scroll max-h-[250px]">
-                                {!question.isfeedbackgenerated ? "Generating Your Feedback." : question.strengths}
+                            {question.submitted_answer != "" ? <div className={`bg-background rounded-md text-sm p-4 overflow-y-scroll max-h-[250px] ${!isFeedbackGenerated && "flex"}`}>
+                                {!isFeedbackGenerated ? "Generating Your Feedback" : question.strengths}
+                                {!isFeedbackGenerated && <Loader2 className='h-5 w-5 animate-spin ml-2' />}
                             </div>
                                 :
                                 <div className="bg-background rounded-md font-semibold text-sm p-4 text-center overflow-y-scroll max-h-[250px]">
@@ -306,8 +344,9 @@ const Question = ({ jobId, questionId, questionData, prevQuestion, nextQuestion,
                             <CardTitle>How To Improve</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            {question.submitted_answer != "" ? <div className="bg-background rounded-md text-sm p-4 overflow-y-scroll max-h-[250px]">
-                                {!question.isfeedbackgenerated ? "Generating Your Feedback..." : question.suggestions}
+                            {question.submitted_answer != "" ? <div className={`bg-background rounded-md text-sm p-4 overflow-y-scroll max-h-[250px] ${!isFeedbackGenerated && "flex"}`}>
+                                {!isFeedbackGenerated ? "Generating Your Feedback" : question.suggestions}
+                                {!isFeedbackGenerated && <Loader2 className='h-5 w-5 animate-spin ml-2' />}
                             </div>
                                 :
                                 <div className="bg-background rounded-md font-semibold text-sm p-4 text-center overflow-y-scroll max-h-[250px]">

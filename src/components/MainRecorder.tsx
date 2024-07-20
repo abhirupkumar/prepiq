@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Clock } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock } from 'lucide-react';
 import { useToast } from './ui/use-toast';
 
 interface MainRecorderProps {
@@ -93,13 +93,9 @@ export default function MainRecorder({ isSpeaking, setIsSpeaking, jobId, questio
     };
 
     return (
-        <div className='h-full'>
+        <div className='h-full overflow-y-auto'>
             <div className="mb-4">
-                <div className='flex flex-wrap items-center mb-2'>
-                    {[1, 2, 3, 4, 5].map((question: number, index: number) => <div key={index} className={`flex mx-3 my-1 px-3 py-1 rounded-full ${currIndex == index ? "bg-blue-200 text-black" : "bg-background text-primary"}`}>
-                        <h2 className="text-lg font-bold">Question {index + 1}</h2>
-                    </div>)}
-                </div>
+                <h2 className="text-xl font-bold mb-2">Question {currIndex + 1}</h2>
                 <p>{question.question}</p>
             </div>
             <div className="flex flex-col justify-between h-full">
