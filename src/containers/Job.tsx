@@ -46,7 +46,7 @@ const Job = ({ jobId, jobData, interviewData }: { jobId: string, jobData: any, i
 
     return (
         <MaxWidthWrapper className='px-4 md:px-16 lg:px-32 py-16'>
-            <Button onClick={() => router.back()} variant="outline" className='rounded-full bg-muted shadow-md flex items-center'><ArrowLeft className="mr-2" />{" "}Back</Button>
+            <Button onClick={() => router.push('/dashboard')} variant="outline" className='rounded-full bg-muted shadow-md flex items-center'><ArrowLeft className="mr-2" />{" "}Back</Button>
             <h1 className='text-4xl font-bold my-4'>{job?.title}{job?.company_name ? " - " + job?.company_name : ""}</h1>
             <UploadResume jobId={jobId} resume_name={job?.resume_name} />
             <InterviewQuestions jobId={jobId} />

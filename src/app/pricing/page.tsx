@@ -1,9 +1,13 @@
 import Pricing from '@/containers/Pricing';
+import { getCurrentUser } from '@/lib/auth-actions';
 import React from 'react'
 
-const Page = () => {
+const Page = async () => {
+
+    const { user, isAuth } = await getCurrentUser();
+
     return (
-        <Pricing />
+        <Pricing isAuth={isAuth} user={user} />
     )
 }
 

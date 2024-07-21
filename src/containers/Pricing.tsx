@@ -1,10 +1,28 @@
 "use client";
 
+import { Button } from '@/components/ui/button';
+import { PLANS } from '@/config/lemonsqueezy';
+import { getCheckoutURL } from '@/lib/getCheckoutUrl';
+import { pricingItems } from '@/lib/leomonsqueezy';
 import { CheckIcon } from 'lucide-react';
-import Link from 'next/link';
-import React from 'react'
+import { useRouter } from 'next/navigation';
+import React from 'react';
 
-const Pricing = () => {
+const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
+
+    const router = useRouter();
+
+    const handleClick = async (text: string) => {
+        if (!isAuth) {
+            router.push("/sign-in");
+        }
+        else {
+            const plan = PLANS.find((p) => p.name === text)!;
+            const checkoutUrl = await getCheckoutURL(plan.variantId);
+            router.push(checkoutUrl ?? '/');
+        }
+    }
+
     return (
         <section id="pricing" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
             <div className="container px-4 md:px-6">
@@ -17,154 +35,23 @@ const Pricing = () => {
                     </div>
                 </div>
                 <div className="mx-auto grid max-w-7xl items-center gap-4 py-12 lg:grid-cols-4 lg:gap-10">
-                    <div className="flex flex-col justify-between rounded-lg bg-background p-6 shadow-lg">
+                    {pricingItems.map((item, index) => <div key={index} className="flex flex-col justify-between rounded-lg bg-background p-6 shadow-lg">
                         <div className="space-y-4">
-                            <h3 className="text-2xl font-bold">Free Plan</h3>
+                            <h3 className="text-2xl font-bold">{item.name}</h3>
                             <p className="text-4xl font-bold">
-                                $0
+                                ${item.price}
                             </p>
                             <ul className="space-y-2 text-muted-foreground">
-                                <li>
+                                {item.features.map((feature, index2) => <li key={index2}>
                                     <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    5 Credits
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Each Interviews costs 4 credits
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Every 10 Questions costs 1 credit.
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Generate Answers with AI
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    AI-Powered Feedback and Guidance
-                                </li>
+                                    {feature}
+                                </li>)}
                             </ul>
                         </div>
-                        <Link
-                            href="/sign-in"
-                            className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                            prefetch={false}
-                        >
+                        <Button onClick={() => handleClick(item.name)} disabled={item.name == "Free" && isAuth} className="my-1">
                             Try Now
-                        </Link>
-                    </div>
-                    <div className="flex flex-col justify-between rounded-lg bg-background p-6 shadow-lg">
-                        <div className="space-y-4">
-                            <h3 className="text-2xl font-bold">Lite Plan</h3>
-                            <p className="text-4xl font-bold">
-                                $4.99
-                            </p>
-                            <ul className="space-y-2 text-muted-foreground">
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    10 Credits
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Each Interviews costs 4 credits
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Every 10 Questions costs 1 credit.
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Generate Answers with AI
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    AI-Powered Feedback and Guidance
-                                </li>
-                            </ul>
-                        </div>
-                        <Link
-                            href="/sign-in"
-                            className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                            prefetch={false}
-                        >
-                            Try Now
-                        </Link>
-                    </div>
-                    <div className="flex flex-col justify-between rounded-lg bg-background p-6 shadow-lg">
-                        <div className="space-y-4">
-                            <h3 className="text-2xl font-bold">Plus Plan</h3>
-                            <p className="text-4xl font-bold">
-                                $7.99
-                            </p>
-                            <ul className="space-y-2 text-muted-foreground">
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    25 Credits
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Each Interviews costs 4 credits
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Every 10 Questions costs 1 credit.
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Generate Answers with AI
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    AI-Powered Feedback and Guidance
-                                </li>
-                            </ul>
-                        </div>
-                        <Link
-                            href="/sign-in"
-                            className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                            prefetch={false}
-                        >
-                            Try Now
-                        </Link>
-                    </div>
-                    <div className="flex flex-col justify-between rounded-lg bg-background p-6 shadow-lg">
-                        <div className="space-y-4">
-                            <h3 className="text-2xl font-bold">Pro Plan</h3>
-                            <p className="text-4xl font-bold">
-                                $13.99
-                            </p>
-                            <ul className="space-y-2 text-muted-foreground">
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    50 Credits
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Each Interviews costs 4 credits
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Every 10 Questions costs 1 credit.
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    Generate Answers with AI
-                                </li>
-                                <li>
-                                    <CheckIcon className="mr-2 inline-block h-4 w-4" />
-                                    AI-Powered Feedback and Guidance
-                                </li>
-                            </ul>
-                        </div>
-                        <Link
-                            href="/sign-in"
-                            className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                            prefetch={false}
-                        >
-                            Try Now
-                        </Link>
-                    </div>
+                        </Button>
+                    </div>)}
                     <div className="flex flex-col justify" />
                 </div>
             </div>

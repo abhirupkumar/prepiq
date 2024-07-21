@@ -83,7 +83,6 @@ const Dashboard = ({ user }: {
           Custom Jobs
         </h1>
         {!loading && <Link href="/create-job" className={cn(buttonVariants(), "rounded-full")}>Create a New Job</Link>}
-        {/* <Button onClick={handleClick}>Create a New Job</Button> */}
       </div>
 
       {jobs && jobs?.length !== 0 ? (
