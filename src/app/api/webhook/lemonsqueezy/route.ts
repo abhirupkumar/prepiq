@@ -30,14 +30,16 @@ export async function POST(request: NextRequest) {
             if (obj['store_id'] != process.env.LEMONSQUEEZY_STORE_ID) {
                 return NextResponse.json({ error: "Invalid store id." }, { status: 500 });
             }
-            const order = obj['first_order_item'];
-            const plan = PLANS.find((p) => p.priceId === order['product_id']);
+            const plan = PLANS.find((p) => p.priceId === obj['variant_id ']);
             if (plan == undefined || plan == null) {
                 return NextResponse.json({ error: "Invalid product id." }, { status: 500 });
             }
-
+            const userId = data["meta"]["custom_data"]["user_id"];
+            if (!userId) {
+                return NextResponse.json({ error: "No User Found." }, { status: 500 });
+            }
             // increment_profile_credit is a function created in SQL Editor
-            await supabase.rpc('increment_profile_credit', { credit: plan.credits, profile_id: "" })
+            await supabase.rpc('increment_profile_credit', { credit: plan.credits, profile_id: userId })
         }
 
         return new Response('OK', { status: 200 })
