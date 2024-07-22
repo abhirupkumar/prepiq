@@ -11,8 +11,10 @@ export async function getCheckoutURL(variantId: number) {
         throw new Error('User is not authenticated.');
     }
 
+    const storeId = process.env.LEMONSQUEEZY_STORE_ID!;
+
     const checkout = await createCheckout(
-        process.env.LEMONSQUEEZY_STORE_ID!,
+        storeId,
         variantId,
         {
             checkoutOptions: {

@@ -6,20 +6,23 @@ import { getCheckoutURL } from '@/lib/getCheckoutUrl';
 import { pricingItems } from '@/lib/leomonsqueezy';
 import { CheckIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useState } from 'react';
 
 const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
 
     const router = useRouter();
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleClick = async (text: string) => {
         if (!isAuth) {
             router.push("/sign-in");
         }
         else {
+            setLoading(true);
             const plan = PLANS.find((p) => p.name === text)!;
             const checkoutUrl = await getCheckoutURL(plan.variantId);
             router.push(checkoutUrl ?? '/');
+            setLoading(false);
         }
     }
 
@@ -48,8 +51,8 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
                                 </li>)}
                             </ul>
                         </div>
-                        <Button onClick={() => handleClick(item.name)} disabled={item.name == "Free" && isAuth} className="my-1">
-                            Try Now
+                        <Button onClick={() => handleClick(item.name)} disabled={loading || (item.name == "Free" && isAuth)} className="my-1">
+                            {loading ? "Loading..." : "Try Now"}
                         </Button>
                     </div>)}
                     <div className="flex flex-col justify" />
