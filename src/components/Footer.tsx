@@ -47,7 +47,7 @@ const Footer = () => {
                     <Link className="text-sm text-primary" href="/contact">Contact Us</Link>
                   </li>
                   <li>
-                    <Link className="text-sm text-primary" href="/refund">Cancellation & Refund Policy</Link>
+                    <Link className="text-sm text-primary" href="/cancellationandrefund">Cancellation & Refund Policy</Link>
                   </li>
                 </ul>
               </div>
@@ -55,10 +55,10 @@ const Footer = () => {
                 <h3 className="font-bold text-primary">Legal</h3>
                 <ul role="list" className="mt-4 space-y-4">
                   <li>
-                    <Link className="text-sm text-primary" href="/privacy">Privacy Commitment</Link>
+                    <Link className="text-sm text-primary" href="/privacypolicy">Privacy Commitment</Link>
                   </li>
                   <li>
-                    <Link className="text-sm text-primary" href="/terms">Terms & Condition</Link>
+                    <Link className="text-sm text-primary" href="/termsandcondition">Terms & Condition</Link>
                   </li>
                 </ul>
               </div>
