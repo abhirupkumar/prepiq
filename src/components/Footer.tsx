@@ -46,9 +46,6 @@ const Footer = () => {
                   <li>
                     <Link className="text-sm text-primary" href="/contact">Contact Us</Link>
                   </li>
-                  <li>
-                    <Link className="text-sm text-primary" href="/cancellationandrefund">Cancellation & Refund Policy</Link>
-                  </li>
                 </ul>
               </div>
               <div className="mt-10 md:mt-0">
