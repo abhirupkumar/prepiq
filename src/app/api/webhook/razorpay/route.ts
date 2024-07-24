@@ -1,0 +1,39 @@
+// app/api/webhook/route.js
+import { createClient } from '@/utils/supabase/server';
+import crypto from 'crypto';
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(request: NextRequest) {
+    const secret = process.env.RAZORPAY_WEBHOOK_SECRET!;
+
+    const body = await request.json();
+    const shasum = crypto.createHmac('sha256', secret);
+    shasum.update(JSON.stringify(body));
+    const digest = shasum.digest('hex');
+
+    if (digest === request.headers.get('x-razorpay-signature')) {
+        const { payload } = body;
+        const { payment } = payload;
+        const { order_id, status, notes } = payment.entity;
+
+        if (status === 'captured') {
+            const userId = notes.userId;
+            const plan = notes.plan;
+
+            const supabase = createClient();
+            const { error } = await supabase.rpc('increment_profile_credit', { credit: plan.credits, profile_id: userId });
+
+            if (error) {
+                return NextResponse.json({ error: error.message }, { status: 500 });
+            } else {
+                return NextResponse.json({ success: true }, { status: 200 });
+            }
+        } else {
+            return NextResponse.json({ error: 'Payment not captured' }, { status: 400 });
+        }
+    } else {
+        return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+    }
+}
+
+export const GET = () => NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
