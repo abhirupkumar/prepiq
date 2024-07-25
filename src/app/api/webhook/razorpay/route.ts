@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
             const { payload } = body;
             const { payment } = payload;
             const { order_id, status, notes } = payment.entity;
-
+            console.log('payload');
             if (status === 'captured') {
                 const userId = notes.userId;
                 const plan = notes.plan;
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
                 if (error) {
                     return NextResponse.json({ success: false, error: error.message }, { status: 407 });
                 } else {
-                    return NextResponse.json({ success: true }, { status: 200 });
+                    return NextResponse.json({ success: true, payload }, { status: 200 });
                 }
             } else {
                 return NextResponse.json({ success: false, error: 'Payment not captured' }, { status: 400 });
