@@ -23,6 +23,7 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
         else {
             if (text === "Free") {
                 router.push("/dashboard");
+                return;
             }
             const plan = PLANS.find((p) => p.name === text);
             // const checkoutUrl = await getCheckoutURL(plan.variantId);
