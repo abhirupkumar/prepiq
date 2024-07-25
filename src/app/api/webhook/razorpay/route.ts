@@ -1,4 +1,3 @@
-// app/api/webhook/route.js
 import { createClient } from '@/utils/supabase/server';
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
@@ -24,12 +23,15 @@ export async function POST(request: NextRequest) {
                 const { error: error1 } = await supabase.from('orders').insert({ order_id: id, profile_id: userId, payload });
                 if (error1) return NextResponse.json({ success: false, error: error1.message }, { status: 405 });
                 const { data, error } = await supabase
-                    .rpc('increment_profile_credit', {
-                        credit: plan.credits,
-                        profile_id: userId,
-                    });
-                console.log(data);
-                if (error) {
+                    .from('profiles')
+                    .select('credits')
+                    .eq('id', userId)
+                    .single();
+                const { error: creditError } = await supabase
+                    .from('profiles')
+                    .update({ credits: data.credits + plan.credits })
+                    .eq('id', userId);
+                if (error || creditError) {
                     return NextResponse.json({ success: false, error: error.message }, { status: 407 });
                 } else {
                     return NextResponse.json({ success: true }, { status: 200 });
