@@ -7,7 +7,7 @@ const InterviewQuestions = ({ jobId }: { jobId: string }) => {
     return (
         <div className='flex flex-col mt-10 space-y-4'>
             <h2 className='text-3xl font-semibold'>
-                Interview Questions:
+                Practice Questions:
             </h2>
             <Separator className='!mt-1' />
             <Link href={`/dashboard/${jobId}/questions`} className='flex items-center text-semibold text-xl bg-muted px-6 py-4 rounded-md border w-80 text-start'>

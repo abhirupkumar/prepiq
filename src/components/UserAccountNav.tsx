@@ -18,12 +18,14 @@ interface UserAccountNavProps {
     email: string | undefined
     name: string
     imageUrl: string
+    credits: number
 }
 
 const UserAccountNav = async ({
     email,
     imageUrl,
     name,
+    credits
 }: UserAccountNavProps) => {
 
     return (
@@ -75,9 +77,9 @@ const UserAccountNav = async ({
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
-                    <Link href='/dashboard/billing' className="cursor-pointer">
-                        Billing
-                    </Link>
+                    <span className="">
+                        {credits} Credits Left
+                    </span>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />

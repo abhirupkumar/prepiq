@@ -68,6 +68,7 @@ const Navbar = async () => {
                                         }
                                         email={user?.email ?? ''}
                                         imageUrl={user?.avatar_url ?? ''}
+                                        credits={user?.credits ?? 0}
                                     />
                                 </>
                             )}

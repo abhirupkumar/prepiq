@@ -64,25 +64,16 @@ const Dashboard = ({ user }: {
     return strTime;
   }
 
-  const handleClick = async () => {
-    const fetchData = await fetch("/api/generatequestions", {
-      method: "POST",
-      body: JSON.stringify({ noOfQuestions: 10, jobId: jobs[0].id }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const res = await fetchData.json();
-    console.log(res);
-  }
-
   return (
     <MaxWidthWrapper className='md:p-10 p-4'>
       <div className='mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:gap-0'>
         <h1 className='font-bold text-4xl text-primary'>
-          Custom Jobs
+          Dashboard
         </h1>
-        {!loading && <Link href="/create-job" className={cn(buttonVariants(), "rounded-full")}>Create a New Job</Link>}
+        <div className='flex justify-between items-center'>
+          <p className='text-xl mr-6'>Credits Left: {user?.credits}</p>
+          {!loading && <Link href="/create-job" className={cn(buttonVariants(), "rounded-full")}>Create a New Job</Link>}
+        </div>
       </div>
 
       {jobs && jobs?.length !== 0 ? (

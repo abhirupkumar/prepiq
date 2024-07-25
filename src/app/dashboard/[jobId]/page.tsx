@@ -31,7 +31,7 @@ const Page = async ({ params }: PageProps) => {
 
     return (
         <>
-            {data && <Job jobId={jobId} jobData={data} interviewData={interviewData} />}
+            {data && <Job user={user} jobId={jobId} jobData={data} interviewData={interviewData} />}
         </>
     )
 }
