@@ -16,7 +16,6 @@ export async function POST(request: NextRequest) {
             const { payload } = body;
             const { order, payment } = payload;
             const { order_id, status, notes } = payment.entity;
-            console.log('payload');
             if (order.entity.status == 'paid') {
                 const userId = notes.userId;
                 const plan = notes.plan;
@@ -25,10 +24,11 @@ export async function POST(request: NextRequest) {
                 const { error: error1 } = await supabase.from('orders').insert({ order_id: order_id, profile_id: userId, payload });
                 if (error1) return NextResponse.json({ success: false, error: error1.message }, { status: 405 });
                 const { data, error } = await supabase.rpc('increment_profile_credit', { credit: plan.credits, profile_id: userId });
+                console.log(data);
                 if (error) {
                     return NextResponse.json({ success: false, error: error.message }, { status: 407 });
                 } else {
-                    return NextResponse.json({ success: true, data: data }, { status: 200 });
+                    return NextResponse.json({ success: true }, { status: 200 });
                 }
             } else {
                 return NextResponse.json({ success: false, error: 'Payment not captured' }, { status: 400 });
