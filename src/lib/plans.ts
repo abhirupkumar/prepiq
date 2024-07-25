@@ -12,7 +12,7 @@ export const pricingItems = [
     },
     {
         name: 'Lite',
-        price: 4.99,
+        price: 399,
         features: [
             "10 Credits",
             "Each Interviews costs 4 credits",
@@ -23,7 +23,7 @@ export const pricingItems = [
     },
     {
         name: 'Plus',
-        price: 7.99,
+        price: 699,
         features: [
             "25 Credits",
             "Each Interviews costs 4 credits",
@@ -34,7 +34,7 @@ export const pricingItems = [
     },
     {
         name: 'Pro',
-        price: 13.99,
+        price: 1199,
         features: [
             "50 Credits",
             "Each Interviews costs 4 credits",

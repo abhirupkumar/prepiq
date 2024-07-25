@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { PLANS } from '@/config/plans';
 import { getCheckoutURL } from '@/lib/getCheckoutUrl';
-import { pricingItems } from '@/lib/leomonsqueezy';
+import { pricingItems } from '@/lib/plans';
 import { CheckIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
@@ -132,7 +132,7 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
                             <div className="space-y-4">
                                 <h3 className="text-2xl font-bold">{item.name}</h3>
                                 <p className="text-4xl font-bold">
-                                    ${item.price}
+                                    ₹{item.price}
                                 </p>
                                 <ul className="space-y-2 text-muted-foreground">
                                     {item.features.map((feature, index2) => <li key={index2}>
