@@ -53,9 +53,8 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
             });
 
             const data = await res.json();
-            const key = process.env.RAZORPAY_KEY_ID!;
             const options = {
-                key: key,
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
                 amount: plan.price * 100,
                 currency: 'INR',
                 name: 'PrepiQ',
