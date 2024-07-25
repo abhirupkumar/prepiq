@@ -22,8 +22,9 @@ export async function POST(request: NextRequest) {
                 const plan = notes.plan;
 
                 const supabase = createClient();
+                const { error: error1 } = await supabase.from('orders').insert({ order_id: order_id, profile_id: userId, payload });
+                if (error1) return NextResponse.json({ success: false, error: error1.message }, { status: 405 });
                 const { error } = await supabase.rpc('increment_profile_credit', { credit: plan.credits, profile_id: userId });
-
                 if (error) {
                     return NextResponse.json({ success: false, error: error.message }, { status: 407 });
                 } else {
