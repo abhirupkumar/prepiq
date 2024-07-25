@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
                 const plan = notes.plan;
 
                 const supabase = adminClient();
-                const { error: error1 } = await supabase.from('orders').insert({ order_id: id, profile_id: userId, payload });
+                const { error: error1 } = await supabase.from('orders').insert({ order_id: id, profile_id: userId, payload, plan_name: plan.name });
                 if (error1) return NextResponse.json({ success: false, error: error1.message }, { status: 405 });
                 const { data, error } = await supabase
                     .from('profiles')

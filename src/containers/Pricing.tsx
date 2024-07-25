@@ -14,6 +14,7 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
 
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(false);
+    const [selectedPlan, setSelectedPlan] = useState<string>("");
     const { toast } = useToast();
 
     const handleClick = async (text: string) => {
@@ -25,6 +26,7 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
                 router.push("/dashboard");
                 return;
             }
+            setSelectedPlan(text);
             const plan = PLANS.find((p) => p.name === text);
             // const checkoutUrl = await getCheckoutURL(plan.variantId);
             // router.push(checkoutUrl ?? '/');
@@ -81,6 +83,7 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
                             title: "Payment Successful!",
                             description: `You have successfully purchased the ${plan.name} pack.`,
                         })
+                        router.refresh();
                     } else {
                         toast({
                             variant: "destructive",
@@ -105,6 +108,7 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
             })
         } finally {
             setLoading(false);
+            setSelectedPlan("");
         }
     };
 
@@ -139,10 +143,9 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
                                 </ul>
                             </div>
                             <Button onClick={() => handleClick(item.name)} disabled={loading} className="my-1">
-                                {loading ? "Loading..." : "Try Now"}
+                                {selectedPlan == item.name ? "Loading..." : "Try Now"}
                             </Button>
                         </div>)}
-                        <div className="flex flex-col justify" />
                     </div>
                 </div>
             </section>
