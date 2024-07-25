@@ -14,21 +14,21 @@ export async function POST(request: NextRequest) {
 
         if (digest === request.headers.get('x-razorpay-signature')) {
             const { payload } = body;
-            const { payment } = payload;
+            const { order, payment } = payload;
             const { order_id, status, notes } = payment.entity;
             console.log('payload');
-            if (status === 'captured') {
+            if (order.entity.status == 'paid') {
                 const userId = notes.userId;
                 const plan = notes.plan;
 
                 const supabase = createClient();
                 const { error: error1 } = await supabase.from('orders').insert({ order_id: order_id, profile_id: userId, payload });
                 if (error1) return NextResponse.json({ success: false, error: error1.message }, { status: 405 });
-                const { error } = await supabase.rpc('increment_profile_credit', { credit: plan.credits, profile_id: userId });
+                const { data, error } = await supabase.rpc('increment_profile_credit', { credit: plan.credits, profile_id: userId });
                 if (error) {
                     return NextResponse.json({ success: false, error: error.message }, { status: 407 });
                 } else {
-                    return NextResponse.json({ success: true, payload }, { status: 200 });
+                    return NextResponse.json({ success: true, data: data }, { status: 200 });
                 }
             } else {
                 return NextResponse.json({ success: false, error: 'Payment not captured' }, { status: 400 });
