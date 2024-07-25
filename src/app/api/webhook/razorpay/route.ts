@@ -15,13 +15,13 @@ export async function POST(request: NextRequest) {
         if (digest === request.headers.get('x-razorpay-signature')) {
             const { payload } = body;
             const { order, payment } = payload;
-            const { order_id, status, notes } = payment.entity;
-            if (order.entity.status == 'paid') {
+            const { id, status, notes } = order.entity;
+            if (status == 'paid') {
                 const userId = notes.userId;
                 const plan = notes.plan;
 
                 const supabase = createClient();
-                const { error: error1 } = await supabase.from('orders').insert({ order_id: order_id, profile_id: userId, payload });
+                const { error: error1 } = await supabase.from('orders').insert({ order_id: id, profile_id: userId, payload });
                 if (error1) return NextResponse.json({ success: false, error: error1.message }, { status: 405 });
                 const { data, error } = await supabase.rpc('increment_profile_credit', { credit: plan.credits, profile_id: userId });
                 console.log(data);
