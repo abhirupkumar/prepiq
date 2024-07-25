@@ -109,7 +109,7 @@ export default function HomePage({ isAuth, user }: { isAuth: boolean, user: any 
                         </div>
                     </div>
                     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16 items-center">
-                        <div>
+                        <div className="-order-1">
                             <img src="/questions.png" alt="Practice your answers" className="w-full h-auto rounded-lg" />
                         </div>
                         <div className="space-y-4">
