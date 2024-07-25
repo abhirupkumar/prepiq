@@ -62,6 +62,7 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
                 order_id: data.orderId,
                 image: "/thumbnail.jpg",
                 handler: async function (response: any) {
+                    console.log(response);
                     const verifyRes = await fetch('/api/verify-payment', {
                         method: 'POST',
                         headers: {

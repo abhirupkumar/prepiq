@@ -9,10 +9,12 @@ export async function POST(request: NextRequest) {
         key_secret: process.env.RAZORPAY_KEY_SECRET!,
     });
 
+    const payment_capture = 1;
     const options = {
         amount: plan.price * 100,
         currency: 'INR',
         receipt: `receipt_${plan.name}_${Date.now()}`,
+        payment_capture,
     };
 
     try {
