@@ -1,3 +1,4 @@
+import { adminClient } from '@/utils/supabase/admin';
 import { createClient } from '@/utils/supabase/server';
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
                 const userId = notes.userId;
                 const plan = notes.plan;
 
-                const supabase = createClient();
+                const supabase = adminClient();
                 const { error: error1 } = await supabase.from('orders').insert({ order_id: id, profile_id: userId, payload });
                 if (error1) return NextResponse.json({ success: false, error: error1.message }, { status: 405 });
                 const { data, error } = await supabase
