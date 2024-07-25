@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
 
 export async function POST(request: NextRequest) {
-    const { userId, plan } = await request.json();
+    const { plan, receipt } = await request.json();
 
     const razorpay = new Razorpay({
         key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
@@ -11,9 +11,9 @@ export async function POST(request: NextRequest) {
 
     const payment_capture = 1;
     const options = {
-        amount: plan.price * 100,
+        amount: (plan.price * 100).toString(),
         currency: 'INR',
-        receipt: `receipt_${plan.name}_${Date.now()}`,
+        receipt: receipt,
         payment_capture,
     };
 
@@ -21,6 +21,8 @@ export async function POST(request: NextRequest) {
         const order = await razorpay.orders.create(options);
         return NextResponse.json({ orderId: order.id }, { status: 200 });
     } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.log(error);
+        console.log(error.error.description);
+        return NextResponse.json({ error: error.error.description }, { status: 500 });
     }
 }

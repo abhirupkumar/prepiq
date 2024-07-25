@@ -49,7 +49,7 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userId: user.id, plan }),
+                body: JSON.stringify({ plan, receipt: `receipt_${plan.name}_${Date.now()}` }),
             });
 
             const data = await res.json();
