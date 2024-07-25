@@ -49,7 +49,7 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ plan, receipt: `receipt_${plan.name}_${Date.now()}` }),
+                body: JSON.stringify({ userId: user?.id, plan, receipt: `receipt_${plan.name}_${Date.now()}` }),
             });
 
             const data = await res.json();
@@ -92,10 +92,6 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
                 prefill: {
                     name: user?.full_name ?? "User",
                     email: user?.email ?? 'Email',
-                },
-                notes: {
-                    userId: user.id,
-                    plan: plan,
                 },
             };
 

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
 
 export async function POST(request: NextRequest) {
-    const { plan, receipt } = await request.json();
+    const { userId, plan, receipt } = await request.json();
 
     const razorpay = new Razorpay({
         key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
@@ -15,6 +15,10 @@ export async function POST(request: NextRequest) {
         currency: 'INR',
         receipt: receipt,
         payment_capture,
+        notes: {
+            userId,
+            plan,
+        }
     };
 
     try {
