@@ -21,7 +21,9 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
             router.push("/sign-in");
         }
         else {
-            setLoading(true);
+            if (text === "Free") {
+                router.push("/dashboard");
+            }
             const plan = PLANS.find((p) => p.name === text);
             // const checkoutUrl = await getCheckoutURL(plan.variantId);
             // router.push(checkoutUrl ?? '/');
@@ -35,7 +37,6 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
             else {
                 handlePayment(plan);
             }
-            setLoading(false);
         }
     }
 
@@ -140,7 +141,7 @@ const Pricing = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
                                     </li>)}
                                 </ul>
                             </div>
-                            <Button onClick={() => handleClick(item.name)} disabled={loading || (item.name == "Free" && isAuth)} className="my-1">
+                            <Button onClick={() => handleClick(item.name)} disabled={loading} className="my-1">
                                 {loading ? "Loading..." : "Try Now"}
                             </Button>
                         </div>)}
