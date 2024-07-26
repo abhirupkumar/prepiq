@@ -7,7 +7,7 @@ export default function TermsAndConditions() {
                 <h1 className="text-3xl font-bold mb-4">Terms & Conditions</h1>
                 <p className="text-gray-400">Last updated on Jul 23rd 2024</p>
                 <p className="mt-4">
-                    For the purpose of these Terms and Conditions, The term "we", "us", "our" used anywhere on this page shall mean PrepiQ, whose registered/operational office is Ganganagar, Madhyamgram, Kolkata - 700132 North Parganas WEST BENGAL 700132. "you", "your", "user", "visitor" shall mean any natural or legal person who is visiting our website and/or agreed to purchase from us.
+                    For the purpose of these Terms and Conditions, The term &quot;we&quot;, &quot;us&quot;, &quot;our&quot; used anywhere on this page shall mean PrepiQ, whose registered/operational office is Ganganagar, Madhyamgram, Kolkata - 700132 North Parganas WEST BENGAL 700132. &quot;you&quot;, &quot;your&quot;, &quot;user&quot;, &quot;visitor&quot; shall mean any natural or legal person who is visiting our website and/or agreed to purchase from us.
                 </p>
                 <h2 className="text-2xl font-bold mt-6">Your use of the website and/or purchase from us are governed by following Terms and Conditions:</h2>
                 <ul className="list-disc list-inside mt-4">
