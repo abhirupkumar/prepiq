@@ -119,6 +119,7 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
     const nextQuestion = async () => {
         if (currentQuestionIndex < questions.length - 1) {
             setLoading(true);
+            setOpenModal(false);
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setIsSpeaking(true);
             setLoading(false);
