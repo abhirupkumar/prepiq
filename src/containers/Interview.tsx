@@ -9,6 +9,8 @@ import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 import { browserClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import SendingDataModal from '@/components/SendingDataModal';
+import axios from 'axios';
+import { AssemblyAI } from 'assemblyai';
 
 export default function Interview({ jobId, interviewId, questionsData }: { jobId: string, interviewId: string, questionsData: any[] }) {
 
@@ -32,6 +34,9 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
     const [startTranscribe, setStartTranscribe] = useState(false);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const client = new AssemblyAI({
+        apiKey: process.env.ASSEMBLYAI_API_KEY!
+    })
 
     const enableAudioAndCamera = async () => {
         try {
@@ -118,6 +123,19 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
 
     const nextQuestion = async () => {
         setLoading(true);
+        const headers = {
+            authorization: process.env.ASSEMBLYAI_API_KEY!
+        }
+        const uploadResponse = await axios.post(`https://api.assemblyai.com/v2/upload`, audioData.audioBlob, {
+            headers
+        })
+        const uploadUrl = uploadResponse.data.upload_url
+        client.transcripts.submit({
+            audio: uploadUrl,
+            webhook_url: `${process.env.NEXT_PUBLIC_HOST}/webhook/speechtotext?interview_id=${interviewId}&question_id=${audioData.questionId}`,
+            webhook_auth_header_name: "Prepiq-Assembly-Webhook-Secret",
+            webhook_auth_header_value: process.env.ASSEMBLYAI_WEBHOOK_SECRET!
+        })
         if (currentQuestionIndex < questions.length - 1) {
             setOpenModal(false);
             setCurrentQuestionIndex(currentQuestionIndex + 1);
