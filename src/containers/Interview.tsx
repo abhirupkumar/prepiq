@@ -25,12 +25,11 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
     const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
     const [selectedAudioDevice, setSelectedAudioDevice] = useState<string>('');
     const [selectedVideoDevice, setSelectedVideoDevice] = useState<string>('');
-    const [audioData, setAudioData] = useState<any>();
+    const [audioDatas, setAudioDatas] = useState<any[]>([]);
     const [openModal, setOpenModal] = useState(false);
     const [isUploading, setIsUploading] = useState(-1);
     const [isSpeaking, setIsSpeaking] = useState(true);
     const [startTranscribe, setStartTranscribe] = useState(false);
-    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     const enableAudioAndCamera = async () => {
@@ -112,23 +111,13 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
         setCurrentQuestionIndex(newIndex);
     };
 
-    const onRecordingComplete = () => {
-        setStartTranscribe(true);
-    }
-
-    const nextQuestion = async () => {
+    const nextQuestion = () => {
         if (currentQuestionIndex < questions.length - 1) {
-            setLoading(true);
-            setOpenModal(false);
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setIsSpeaking(true);
-            setLoading(false);
         }
         else {
-            setLoading(true);
-            await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
-            window.location.reload();
-            setLoading(true);
+            setStartTranscribe(true);
         }
     };
 
@@ -150,25 +139,28 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
 
     const transcribeAudio = async () => {
         await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
-        setIsUploading(audioData.index);
-        const audioBlob = audioData.audioBlob;
-        const formData = new FormData();
-        formData.append('audioBlob', audioBlob);
-        const fetchedData = await fetch('/api/speechtotext', {
-            method: 'POST',
-            body: formData,
-        });
+        for (const audioData of audioDatas) {
+            setIsUploading(audioData.index);
+            const audioBlob = audioData.audioBlob;
+            const formData = new FormData();
+            formData.append('audioBlob', audioBlob);
+            const fetchedData = await fetch('/api/speechtotext', {
+                method: 'POST',
+                body: formData,
+            });
 
-        const response = await fetchedData.json();
-        if (!response.success) {
-            toast({
-                title: "Some error occured!"
-            })
-            return;
+            const response = await fetchedData.json();
+            if (!response.success) {
+                toast({
+                    title: "Some error occured!"
+                })
+                return;
+            }
+            await supabase.from('interview_questions').update({ submitted_answer: response.transcription }).eq('id', audioData.questionId);
         }
-        await supabase.from('interview_questions').update({ submitted_answer: response.transcription }).eq('id', audioData.questionId);
-        setAudioData(null);
-        setStartTranscribe(false);
+        await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
+        setIsUploading(6);
+        window.location.reload();
     }
 
     return (
@@ -226,9 +218,9 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
                         </div>
                     ) : (
                         <>
-                            <MainRecorder isSpeaking={isSpeaking} setIsSpeaking={setIsSpeaking} jobId={jobId} questionId={questions[currentQuestionIndex].id as string} stream={stream!} onRecordingComplete={onRecordingComplete} currIndex={currentQuestionIndex} question={questions[currentQuestionIndex]} setAudioData={setAudioData} />
+                            <MainRecorder isSpeaking={isSpeaking} setIsSpeaking={setIsSpeaking} jobId={jobId} questionId={questions[currentQuestionIndex].id as string} stream={stream!} onRecordingComplete={nextQuestion} currIndex={currentQuestionIndex} question={questions[currentQuestionIndex]} setAudioDatas={setAudioDatas} />
 
-                            <SendingDataModal loading={loading} nextQuestion={nextQuestion} startTranscribe={startTranscribe} openModal={openModal} setOpenModal={setOpenModal} isUploading={isUploading} />
+                            <SendingDataModal openModal={openModal} setOpenModal={setOpenModal} isUploading={isUploading} />
                         </>
                     )}
                 </div>
