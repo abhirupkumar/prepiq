@@ -7,30 +7,31 @@ export const maxDuration = 60;
 export const revalidate = 0;
 
 export async function POST(request: NextRequest) {
-    const { jobId } = await request.json();
-    const supabase = createClient();
-    const { user, isAuth } = await getCurrentUser();
-    const { data, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .eq('id', jobId)
-    if (!isAuth) return NextResponse.json({ success: false, error: "User not authenticated." }, { status: 405 });
-    if (user.credits <= 0) return NextResponse.json({ success: false, error: "Need more Credits.", submessage: "1 credit for each 10 questions." }, { status: 405 });
-    if (error) {
-        return NextResponse.json({ success: false, error: error.message }, { status: 401 });
-    }
-    const job = data[0];
+    try {
+        const { jobId } = await request.json();
+        const supabase = createClient();
+        const { user, isAuth } = await getCurrentUser();
+        const { data, error } = await supabase
+            .from('jobs')
+            .select('*')
+            .eq('id', jobId)
+        if (!isAuth) return NextResponse.json({ success: false, error: "User not authenticated." }, { status: 405 });
+        if (user.credits <= 0) return NextResponse.json({ success: false, error: "Need more Credits.", submessage: "1 credit for each 10 questions." }, { status: 405 });
+        if (error) {
+            return NextResponse.json({ success: false, error: error.message }, { status: 401 });
+        }
+        const job = data[0];
 
-    const { data: prevQuestions, error: prevQuestionsError } = await supabase.from('questions').select('question, index').eq('job_id', jobId);
+        const { data: prevQuestions, error: prevQuestionsError } = await supabase.from('questions').select('question, index').eq('job_id', jobId);
 
-    if (prevQuestionsError) {
-        return NextResponse.json({ success: false, error: prevQuestionsError.message }, { status: 401 });
-    }
+        if (prevQuestionsError) {
+            return NextResponse.json({ success: false, error: prevQuestionsError.message }, { status: 401 });
+        }
 
-    const prevQuestionsText = prevQuestions.length > 0 ? prevQuestions.map((question: any) => question.question).join("\n\n") : "";
-    const lastQuestionIndex = prevQuestions.length > 0 ? prevQuestions.length : 0;
+        const prevQuestionsText = prevQuestions.length > 0 ? prevQuestions.map((question: any) => question.question).join("\n\n") : "";
+        const lastQuestionIndex = prevQuestions.length > 0 ? prevQuestions.length : 0;
 
-    const Question = `
+        const Question = `
     Ask Questions based on the job description and also about the work or project or experience or achievement he has mentioned in his resume.If required search on the internet about different questions asked for the above mentioned job description.
     ${prevQuestions.length > 0 && prevQuestionsText != "" && `
     Previously Asked Questions: 
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
         ...
     ]
     `
-    const prompt = `
+        const prompt = `
     You are a professional interviewer ${job.company_name != "" ? ("of " + job.company_name) : ""}.
     ${job.company_desc == "" ? "" : `
         Company Description: 
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
         ${job.company_desc}
 
         `
-        }
+            }
     Please generate top 10 different interview questions which might come in the interview for a candidate applying for the position described in the following job description:
 
     ${job.desc}
@@ -66,27 +67,31 @@ export async function POST(request: NextRequest) {
     ${Question}
     `
 
-    const { data: userData, error: userError } = await supabase.from('profiles').update({ 'credits': user.credits - 1 }).eq('id', user.id).select();
-    if (userError) {
-        return NextResponse.json({ success: false, error: "Some error occured!" }, { status: 406 });
+        const { data: userData, error: userError } = await supabase.from('profiles').update({ 'credits': user.credits - 1 }).eq('id', user.id).select();
+        if (userError) {
+            return NextResponse.json({ success: false, error: "Some error occured!" }, { status: 406 });
+        }
+
+        const res: any = await model.invoke(prompt);
+
+        const questions = JSON.parse(res.content);
+        const created_at = new Date();
+        const questionWithId = questions.map((question: any, index: number) => {
+            return { ...question, job_id: jobId, created_at: created_at, index: lastQuestionIndex + index + 1 }
+        });
+
+        console.log(lastQuestionIndex)
+        const response = await supabase
+            .from('questions')
+            .insert(questionWithId)
+
+        if (response.error) {
+            return NextResponse.json({ success: false, error: response.error.message }, { status: 402 });
+        }
+
+        return NextResponse.json({ success: true }, { status: 200 });
     }
-
-    const res: any = await model.invoke(prompt);
-
-    const questions = JSON.parse(res.content);
-    const created_at = new Date();
-    const questionWithId = questions.map((question: any, index: number) => {
-        return { ...question, job_id: jobId, created_at: created_at, index: lastQuestionIndex + index + 1 }
-    });
-
-    console.log(lastQuestionIndex)
-    const response = await supabase
-        .from('questions')
-        .insert(questionWithId)
-
-    if (response.error) {
-        return NextResponse.json({ success: false, error: response.error.message }, { status: 402 });
+    catch (error: any) {
+        return NextResponse.json({ success: false, error: "Some Error Occured! Please try again." }, { status: 500 });
     }
-
-    return NextResponse.json({ success: true }, { status: 200 });
 }
