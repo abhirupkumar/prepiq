@@ -2,22 +2,27 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function TermsAndConditions() {
     return (
-        <div className="container mx-auto py-8">
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-2xl font-bold">Terms and Conditions</CardTitle>
-                </CardHeader>
-                <CardContent className="prose max-w-none">
-                    <h2 className="font-semibold">1. Acceptance of Terms</h2>
-                    <p className="ml-4">By accessing or using our service, you agree to be bound by these Terms and Conditions.</p>
-                    <h2 className="font-semibold">2. User Accounts</h2>
-                    <p className="ml-4">You are responsible for maintaining the confidentiality of your account and password.</p>
-                    <h2 className="font-semibold">3. Intellectual Property</h2>
-                    <p className="ml-4">All content included on this site, such as text, graphics, logos, and software, is the property of our company or its content suppliers and protected by copyright laws.</p>
-                    <h2 className="font-semibold">4. Limitation of Liability</h2>
-                    <p className="ml-4">We shall not be liable for any indirect, incidental, special, consequential or punitive damages resulting from your use of our services.</p>
-                </CardContent>
-            </Card>
+        <div className="container mx-auto px-4 py-8 min-h-screen">
+            <div className="max-w-4xl mx-auto">
+                <h1 className="text-3xl font-bold mb-4">Terms & Conditions</h1>
+                <p className="text-gray-400">Last updated on Jul 23rd 2024</p>
+                <p className="mt-4">
+                    For the purpose of these Terms and Conditions, The term "we", "us", "our" used anywhere on this page shall mean PrepiQ, whose registered/operational office is Ganganagar, Madhyamgram, Kolkata - 700132 North Parganas WEST BENGAL 700132. "you", "your", "user", "visitor" shall mean any natural or legal person who is visiting our website and/or agreed to purchase from us.
+                </p>
+                <h2 className="text-2xl font-bold mt-6">Your use of the website and/or purchase from us are governed by following Terms and Conditions:</h2>
+                <ul className="list-disc list-inside mt-4">
+                    <li>The content of the pages of this website is subject to change without notice.</li>
+                    <li>Neither we nor any third parties provide any warranty or guarantee as to the accuracy, timeliness, performance, completeness or suitability of the information and materials found or offered on this website for any particular purpose. You acknowledge that such information and materials may contain inaccuracies or errors and we expressly exclude liability for any such inaccuracies or errors to the fullest extent permitted by law.</li>
+                    <li>Your use of any information or materials on our website and/or product pages is entirely at your own risk, for which we shall not be liable. It shall be your own responsibility to ensure that any products, services or information available through our website and/or product pages meet your specific requirements.</li>
+                    <li>Our website contains material which is owned by or licensed to us. This material includes, but is not limited to, the design, layout, look, appearance and graphics. Reproduction is prohibited other than in accordance with the copyright notice, which forms part of these terms and conditions.</li>
+                    <li>All trademarks reproduced in our website which are not the property of, or licensed to, the operator are acknowledged on the website.</li>
+                    <li>Unauthorized use of information provided by us shall give rise to a claim for damages and/or be a criminal offense.</li>
+                    <li>From time to time our website may also include links to other websites. These links are provided for your convenience to provide further information.</li>
+                    <li>You may not create a link to our website from another website or document without our prior written consent.</li>
+                    <li>Any dispute arising out of use of our website and/or purchase with us and/or any engagement with us is subject to the laws of India.</li>
+                    <li>We, shall be under no liability whatsoever in respect of any loss or damage arising directly or indirectly out of the decline of authorization for any Transaction, on Account of the Cardholder having exceeded the preset limit mutually agreed by us with our acquiring bank from time to time.</li>
+                </ul>
+            </div>
         </div>
     );
 }

@@ -108,8 +108,8 @@ export default function HomePage({ isAuth, user }: { isAuth: boolean, user: any 
                             <img src="/create-job.png" alt="Upload documents" className="w-full h-auto rounded-lg" />
                         </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16 items-center">
-                        <div className="-order-1">
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16 items-center md:mt-0 mt-6">
+                        <div className="md:-order-1 order-1">
                             <img src="/questions.png" alt="Practice your answers" className="w-full h-auto rounded-lg" />
                         </div>
                         <div className="space-y-4">
@@ -125,7 +125,7 @@ export default function HomePage({ isAuth, user }: { isAuth: boolean, user: any 
                             <Button>Get Started</Button>
                         </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16  items-center">
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-16 items-center md:mt-0 mt-6">
                         <div className="space-y-4">
                             <h2 className="text-3xl font-bold">3) Detailed Feedback and Suggestions</h2>
                             <p className="text-muted-foreground text-xl">
