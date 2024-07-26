@@ -25,7 +25,7 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
     const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
     const [selectedAudioDevice, setSelectedAudioDevice] = useState<string>('');
     const [selectedVideoDevice, setSelectedVideoDevice] = useState<string>('');
-    const [audioDatas, setAudioDatas] = useState<any[]>([]);
+    const [audioData, setAudioData] = useState<any>();
     const [openModal, setOpenModal] = useState(false);
     const [isUploading, setIsUploading] = useState(-1);
     const [isSpeaking, setIsSpeaking] = useState(true);
@@ -111,13 +111,18 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
         setCurrentQuestionIndex(newIndex);
     };
 
-    const nextQuestion = () => {
+    const onRecordingComplete = () => {
+        setStartTranscribe(true);
+    }
+
+    const nextQuestion = async () => {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setIsSpeaking(true);
         }
         else {
-            setStartTranscribe(true);
+            await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
+            router.refresh();
         }
     };
 
@@ -139,28 +144,25 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
 
     const transcribeAudio = async () => {
         await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
-        for (const audioData of audioDatas) {
-            setIsUploading(audioData.index);
-            const audioBlob = audioData.audioBlob;
-            const formData = new FormData();
-            formData.append('audioBlob', audioBlob);
-            const fetchedData = await fetch('/api/speechtotext', {
-                method: 'POST',
-                body: formData,
-            });
+        setIsUploading(audioData.index);
+        const audioBlob = audioData.audioBlob;
+        const formData = new FormData();
+        formData.append('audioBlob', audioBlob);
+        const fetchedData = await fetch('/api/speechtotext', {
+            method: 'POST',
+            body: formData,
+        });
 
-            const response = await fetchedData.json();
-            if (!response.success) {
-                toast({
-                    title: "Some error occured!"
-                })
-                return;
-            }
-            await supabase.from('interview_questions').update({ submitted_answer: response.transcription }).eq('id', audioData.questionId);
+        const response = await fetchedData.json();
+        if (!response.success) {
+            toast({
+                title: "Some error occured!"
+            })
+            return;
         }
-        await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
-        setIsUploading(6);
-        router.refresh();
+        await supabase.from('interview_questions').update({ submitted_answer: response.transcription }).eq('id', audioData.questionId);
+        setAudioData(null);
+        setStartTranscribe(false);
     }
 
     return (
@@ -218,8 +220,8 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
                         </div>
                     ) : (
                         <>
-                            <MainRecorder isSpeaking={isSpeaking} setIsSpeaking={setIsSpeaking} jobId={jobId} questionId={questions[currentQuestionIndex].id as string} stream={stream!} onRecordingComplete={nextQuestion} currIndex={currentQuestionIndex} question={questions[currentQuestionIndex]} setAudioDatas={setAudioDatas} />
-                            <SendingDataModal openModal={openModal} setOpenModal={setOpenModal} isUploading={isUploading} />
+                            <MainRecorder isSpeaking={isSpeaking} setIsSpeaking={setIsSpeaking} jobId={jobId} questionId={questions[currentQuestionIndex].id as string} stream={stream!} onRecordingComplete={onRecordingComplete} currIndex={currentQuestionIndex} question={questions[currentQuestionIndex]} setAudioData={setAudioData} />
+                            <SendingDataModal nextQuestion={nextQuestion} startTranscribe={startTranscribe} openModal={openModal} setOpenModal={setOpenModal} isUploading={isUploading} />
                         </>
                     )}
                 </div>

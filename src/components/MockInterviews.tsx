@@ -9,6 +9,7 @@ import { Separator } from './ui/separator';
 import { browserClient } from '@/utils/supabase/client';
 import { Skeleton } from './ui/skeleton';
 import { useToast } from './ui/use-toast';
+import { useRouter } from 'next/navigation';
 
 const MockInterviews = ({ jobId, interviewData }: { jobId: string, interviewData: any[] }) => {
 
@@ -17,6 +18,7 @@ const MockInterviews = ({ jobId, interviewData }: { jobId: string, interviewData
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
     const { toast } = useToast();
+    const router = useRouter();
 
     useEffect(() => {
         setLoading(true);
@@ -63,6 +65,7 @@ const MockInterviews = ({ jobId, interviewData }: { jobId: string, interviewData
                 title: 'Interview created successfully!',
                 description: 'You can now start taking the interviews.',
             })
+            router.refresh();
         }
         else {
             toast({
