@@ -126,7 +126,7 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
         else {
             setLoading(true);
             await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
-            router.refresh();
+            window.location.reload();
             setLoading(true);
         }
     };
