@@ -73,6 +73,7 @@ const Questions = ({ jobId, questionsData }: { jobId: string, questionsData: any
                 title: 'Questions Generated Successfully.',
                 description: "Practice these questions to prepare for the interview.",
             })
+            router.refresh();
         }
         else {
             toast({
