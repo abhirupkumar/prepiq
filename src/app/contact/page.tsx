@@ -57,21 +57,21 @@ export default function ContactUs() {
                             <Input value={formData.name} onChange={(e: any) => setFormData({
                                 ...formData,
                                 "name": e.target.value
-                            })} id="name" type="text" placeholder="Your Name" required />
+                            })} id="name" type="text" placeholder="Enter your Name" required />
                         </div>
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
                             <Input value={formData.email} onChange={(e: any) => setFormData({
                                 ...formData,
                                 "email": e.target.value
-                            })} id="email" type="email" placeholder="your@email.com" required />
+                            })} id="email" type="email" placeholder="Enter Your Email" required />
                         </div>
                         <div>
                             <label htmlFor="message" className="block text-sm font-medium text-gray-700">Message</label>
                             <Textarea value={formData.message} onChange={(e: any) => setFormData({
                                 ...formData,
                                 "message": e.target.value
-                            })} id="message" placeholder="Your message here..." required />
+                            })} id="message" placeholder="Enter Your Message" required />
                         </div>
                         <Button disabled={loading} type="submit">{loading ? "Loading..." : "Send Message"}</Button>
                     </form>

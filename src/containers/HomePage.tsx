@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import Pricing from "@/containers/Pricing";
+import Feedback from "@/components/Feedback";
 
 export default function HomePage({ isAuth, user }: { isAuth: boolean, user: any }) {
     return (
@@ -186,39 +187,7 @@ export default function HomePage({ isAuth, user }: { isAuth: boolean, user: any 
                         </div>
                     </div>
                 </section>
-                <section id="feedback" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
-                    <div className="px-4 md:px-6">
-                        <div className="flex flex-col items-center justify-center space-y-8">
-                            <div className="space-y-2 text-center">
-                                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Feedback</h2>
-                                <p className="max-w-[700px] text-muted-foreground md:text-xl">
-                                    We&apos;d love to hear your feedback! Please fill out the form below.
-                                </p>
-                            </div>
-                            <div className="w-full max-w-[800px] space-y-4 bg-background p-6 rounded-lg shadow-md">
-                                <form className="space-y-4">
-                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="name">Name</Label>
-                                            <Input className="bg-muted" id="name" placeholder="Enter your name" required />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="email">Email</Label>
-                                            <Input className="bg-muted" id="email" type="email" placeholder="Enter your email" required />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="message">Message</Label>
-                                        <Textarea className="bg-muted min-h-[100px]" id="message" placeholder="Enter your message" required />
-                                    </div>
-                                    <Button type="submit" className="w-full">
-                                        Submit Feedback
-                                    </Button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                <Feedback />
                 <section id="tryforfree" className="w-full py-12 md:py-24 lg:py-32 bg-background">
                     <div className="px-4 md:px-6">
                         <div className="flex flex-col items-center justify-center space-y-8">
