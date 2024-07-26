@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
 
-const SendingDataModal = ({ openModal, setOpenModal, isUploading, startTranscribe, nextQuestion }: { openModal: boolean, setOpenModal: React.Dispatch<React.SetStateAction<boolean>>, isUploading: number, startTranscribe: boolean, nextQuestion: () => void }) => {
+const SendingDataModal = ({ loading, openModal, setOpenModal, isUploading, startTranscribe, nextQuestion }: { loading: boolean, openModal: boolean, setOpenModal: React.Dispatch<React.SetStateAction<boolean>>, isUploading: number, startTranscribe: boolean, nextQuestion: () => void }) => {
 
     return (
         <Dialog
@@ -22,7 +22,8 @@ const SendingDataModal = ({ openModal, setOpenModal, isUploading, startTranscrib
                         {startTranscribe && <Loader2 className="animate-spin h-6 w-6" />}
                     </div>
                     <h1 className="text-xl text-primary font-semibold">Please do not refresh. Good things take time.</h1>
-                    <Button onClick={nextQuestion} disabled={startTranscribe}>{isUploading >= 5 ? "See Your Result" : 'Next Question'}</Button>
+                    {!loading ? <Button onClick={nextQuestion} disabled={startTranscribe}>{isUploading >= 5 ? "See Your Result" : 'Next Question'}</Button> :
+                        <Button disabled={true}>Loading {" "}<Loader2 className="animate-spin h-6 w-6" /></Button>}
                 </div>
             </DialogContent>
         </Dialog>

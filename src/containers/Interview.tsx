@@ -30,6 +30,7 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
     const [isUploading, setIsUploading] = useState(-1);
     const [isSpeaking, setIsSpeaking] = useState(true);
     const [startTranscribe, setStartTranscribe] = useState(false);
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     const enableAudioAndCamera = async () => {
@@ -117,12 +118,16 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
 
     const nextQuestion = async () => {
         if (currentQuestionIndex < questions.length - 1) {
+            setLoading(true);
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setIsSpeaking(true);
+            setLoading(false);
         }
         else {
+            setLoading(true);
             await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
             router.refresh();
+            setLoading(true);
         }
     };
 
@@ -221,7 +226,8 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
                     ) : (
                         <>
                             <MainRecorder isSpeaking={isSpeaking} setIsSpeaking={setIsSpeaking} jobId={jobId} questionId={questions[currentQuestionIndex].id as string} stream={stream!} onRecordingComplete={onRecordingComplete} currIndex={currentQuestionIndex} question={questions[currentQuestionIndex]} setAudioData={setAudioData} />
-                            <SendingDataModal nextQuestion={nextQuestion} startTranscribe={startTranscribe} openModal={openModal} setOpenModal={setOpenModal} isUploading={isUploading} />
+
+                            <SendingDataModal loading={loading} nextQuestion={nextQuestion} startTranscribe={startTranscribe} openModal={openModal} setOpenModal={setOpenModal} isUploading={isUploading} />
                         </>
                     )}
                 </div>
