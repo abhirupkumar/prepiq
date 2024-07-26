@@ -117,12 +117,10 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
         setCurrentQuestionIndex(newIndex);
     };
 
-    const onRecordingComplete = () => {
-        setStartTranscribe(true);
-    }
-
-    const nextQuestion = async () => {
+    const onRecordingComplete = async () => {
         setLoading(true);
+        setIsUploading(audioData.index);
+        await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
         const headers = {
             authorization: process.env.ASSEMBLYAI_API_KEY!
         }
@@ -136,6 +134,11 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
             webhook_auth_header_name: "Prepiq-Assembly-Webhook-Secret",
             webhook_auth_header_value: process.env.ASSEMBLYAI_WEBHOOK_SECRET!
         })
+        // setStartTranscribe(true);
+    }
+
+    const nextQuestion = () => {
+        setLoading(true);
         if (currentQuestionIndex < questions.length - 1) {
             setOpenModal(false);
             setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -143,7 +146,6 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
             setLoading(false);
         }
         else {
-            await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
             window.location.reload();
             setLoading(true);
         }
