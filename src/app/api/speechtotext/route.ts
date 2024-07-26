@@ -3,6 +3,8 @@ import { AssemblyAI } from 'assemblyai';
 import { createClient } from '@/utils/supabase/server';
 import { Storage } from '@google-cloud/storage';
 
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
 
     try {
