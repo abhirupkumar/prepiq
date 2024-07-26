@@ -28,12 +28,8 @@ export const POST = async (req: NextRequest) => {
             },
         });
         const response = await fetchData.json();
-        let transcription = "";
-        for (let word of response.words) {
-            transcription = transcription + " " + word.text;
-        }
         const supabase = adminClient();
-        const { error } = await supabase.from('interview_questions').update({ submitted_answer: response.transcription }).eq('id', questionId).eq('interview_id', interviewId);
+        const { error } = await supabase.from('interview_questions').update({ submitted_answer: response.text }).eq('id', questionId).eq('interview_id', interviewId);
         if (error) {
             return NextResponse.json({ success: false, error: 'Unable to save the transcription.' }, { status: 407 });
         }
