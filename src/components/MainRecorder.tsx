@@ -14,10 +14,10 @@ interface MainRecorderProps {
     onRecordingComplete: () => void;
     currIndex: number;
     question: any;
-    setAudioDatas: React.Dispatch<React.SetStateAction<any[]>>;
+    setAudioData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-export default function MainRecorder({ isSpeaking, setIsSpeaking, jobId, questionId, stream, onRecordingComplete, currIndex, question, setAudioDatas }: MainRecorderProps) {
+export default function MainRecorder({ isSpeaking, setIsSpeaking, jobId, questionId, stream, onRecordingComplete, currIndex, question, setAudioData }: MainRecorderProps) {
     const { toast } = useToast();
     const [timer, setTimer] = useState(0);
     const videoChunksRef = useRef<BlobPart[]>([]);
@@ -47,11 +47,11 @@ export default function MainRecorder({ isSpeaking, setIsSpeaking, jobId, questio
 
         mediaRecorderRef.current?.addEventListener("stop", () => {
             const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
-            setAudioDatas((prev) => [...prev, {
+            setAudioData({
                 index: currIndex,
                 questionId: questionId,
                 audioBlob
-            }]);
+            });
             onRecordingComplete();
         });
 
