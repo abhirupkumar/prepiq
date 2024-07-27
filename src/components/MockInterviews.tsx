@@ -10,6 +10,7 @@ import { browserClient } from '@/utils/supabase/client';
 import { Skeleton } from './ui/skeleton';
 import { useToast } from './ui/use-toast';
 import { useRouter } from 'next/navigation';
+import { Anybody } from 'next/font/google';
 
 const MockInterviews = ({ jobId, interviewData }: { jobId: string, interviewData: any[] }) => {
 
@@ -105,26 +106,28 @@ const MockInterviews = ({ jobId, interviewData }: { jobId: string, interviewData
             <Separator className='!mt-1' />
             <div className="flex flex-wrap">
                 {isFetching ? <Skeleton className="my-2 h-40 w-full" /> :
-                    interviews && interviews.length > 0 ? interviews.map((interview, index) => <Link key={index} href={`/dashboard/${jobId}/interview/${interview.id}`} className='flex items-center m-2 bg-muted px-4 py-4 rounded-md border w-80 text-start'>
-                        <Image src="/mockinterview.jpg" alt="interview-question" height="80" width="80" className='rounded-md mr-4' />
-                        <div className='flex flex-col space-y-1'>
-                            <h3 className='text-xl text-semibold'>Interview {index + 1}</h3>
-                            <div className='flex gap-2'>
-                                <div className='flex items-center gap-1 text-xs'>
-                                    <Calendar className='h-4 w-4' />
-                                    {getFormattedDate(interview.created_at)}
+                    interviews && interviews.length > 0 ? interviews
+                        .sort((a: any, b: any) => (new Date(a.created_at)).getTime() - (new Date(b.created_at)).getTime())
+                        .map((interview, index) => <Link key={index} href={`/dashboard/${jobId}/interview/${interview.id}`} className='flex items-center m-2 bg-muted px-4 py-4 rounded-md border w-80 text-start'>
+                            <Image src="/mockinterview.jpg" alt="interview-question" height="80" width="80" className='rounded-md mr-4' />
+                            <div className='flex flex-col space-y-1'>
+                                <h3 className='text-xl text-semibold'>Interview {index + 1}</h3>
+                                <div className='flex gap-2'>
+                                    <div className='flex items-center gap-1 text-xs'>
+                                        <Calendar className='h-4 w-4' />
+                                        {getFormattedDate(interview.created_at)}
+                                    </div>
+                                    <div className='flex items-center gap-1 text-xs'>
+                                        <Clock className='h-4 w-4' />
+                                        {getTime(interview.created_at)}
+                                    </div>
                                 </div>
-                                <div className='flex items-center gap-1 text-xs'>
-                                    <Clock className='h-4 w-4' />
-                                    {getTime(interview.created_at)}
+                                <div className='flex items-center gap-2 text-sm'>
+                                    <Check className={`${interview.completed == "completed" && "text-green-500"} ${interview.completed == "pending" && "text-red-500"}`} />
+                                    {interview.completed.charAt(0).toUpperCase() + interview.completed.slice(1)}
                                 </div>
                             </div>
-                            <div className='flex items-center gap-2 text-sm'>
-                                <Check className={`${interview.completed == "completed" && "text-green-500"} ${interview.completed == "pending" && "text-red-500"}`} />
-                                {interview.completed.charAt(0).toUpperCase() + interview.completed.slice(1)}
-                            </div>
-                        </div>
-                    </Link>)
+                        </Link>)
                         : loading ? (
                             <>
                                 <Skeleton className="my-2 h-40 w-full" />

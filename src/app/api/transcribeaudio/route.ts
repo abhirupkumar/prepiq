@@ -25,7 +25,6 @@ export async function POST(req: NextRequest) {
 
         const arrayBuffer = await audioBlob.arrayBuffer();
         const audioFileData = new Uint8Array(arrayBuffer);
-        console.log(process.env.ASSEMBLYAI_API_KEY)
         const uploadResponse = await axios.post(`https://api.assemblyai.com/v2/upload`, audioFileData, {
             "headers": {
                 "authorization": process.env.ASSEMBLYAI_API_KEY!,
