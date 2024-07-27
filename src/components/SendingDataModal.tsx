@@ -22,11 +22,10 @@ const SendingDataModal = ({ loading, openModal, setOpenModal, isUploading, start
             <DialogContent>
                 <div className="flex flex-col items-center justify-center space-y-4">
                     <div className='flex space-x-4 items-center'>
-                        <h2 className={`text-primary`}>Transcribing Your Audio</h2>
+                        <h2 className={`text-primary`}>Uploading Your Audio</h2>
                         {startTranscribe && <Loader2 className="animate-spin h-6 w-6" />}
                     </div>
-                    {!loading ? <Button onClick={handleSubmit} disabled={startTranscribe}>See Your Result</Button> :
-                        <Button disabled={true}>Loading {" "}<Loader2 className="animate-spin h-6 w-6" /></Button>}
+                    {loading && <Button disabled={true}>Loading {" "}<Loader2 className="animate-spin h-6 w-6" /></Button>}
                 </div>
             </DialogContent>
         </Dialog>

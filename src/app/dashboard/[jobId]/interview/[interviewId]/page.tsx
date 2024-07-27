@@ -1,5 +1,6 @@
 import Interview from '@/containers/Interview';
 import InterviewOverview from '@/containers/InterviewOverview';
+import InterviewTranscription from '@/containers/InterviewTranscription';
 import { getCurrentUser } from '@/lib/auth-actions';
 import { createClient } from '@/utils/supabase/server';
 import { notFound, redirect } from 'next/navigation';
@@ -34,14 +35,15 @@ const Page = async ({ params }: PageProps) => {
 
     const newQuestiondata = questionsData.sort((a: any, b: any) => a.index - b.index);
     const areAllAnswersSubmitted = questionsData.find((question: any) => question.submitted_answer === "") === undefined;
+    const areAllAnswered = questionsData.find((question: any) => question.inAnswered === false) === undefined;
     const isInterviewCompleted = interviewData.completed === "completed" || areAllAnswersSubmitted;
-
     return (
         <>
             {!isInterviewCompleted ?
                 <Interview jobId={jobId} interviewId={interviewId} questionsData={newQuestiondata} />
                 :
-                <InterviewOverview interviewData={interviewData} jobId={jobId} interviewId={interviewId} questionsData={newQuestiondata} />}
+                !areAllAnswered ? <InterviewTranscription interviewId={interviewId} questionsData={newQuestiondata} /> :
+                    <InterviewOverview interviewData={interviewData} jobId={jobId} interviewId={interviewId} questionsData={newQuestiondata} />}
         </>
     )
 }

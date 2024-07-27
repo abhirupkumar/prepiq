@@ -9,8 +9,6 @@ import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 import { browserClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import SendingDataModal from '@/components/SendingDataModal';
-import axios from 'axios';
-import { AssemblyAI } from 'assemblyai';
 import fs from 'fs';
 
 export default function Interview({ jobId, interviewId, questionsData }: { jobId: string, interviewId: string, questionsData: any[] }) {
@@ -35,9 +33,6 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
     const [startTranscribe, setStartTranscribe] = useState(false);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-    const client = new AssemblyAI({
-        apiKey: process.env.ASSEMBLYAI_API_KEY!
-    })
 
     const enableAudioAndCamera = async () => {
         try {
@@ -118,15 +113,6 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
         setCurrentQuestionIndex(newIndex);
     };
 
-    // const blobToBuffer = async (blob: Blob) => {
-    //     return new Promise((resolve, reject) => {
-    //         const reader = new FileReader();
-    //         reader.onload = () => resolve(Buffer.from(reader?.result));
-    //         reader.onerror = reject;
-    //         reader.readAsArrayBuffer(blob);
-    //     });
-    // };
-
     const onRecordingComplete = async (audioBlob: Blob) => {
         setLoading(true);
         setIsUploading(currentQuestionIndex);
@@ -136,17 +122,11 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
             formData.append('audioBlob', audioBlob);
             formData.append('interview_id', interviewId);
             formData.append('question_id', questions[currentQuestionIndex].id);
-            const fetchedData = await fetch('/api/transcribeaudio', {
+            fetch('/api/transcribeaudio', {
                 method: 'POST',
                 body: formData,
             });
-            const response = await fetchedData.json();
-            if (!response.success) {
-                toast({
-                    title: "Some error occured!"
-                })
-                return;
-            }
+            await supabase.from('interview_questions').update({ is_answered: true }).eq('id', questions[currentQuestionIndex].id).eq('interview_id', interviewId);
             if (currentQuestionIndex == 0) {
                 await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
             }
@@ -187,6 +167,9 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
             setOpenModal(false);
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setIsSpeaking(true);
+        }
+        else {
+            window.location.href = `${process.env.NEXT_PUBLIC_HOST}/dashboard/${jobId}`
         }
         setLoading(false);
     };

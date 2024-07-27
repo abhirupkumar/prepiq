@@ -23,9 +23,9 @@ const Questions = ({ jobId, questionsData }: { jobId: string, questionsData: any
     const router = useRouter();
     const [questions, setQuestions] = useState<any>(questionsData);
     const [loading, setLoading] = useState<boolean>(false);
+    const supabase = browserClient();
 
     useEffect(() => {
-        const supabase = browserClient();
         const fetchQuestions = async () => {
             const { data, error } = await supabase
                 .from('questions')
