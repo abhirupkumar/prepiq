@@ -11,7 +11,7 @@ interface MainRecorderProps {
     jobId: string;
     questionId: string;
     stream: MediaStream;
-    onRecordingComplete: () => void;
+    onRecordingComplete: (audioBlob: Blob) => void;
     currIndex: number;
     question: any;
     setAudioData: React.Dispatch<React.SetStateAction<any>>;
@@ -52,7 +52,7 @@ export default function MainRecorder({ isSpeaking, setIsSpeaking, jobId, questio
                 questionId: questionId,
                 audioBlob
             });
-            onRecordingComplete();
+            onRecordingComplete(audioBlob);
         });
 
         setTimer(0);

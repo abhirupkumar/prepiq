@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import SendingDataModal from '@/components/SendingDataModal';
 import axios from 'axios';
 import { AssemblyAI } from 'assemblyai';
+import fs from 'fs';
 
 export default function Interview({ jobId, interviewId, questionsData }: { jobId: string, interviewId: string, questionsData: any[] }) {
 
@@ -117,38 +118,77 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
         setCurrentQuestionIndex(newIndex);
     };
 
-    const onRecordingComplete = async () => {
+    // const blobToBuffer = async (blob: Blob) => {
+    //     return new Promise((resolve, reject) => {
+    //         const reader = new FileReader();
+    //         reader.onload = () => resolve(Buffer.from(reader?.result));
+    //         reader.onerror = reject;
+    //         reader.readAsArrayBuffer(blob);
+    //     });
+    // };
+
+    const onRecordingComplete = async (audioBlob: Blob) => {
         setLoading(true);
-        setIsUploading(audioData.index);
-        await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
-        const headers = {
-            authorization: process.env.ASSEMBLYAI_API_KEY!
+        setIsUploading(currentQuestionIndex);
+        setOpenModal(true);
+        try {
+            const formData = new FormData();
+            formData.append('audioBlob', audioBlob);
+            formData.append('interview_id', interviewId);
+            formData.append('question_id', questions[currentQuestionIndex].id);
+            const fetchedData = await fetch('/api/transcribeaudio', {
+                method: 'POST',
+                body: formData,
+            });
+            const response = await fetchedData.json();
+            if (!response.success) {
+                toast({
+                    title: "Some error occured!"
+                })
+                return;
+            }
+            if (currentQuestionIndex == 0) {
+                await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
+            }
+            if (currentQuestionIndex == 4) {
+                await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
+            }
+            nextQuestion();
+            // const arrayBuffer = await audioBlob.arrayBuffer();
+            // const audioFileData = new Uint8Array(arrayBuffer);
+            // console.log(process.env.ASSEMBLYAI_API_KEY)
+            // await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
+            // const uploadResponse = await axios.post(`https://api.assemblyai.com/v2/upload`, audioFileData, {
+            //     "headers": {
+            //         "authorization": process.env.ASSEMBLYAI_API_KEY!,
+            //         'Content-Type': 'application/octet-stream',
+            //     },
+            // })
+            // const uploadUrl = uploadResponse.data.upload_url
+            // client.transcripts.submit({
+            //     audio: uploadUrl,
+            //     webhook_url: `${process.env.NEXT_PUBLIC_HOST}/webhook/speechtotext?interview_id=${interviewId}&question_id=${audioData.questionId}`,
+            //     webhook_auth_header_name: "Prepiq-Assembly-Webhook-Secret",
+            //     webhook_auth_header_value: process.env.ASSEMBLYAI_WEBHOOK_SECRET!
+            // })
+            // const data = {
+            //     audio_url: uploadUrl
+            // }
+            // const transcript = await client.transcripts.transcribe(data);
+            // await supabase.from('interview_questions').update({ submitted_answer: transcript.text }).eq('id', questions[currentQuestionIndex].id).eq('interview_id', interviewId);
+        } catch (error) {
+            console.log(error)
+            return;
         }
-        const uploadResponse = await axios.post(`https://api.assemblyai.com/v2/upload`, audioData.audioBlob, {
-            headers
-        })
-        const uploadUrl = uploadResponse.data.upload_url
-        client.transcripts.submit({
-            audio: uploadUrl,
-            webhook_url: `${process.env.NEXT_PUBLIC_HOST}/webhook/speechtotext?interview_id=${interviewId}&question_id=${audioData.questionId}`,
-            webhook_auth_header_name: "Prepiq-Assembly-Webhook-Secret",
-            webhook_auth_header_value: process.env.ASSEMBLYAI_WEBHOOK_SECRET!
-        })
-        // setStartTranscribe(true);
     }
 
     const nextQuestion = () => {
-        setLoading(true);
         if (currentQuestionIndex < questions.length - 1) {
             setOpenModal(false);
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setIsSpeaking(true);
-            setLoading(false);
         }
-        else {
-            window.location.reload();
-            setLoading(true);
-        }
+        setLoading(false);
     };
 
     useEffect(() => {
