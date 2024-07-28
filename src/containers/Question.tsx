@@ -298,9 +298,7 @@ const Question = ({ jobId, questionId, interviewId, questionData, prevQuestion, 
                                     {rewrittenAnswer != "" && <>
                                         <Separator className="my-4" />
                                         <Button disabled={saveLoading} onClick={saveAnswer} variant="outline" className='rounded-full'>Save Answer</Button>
-                                        <div className="bg-background rounded-md p-2 text-sm">
-                                            {rewrittenAnswer}
-                                        </div>
+                                        <Textarea disabled={true} value={rewrittenAnswer} className="bg-background rounded-md p-2 text-sm" />
                                     </>}
                                 </CardContent>
                             </Card>
@@ -311,9 +309,7 @@ const Question = ({ jobId, questionId, interviewId, questionData, prevQuestion, 
                                     <CardTitle>Saved Answer</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-2">
-                                    {question.saved_answer != "" ? <div className="bg-background rounded-md p-4 text-sm">
-                                        {question.saved_answer}
-                                    </div>
+                                    {question.saved_answer != "" ? <Textarea disabled={true} value={question.saved_answer} className="bg-background rounded-md p-4 text-sm" />
                                         :
                                         <div className="bg-background rounded-md p-4 font-semibold text-sm text-center">
                                             No saved answer found.
