@@ -51,7 +51,7 @@ export function constructMetadata({
       }
     }),
     other: {
-      "google-site-verification": "BxVrjT7-TtgJtM8E90LOiZF3KlHvbKPvjUkve_oNsZ0"
+      "google-site-verification": "co0B-CYrqRdI_fmi2ySiu2nYjJd2Wq8Db9ESsAv_uZE"
     }
   }
 }
