@@ -20,7 +20,7 @@ export function constructMetadata({
   image = "/thumbnail.png",
   icons = "/favicon.ico",
   noIndex = false,
-  keywords = ['prepiq', 'prep iq', 'interview', 'preparation', 'ai', 'mock', 'job', 'naukri', 'taiyari']
+  keywords = ['prepiq', 'prep iq', 'interview', 'preparation', 'ai', 'mock', 'job', 'naukri', 'taiyari', 'behavioural interview questions', 'software engineer', 'common interview questions', 'aptitude', 'strengths', 'weakness']
 }: {
   title?: string
   description?: string
@@ -43,7 +43,7 @@ export function constructMetadata({
       ]
     },
     icons,
-    metadataBase: new URL('https://interview-labs.vercel.app'),
+    metadataBase: new URL('https://prepiq.vercel.app'),
     ...(noIndex && {
       robots: {
         index: false,
