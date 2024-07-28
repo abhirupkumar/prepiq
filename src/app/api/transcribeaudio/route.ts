@@ -3,7 +3,7 @@ import { AssemblyAI } from 'assemblyai';
 import { createClient } from '@/utils/supabase/server';
 import axios from 'axios';
 
-export const maxDuration = 60;
+export const maxDuration = 5;
 
 export async function POST(req: NextRequest) {
 

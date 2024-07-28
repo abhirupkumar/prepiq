@@ -122,18 +122,10 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
             formData.append('audioBlob', audioBlob);
             formData.append('interview_id', interviewId);
             formData.append('question_id', questions[currentQuestionIndex].id);
-            fetch('/api/transcribeaudio', {
+            await fetch('/api/transcribeaudio', {
                 method: 'POST',
                 body: formData,
             });
-            await supabase.from('interview_questions').update({ is_answered: true }).eq('id', questions[currentQuestionIndex].id).eq('interview_id', interviewId);
-            if (currentQuestionIndex == 0) {
-                await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
-            }
-            if (currentQuestionIndex == 4) {
-                await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
-            }
-            nextQuestion();
             // const arrayBuffer = await audioBlob.arrayBuffer();
             // const audioFileData = new Uint8Array(arrayBuffer);
             // console.log(process.env.ASSEMBLYAI_API_KEY)
@@ -159,6 +151,16 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
         } catch (error) {
             console.log(error)
             return;
+        }
+        finally {
+            await supabase.from('interview_questions').update({ is_answered: true }).eq('id', questions[currentQuestionIndex].id).eq('interview_id', interviewId);
+            if (currentQuestionIndex == 0) {
+                await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
+            }
+            if (currentQuestionIndex == 4) {
+                await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
+            }
+            nextQuestion();
         }
     }
 
