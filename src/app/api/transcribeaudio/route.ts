@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
         const audioBlob = formData.get('audioBlob') as Blob;
         const interviewId = formData.get('interview_id');
         const questionId = formData.get('question_id');
-
+        console.log(questionId)
         if (!audioBlob) {
             return NextResponse.json({ success: false, error: 'Missing audio file' }, { status: 401 })
         }
