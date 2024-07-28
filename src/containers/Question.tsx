@@ -298,7 +298,7 @@ const Question = ({ jobId, questionId, interviewId, questionData, prevQuestion, 
                                     {rewrittenAnswer != "" && <>
                                         <Separator className="my-4" />
                                         <Button disabled={saveLoading} onClick={saveAnswer} variant="outline" className='rounded-full'>Save Answer</Button>
-                                        <Textarea disabled={true} value={rewrittenAnswer} className="bg-background rounded-md p-2 text-sm" />
+                                        <Textarea disabled={true} value={rewrittenAnswer} className="bg-background rounded-md p-2 text-sm min-h-[300px]" />
                                     </>}
                                 </CardContent>
                             </Card>
@@ -309,7 +309,7 @@ const Question = ({ jobId, questionId, interviewId, questionData, prevQuestion, 
                                     <CardTitle>Saved Answer</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-2">
-                                    {question.saved_answer != "" ? <Textarea disabled={true} value={question.saved_answer} className="bg-background rounded-md p-4 text-sm" />
+                                    {question.saved_answer != "" ? <Textarea disabled={true} value={question.saved_answer} className="bg-background rounded-md p-4 text-sm min-h-[300px]" />
                                         :
                                         <div className="bg-background rounded-md p-4 font-semibold text-sm text-center">
                                             No saved answer found.
@@ -325,10 +325,10 @@ const Question = ({ jobId, questionId, interviewId, questionData, prevQuestion, 
                             <CardTitle>Strengths</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            {question.submitted_answer != "" ? <div className={`bg-background rounded-md text-sm p-4 overflow-y-scroll max-h-[250px] ${!isFeedbackGenerated && "flex"}`}>
-                                {!isFeedbackGenerated ? "Generating Your Feedback" : question.strengths}
-                                {!isFeedbackGenerated && <Loader2 className='h-5 w-5 animate-spin ml-2' />}
-                            </div>
+                            {question.submitted_answer != "" ? !isFeedbackGenerated ? <div className={`bg-background rounded-md text-sm p-4 overflow-y-scroll max-h-[250px] flex`}>
+                                Generating Your Feedback
+                                <Loader2 className='h-5 w-5 animate-spin ml-2' />
+                            </div> : <Textarea disabled={true} value={question.strengths} className={`bg-background rounded-md text-sm p-4 overflow-y-scroll min-h-[250px]`} />
                                 :
                                 <div className="bg-background rounded-md font-semibold text-sm p-4 text-center overflow-y-scroll max-h-[250px]">
                                     Submit an answer to get Feedback.
@@ -340,10 +340,10 @@ const Question = ({ jobId, questionId, interviewId, questionData, prevQuestion, 
                             <CardTitle>How To Improve</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            {question.submitted_answer != "" ? <div className={`bg-background rounded-md text-sm p-4 overflow-y-scroll max-h-[250px] ${!isFeedbackGenerated && "flex"}`}>
-                                {!isFeedbackGenerated ? "Generating Your Feedback" : question.suggestions}
-                                {!isFeedbackGenerated && <Loader2 className='h-5 w-5 animate-spin ml-2' />}
-                            </div>
+                            {question.submitted_answer != "" ? !isFeedbackGenerated ? <div className={`bg-background rounded-md text-sm p-4 overflow-y-scroll max-h-[250px] flex`}>
+                                Generating Your Feedback
+                                <Loader2 className='h-5 w-5 animate-spin ml-2' />
+                            </div> : <Textarea disabled={true} value={question.suggestions} className={`bg-background rounded-md text-sm p-4 overflow-y-scroll min-h-[250px]`} />
                                 :
                                 <div className="bg-background rounded-md font-semibold text-sm p-4 text-center overflow-y-scroll max-h-[250px]">
                                     Submit an answer to get Feedback.
