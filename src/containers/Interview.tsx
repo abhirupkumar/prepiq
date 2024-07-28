@@ -34,6 +34,33 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
+    useEffect(() => {
+        document.addEventListener('contextmenu', (event) => event.preventDefault());
+
+        return () => {
+            document.removeEventListener('contextmenu', (event) => event.preventDefault());
+        };
+    }, []);
+
+    useEffect(() => {
+        const disableShortcuts = (event: KeyboardEvent) => {
+            if (
+                event.key === 'F12' || // F12
+                (event.ctrlKey && event.shiftKey && event.key === 'I') || // Ctrl + Shift + I
+                (event.ctrlKey && event.shiftKey && event.key === 'J') || // Ctrl + Shift + J
+                (event.ctrlKey && event.key === 'U') // Ctrl + U
+            ) {
+                event.preventDefault();
+            }
+        };
+
+        document.addEventListener('keydown', disableShortcuts);
+
+        return () => {
+            document.removeEventListener('keydown', disableShortcuts);
+        };
+    }, []);
+
     const enableAudioAndCamera = async () => {
         try {
             const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
