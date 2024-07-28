@@ -39,10 +39,10 @@ const Page = async ({ params }: PageProps) => {
     const isInterviewCompleted = interviewData.completed === "completed" || areAllAnswersSubmitted;
     return (
         <>
-            {!isInterviewCompleted ?
+            {!areAllAnswered ?
                 <Interview jobId={jobId} interviewId={interviewId} questionsData={newQuestiondata} />
                 :
-                !areAllAnswered ? <InterviewTranscription interviewId={interviewId} questionsData={newQuestiondata} /> :
+                !areAllAnswersSubmitted ? <InterviewTranscription interviewId={interviewId} questionsData={newQuestiondata} /> :
                     <InterviewOverview interviewData={interviewData} jobId={jobId} interviewId={interviewId} questionsData={newQuestiondata} />}
         </>
     )
