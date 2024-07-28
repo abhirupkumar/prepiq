@@ -108,10 +108,24 @@ export default function MainRecorder({ setLoading, setIsUploading, setOpenModal,
             formData.append('audioBlob', audioBlob);
             formData.append('interview_id', interviewId);
             formData.append('question_id', questionId);
-            await fetch('/api/transcribeaudio', {
+            const fetchedData = await fetch('/api/transcribeaudio', {
                 method: 'POST',
                 body: formData,
             });
+            const response = await fetchedData.json();
+            if (response.success) {
+                toast({
+                    title: 'Recording uploaded successfully!',
+                    description: 'You can now proceed to the next question.',
+                })
+            }
+            else {
+                toast({
+                    variant: 'destructive',
+                    title: response.error,
+                    description: response.submessage ?? "Please try again later.",
+                })
+            }
             // const arrayBuffer = await audioBlob.arrayBuffer();
             // const audioFileData = new Uint8Array(arrayBuffer);
             // console.log(process.env.ASSEMBLYAI_API_KEY)
