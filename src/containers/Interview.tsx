@@ -113,57 +113,6 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
         setCurrentQuestionIndex(newIndex);
     };
 
-    const onRecordingComplete = async (audioBlob: Blob) => {
-        setLoading(true);
-        setIsUploading(currentQuestionIndex);
-        setOpenModal(true);
-        try {
-            const formData = new FormData();
-            formData.append('audioBlob', audioBlob);
-            formData.append('interview_id', interviewId);
-            formData.append('question_id', questions[currentQuestionIndex].id);
-            await fetch('/api/transcribeaudio', {
-                method: 'POST',
-                body: formData,
-            });
-            // const arrayBuffer = await audioBlob.arrayBuffer();
-            // const audioFileData = new Uint8Array(arrayBuffer);
-            // console.log(process.env.ASSEMBLYAI_API_KEY)
-            // await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
-            // const uploadResponse = await axios.post(`https://api.assemblyai.com/v2/upload`, audioFileData, {
-            //     "headers": {
-            //         "authorization": process.env.ASSEMBLYAI_API_KEY!,
-            //         'Content-Type': 'application/octet-stream',
-            //     },
-            // })
-            // const uploadUrl = uploadResponse.data.upload_url
-            // client.transcripts.submit({
-            //     audio: uploadUrl,
-            //     webhook_url: `${process.env.NEXT_PUBLIC_HOST}/webhook/speechtotext?interview_id=${interviewId}&question_id=${audioData.questionId}`,
-            //     webhook_auth_header_name: "Prepiq-Assembly-Webhook-Secret",
-            //     webhook_auth_header_value: process.env.ASSEMBLYAI_WEBHOOK_SECRET!
-            // })
-            // const data = {
-            //     audio_url: uploadUrl
-            // }
-            // const transcript = await client.transcripts.transcribe(data);
-            // await supabase.from('interview_questions').update({ submitted_answer: transcript.text }).eq('id', questions[currentQuestionIndex].id).eq('interview_id', interviewId);
-        } catch (error) {
-            console.log(error)
-            return;
-        }
-        finally {
-            await supabase.from('interview_questions').update({ is_answered: true }).eq('id', questions[currentQuestionIndex].id).eq('interview_id', interviewId);
-            if (currentQuestionIndex == 0) {
-                await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
-            }
-            if (currentQuestionIndex == 4) {
-                await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
-            }
-            nextQuestion();
-        }
-    }
-
     const nextQuestion = () => {
         if (currentQuestionIndex < questions.length - 1) {
             setOpenModal(false);
@@ -270,7 +219,7 @@ export default function Interview({ jobId, interviewId, questionsData }: { jobId
                         </div>
                     ) : (
                         <>
-                            <MainRecorder isSpeaking={isSpeaking} setIsSpeaking={setIsSpeaking} jobId={jobId} questionId={questions[currentQuestionIndex].id as string} stream={stream!} onRecordingComplete={onRecordingComplete} currIndex={currentQuestionIndex} question={questions[currentQuestionIndex]} setAudioData={setAudioData} />
+                            <MainRecorder interviewId={interviewId} nextQuestion={nextQuestion} setLoading={setLoading} setIsUploading={setIsUploading} setOpenModal={setOpenModal} isSpeaking={isSpeaking} setIsSpeaking={setIsSpeaking} jobId={jobId} questionId={questions[currentQuestionIndex].id as string} stream={stream!} currIndex={currentQuestionIndex} question={questions[currentQuestionIndex]} setAudioData={setAudioData} />
 
                             <SendingDataModal loading={loading} nextQuestion={nextQuestion} startTranscribe={startTranscribe} openModal={openModal} setOpenModal={setOpenModal} isUploading={isUploading} />
                         </>

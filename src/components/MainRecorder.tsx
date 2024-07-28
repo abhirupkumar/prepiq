@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Clock } from 'lucide-react';
 import { useToast } from './ui/use-toast';
+import { browserClient } from '@/utils/supabase/client';
 
 interface MainRecorderProps {
     isSpeaking: boolean;
@@ -11,13 +12,17 @@ interface MainRecorderProps {
     jobId: string;
     questionId: string;
     stream: MediaStream;
-    onRecordingComplete: (audioBlob: Blob) => void;
     currIndex: number;
     question: any;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsUploading: React.Dispatch<React.SetStateAction<number>>;
+    setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
     setAudioData: React.Dispatch<React.SetStateAction<any>>;
+    nextQuestion: () => void;
+    interviewId: string;
 }
 
-export default function MainRecorder({ isSpeaking, setIsSpeaking, jobId, questionId, stream, onRecordingComplete, currIndex, question, setAudioData }: MainRecorderProps) {
+export default function MainRecorder({ setLoading, setIsUploading, setOpenModal, isSpeaking, setIsSpeaking, jobId, questionId, stream, currIndex, question, setAudioData, nextQuestion, interviewId }: MainRecorderProps) {
     const { toast } = useToast();
     const [timer, setTimer] = useState(0);
     const videoChunksRef = useRef<BlobPart[]>([]);
@@ -26,6 +31,7 @@ export default function MainRecorder({ isSpeaking, setIsSpeaking, jobId, questio
     const [audioURL, setAudioURL] = useState<string | null>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const recognitionRef = useRef(null);
+    const supabase = browserClient();
 
     useEffect(() => {
         if (isSpeaking && question.question && question.question != "") {
@@ -91,6 +97,58 @@ export default function MainRecorder({ isSpeaking, setIsSpeaking, jobId, questio
         const remainingSeconds = seconds % 60;
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     };
+
+
+    const onRecordingComplete = async (audioBlob: Blob) => {
+        setLoading(true);
+        setIsUploading(currIndex);
+        setOpenModal(true);
+        try {
+            const formData = new FormData();
+            formData.append('audioBlob', audioBlob);
+            formData.append('interview_id', interviewId);
+            formData.append('question_id', questionId);
+            await fetch('/api/transcribeaudio', {
+                method: 'POST',
+                body: formData,
+            });
+            // const arrayBuffer = await audioBlob.arrayBuffer();
+            // const audioFileData = new Uint8Array(arrayBuffer);
+            // console.log(process.env.ASSEMBLYAI_API_KEY)
+            // await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
+            // const uploadResponse = await axios.post(`https://api.assemblyai.com/v2/upload`, audioFileData, {
+            //     "headers": {
+            //         "authorization": process.env.ASSEMBLYAI_API_KEY!,
+            //         'Content-Type': 'application/octet-stream',
+            //     },
+            // })
+            // const uploadUrl = uploadResponse.data.upload_url
+            // client.transcripts.submit({
+            //     audio: uploadUrl,
+            //     webhook_url: `${process.env.NEXT_PUBLIC_HOST}/webhook/speechtotext?interview_id=${interviewId}&question_id=${audioData.questionId}`,
+            //     webhook_auth_header_name: "Prepiq-Assembly-Webhook-Secret",
+            //     webhook_auth_header_value: process.env.ASSEMBLYAI_WEBHOOK_SECRET!
+            // })
+            // const data = {
+            //     audio_url: uploadUrl
+            // }
+            // const transcript = await client.transcripts.transcribe(data);
+            // await supabase.from('interview_questions').update({ submitted_answer: transcript.text }).eq('id', questions[currentQuestionIndex].id).eq('interview_id', interviewId);
+        } catch (error) {
+            console.log(error)
+            return;
+        }
+        finally {
+            await supabase.from('interview_questions').update({ is_answered: true }).eq('id', questionId).eq('interview_id', interviewId);
+            if (currIndex == 0) {
+                await supabase.from('interviews').update({ completed: 'pending' }).eq('id', interviewId);
+            }
+            if (currIndex == 4) {
+                await supabase.from('interviews').update({ completed: 'completed' }).eq('id', interviewId);
+            }
+            nextQuestion();
+        }
+    }
 
     return (
         <div className='h-full overflow-y-auto'>
