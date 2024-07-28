@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
             webhook_auth_header_name: "Prepiq-Assembly-Webhook-Secret",
             webhook_auth_header_value: process.env.ASSEMBLYAI_WEBHOOK_SECRET!
         })
-        console.log("webhook submitted.")
+        console.log("webhook")
         // const data = {
         //     audio_url: uploadUrl
         // }

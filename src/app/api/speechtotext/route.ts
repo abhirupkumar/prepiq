@@ -19,7 +19,6 @@ export async function POST(req: NextRequest) {
 
         const supabase = createClient();
 
-
         const storage = new Storage({
             projectId: process.env.GOOGLE_PROJECT_ID!,
             credentials: {
