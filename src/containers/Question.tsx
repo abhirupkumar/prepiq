@@ -169,7 +169,7 @@ const Question = ({ jobId, questionId, interviewId, questionData, prevQuestion, 
             toast({
                 variant: "destructive",
                 title: 'Error Checking Answer.',
-                description: res.error ?? "Please refresh the page.",
+                description: "Please refresh the page.",
             })
         }
         else {
