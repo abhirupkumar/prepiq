@@ -1,0 +1,28 @@
+User-Agent: *
+Allow: /
+
+# Google adsbot ignores robots.txt unless specifically named!
+User-agent: adsbot-google
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /dashboard*
+
+User-agent: AhrefsBot
+Crawl-delay: 10
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /dashboard*
+Sitemap: https://prepiq.vercel.app/sitemap.xml
+
+User-agent: AhrefsSiteAudit
+Crawl-delay: 10
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /dashboard*
+Sitemap: https://prepiq.vercel.app/sitemap.xml
+
+User-agent: MJ12bot
+Crawl-Delay: 10
+
+User-agent: Pinterest
+Crawl-delay: 1
