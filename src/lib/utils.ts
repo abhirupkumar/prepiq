@@ -30,7 +30,9 @@ export function constructMetadata({
     title,
     description,
     keywords,
-    authors: [{ name: 'ABHIRUP KUMAR BHOWMICK', url: 'https://abhirupkumar.vercel.app' }],
+    authors: [{ name: 'Abhirup Kumar Bhowmick', url: 'https://abhirupkumar.vercel.app' }],
+    creator: 'Abhirup Kumar Bhowmick',
+    publisher: 'Abhirup Kumar Bhowmick',
     openGraph: {
       title,
       description,
