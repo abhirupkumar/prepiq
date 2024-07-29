@@ -6,12 +6,20 @@ User-agent: adsbot-google
 Disallow: /dashboard
 Disallow: /dashboard/*
 Disallow: /dashboard*
+Allow: /
+Allow: /pricing
+Allow: /termsandcondition
+Allow: /privacypolicy
 
 User-agent: AhrefsBot
 Crawl-delay: 10
 Disallow: /dashboard
 Disallow: /dashboard/*
 Disallow: /dashboard*
+Allow: /
+Allow: /pricing
+Allow: /termsandcondition
+Allow: /privacypolicy
 Sitemap: https://prepiq.vercel.app/sitemap.xml
 
 User-agent: AhrefsSiteAudit
@@ -19,6 +27,10 @@ Crawl-delay: 10
 Disallow: /dashboard
 Disallow: /dashboard/*
 Disallow: /dashboard*
+Allow: /
+Allow: /pricing
+Allow: /termsandcondition
+Allow: /privacypolicy
 Sitemap: https://prepiq.vercel.app/sitemap.xml
 
 User-agent: MJ12bot
