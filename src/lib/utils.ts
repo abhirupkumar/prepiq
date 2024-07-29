@@ -15,12 +15,12 @@ export function absoluteUrl(path: string) {
 }
 
 export function constructMetadata({
-  title = "PrepiQ",
-  description = "PrepiQ Labs is an Interview Prep SaaS application that gives you the most comprehensive interview preparation experience so that you can crush your next interview and land the next job offer.",
+  title = "PrepiQ | Crack Your Interview Easily with PrepiQ",
+  description = "PrepiQ is an Interview Prep SaaS application that gives you the most comprehensive interview preparation experience so that you can crush your next interview and land the next job offer.",
   image = "/thumbnail.png",
   icons = "/favicon.ico",
   noIndex = false,
-  keywords = ['prepiq', 'prep iq', 'interview', 'preparation', 'ai', 'mock', 'job', 'naukri', 'taiyari', 'behavioural interview questions', 'software engineer', 'common interview questions', 'aptitude', 'strengths', 'weakness']
+  keywords = ['prepiq', 'prep iq', 'interview preparation for experienced', 'ai', 'mock', 'job', 'naukri', 'taiyari', 'behavioural round', 'answering questions during an interview', 'common interview questions', 'aptitude', 'strengths', 'weakness', 'interview help', 'interview prep questions', 'job interview preparation', 'recruitment']
 }: {
   title?: string
   description?: string
