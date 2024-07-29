@@ -4,6 +4,7 @@ export const pricingItems = [
         price: 0,
         features: [
             "5 Credits",
+            "Unlimited Custom Jobs",
             "Each Interviews costs 4 credits",
             "Every 10 Questions costs 1 credit",
             "Generate Answers with AI",
@@ -15,6 +16,7 @@ export const pricingItems = [
         price: 399,
         features: [
             "10 Credits",
+            "Unlimited Custom Jobs",
             "Each Interviews costs 4 credits",
             "Every 10 Questions costs 1 credit",
             "Generate Answers with AI",
@@ -26,6 +28,7 @@ export const pricingItems = [
         price: 699,
         features: [
             "25 Credits",
+            "Unlimited Custom Jobs",
             "Each Interviews costs 4 credits",
             "Every 10 Questions costs 1 credit",
             "Generate Answers with AI",
@@ -37,6 +40,7 @@ export const pricingItems = [
         price: 1199,
         features: [
             "50 Credits",
+            "Unlimited Custom Jobs",
             "Each Interviews costs 4 credits",
             "Every 10 Questions costs 1 credit",
             "Generate Answers with AI",
