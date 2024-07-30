@@ -37,6 +37,15 @@ const MobileNav = ({ isAuth, user }: { isAuth: boolean, user: any }) => {
                 <div className='fixed animate-in slide-in-from-top-5 slide-out-to-top-5 fade-in-20 fade-out-20 inset-0 z-0 w-full'>
                     <ul className='absolute bg-accent border-b border-zinc-200 shadow-xl grid w-full gap-3 px-10 pt-20 pb-8'>
                         <li className='my-3 h-px w-full bg-border' />
+                        <li>
+                            <Link
+                                className='flex items-center w-full font-semibold'
+                                href='https://dev.to/abhirup2003/how-i-encountered-the-problem-and-built-the-solution-prepiq-3lkh'>
+                                Blog
+                                <ArrowRight className='ml-2 h-5 w-5' />
+                            </Link>
+                        </li>
+                        <li className='my-3 h-px w-full bg-border' />
                         {!isAuth ? (
                             <>
                                 <li>

@@ -31,6 +31,14 @@ const Navbar = async () => {
 
                         <div className='hidden items-center space-x-4 sm:flex mx-4'>
                             <Link
+                                href='https://dev.to/abhirup2003/how-i-encountered-the-problem-and-built-the-solution-prepiq-3lkh'
+                                className={buttonVariants({
+                                    variant: 'ghost',
+                                    size: 'sm',
+                                })}>
+                                Blog
+                            </Link>
+                            <Link
                                 href='/pricing'
                                 className={buttonVariants({
                                     variant: 'ghost',
