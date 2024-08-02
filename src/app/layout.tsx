@@ -7,6 +7,7 @@ import NextTopLoader from 'nextjs-toploader';
 import Navbar from '@/components/Navbar';
 import { ThemeProvider } from '@/components/theme-provider';
 import Footer from '@/components/Footer';
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,6 +31,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Script src="@/utils/tracker.js" />
           <NextTopLoader color="#f98e12" showSpinner={false} />
           <Toaster />
           <Navbar />
