@@ -8,7 +8,6 @@ import Navbar from '@/components/Navbar';
 import { ThemeProvider } from '@/components/theme-provider';
 import Footer from '@/components/Footer';
 import Script from 'next/script';
-import Head from 'next/head';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,9 +20,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <Head>
-        <Script id="tracker" strategy="beforeInteractive">
-          {`(function () {
+      <Script id="tracker" strategy="beforeInteractive">
+        {`(function () {
     window.sib = {
         equeue: [],
         client_key: "lcnxo42wj5aan0f64le790xg"
@@ -49,8 +47,7 @@ export default function RootLayout({
         n.async = !0, n.src = "https://sibautomation.com/sa.js?key=" + window.sib.client_key,
         i.parentNode.insertBefore(n, i), window.sendinblue.page();
 })();`}
-        </Script>
-      </Head>
+      </Script>
       <body
         className={cn(
           'min-h-screen font-sans antialiased bg-background',
