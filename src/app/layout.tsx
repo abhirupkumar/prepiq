@@ -31,7 +31,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Script>
+          <Script id="tracker">
             {`
           (function() {
         (window as any).sib = {
