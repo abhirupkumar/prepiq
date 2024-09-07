@@ -3,7 +3,7 @@ export const pricingItems = [
         name: 'Free',
         price: 0,
         features: [
-            "5 Credits",
+            "10 Credits",
             "Unlimited Custom Jobs",
             "Each Interviews costs 4 credits",
             "Every 10 Questions costs 1 credit",
@@ -15,7 +15,7 @@ export const pricingItems = [
         name: 'Lite',
         price: 399,
         features: [
-            "10 Credits",
+            "15 Credits",
             "Unlimited Custom Jobs",
             "Each Interviews costs 4 credits",
             "Every 10 Questions costs 1 credit",
@@ -27,7 +27,7 @@ export const pricingItems = [
         name: 'Plus',
         price: 699,
         features: [
-            "25 Credits",
+            "30 Credits",
             "Unlimited Custom Jobs",
             "Each Interviews costs 4 credits",
             "Every 10 Questions costs 1 credit",
@@ -39,7 +39,7 @@ export const pricingItems = [
         name: 'Pro',
         price: 1199,
         features: [
-            "50 Credits",
+            "60 Credits",
             "Unlimited Custom Jobs",
             "Each Interviews costs 4 credits",
             "Every 10 Questions costs 1 credit",
