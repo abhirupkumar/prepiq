@@ -13,9 +13,6 @@ export async function POST(request: NextRequest) {
         amount: (plan.price * 100).toString(),
         currency: 'INR',
         receipt: receipt,
-        payment: {
-            capture: 'automatic',
-        },
         notes: {
             userId,
             plan,
